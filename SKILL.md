@@ -374,15 +374,7 @@ Your video is generating! I've set up automatic delivery.
 I'll send you the finished video when it's ready (usually 1-3 minutes). You're free to keep chatting in the meantime.
 ```
 
-### Fallback: Inline Polling (if cron unavailable)
 
-If the `cron` tool is not available, fall back to the polling script:
-
-```bash
-scripts/heygen-poll.sh <video_id> --timeout 300 --interval 30
-```
-
-This blocks the session but guarantees delivery. Use only as fallback.
 
 ---
 
@@ -462,8 +454,6 @@ These are things a good producer knows. They're baked into the phases above, but
 | Script | Purpose |
 |--------|---------|
 | `scripts/heygen-generate.sh` | Submit prompt to Video Agent |
-| `scripts/heygen-poll.sh` | Poll for video completion (fallback) |
-| `scripts/heygen-download.sh` | Download completed video |
 
 ### Advanced Prompt Optimization
 For production-quality scene-by-scene prompts, see `references/prompt-craft.md`. Covers:
