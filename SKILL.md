@@ -235,11 +235,15 @@ Proceed to Phase 3.5.
 
 ## Phase 3.5 — Prompt Review (Quality Gate)
 
+**⚠️ BLOCKING STEP. Do NOT proceed to Phase 4 until the reviewer returns a verdict. Do NOT generate the video while the review is in progress. The review MUST complete before any API call. This is a sequential gate, not a parallel process.**
+
 Before sending the prompt to the API, get a **second opinion from an independent reviewer**. This is not self-review. This is a separate agent with fresh eyes evaluating the prompt objectively.
 
-### Step 1: Spawn a Review Sub-Agent
+### Step 1: Spawn a Review Sub-Agent (AND WAIT)
 
 Use `sessions_spawn` to run a reviewer sub-agent. The reviewer MUST be a flagship model (never an inferior model). Read the reviewer instructions from `{baseDir}/references/reviewer-prompt.md` and include them as the task, followed by the constructed prompt.
+
+**WAIT for the reviewer to respond before doing anything else. Do not fire the API. Do not offer the user options. Do not proceed. Wait.**
 
 ```
 Task for reviewer:
