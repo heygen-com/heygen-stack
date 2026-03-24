@@ -303,16 +303,21 @@ This report serves two purposes: it shows the user that quality control happened
 
 ### API Call
 
-Run `scripts/heygen-generate.sh`:
+Submit to Video Agent:
 
 ```bash
-scripts/heygen-generate.sh "<prompt>" [--duration <seconds>] [--orientation landscape|portrait]
+curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "<the constructed prompt>"}'
 ```
 
-The script handles:
-- API call to POST /v1/video_agent/generate
-- Returns video_id on success
-- Returns structured error on failure
+Response on success:
+```json
+{"error": null, "data": {"video_id": "abc123", "session_id": "def-456-789"}}
+```
+
+Extract both `video_id` and `session_id` from the response.
 
 ### Error Handling
 
@@ -449,11 +454,6 @@ These are things a good producer knows. They're baked into the phases above, but
 - Status: `GET https://api.heygen.com/v1/video_status.get?video_id=<id>`
 - Auth header: `X-Api-Key: $HEYGEN_API_KEY`
 - Cost: 2 credits/minute of generated video
-
-### Scripts
-| Script | Purpose |
-|--------|---------|
-| `scripts/heygen-generate.sh` | Submit prompt to Video Agent |
 
 ### Advanced Prompt Optimization
 For production-quality scene-by-scene prompts, see `references/prompt-craft.md`. Covers:

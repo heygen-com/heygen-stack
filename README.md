@@ -91,7 +91,6 @@ Uses [HeyGen Video Agent](https://docs.heygen.com) (`POST /v1/video_agent/genera
 ## Requirements
 
 - `HEYGEN_API_KEY` environment variable
-- `curl` and `jq` (for shell scripts)
 - OpenClaw, Claude Code, or any agent that reads SKILL.md files
 
 ## License
