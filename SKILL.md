@@ -344,36 +344,15 @@ I'll notify you automatically when it's ready.
 
 The session URL is available instantly. The user can watch scene planning, asset selection, and rendering in real-time while they do other things.
 
-### Delivery: Fire-and-Forget + Scheduled Check
+### Delivery: Check Status and Deliver When Done
 
-Do NOT block the session with a polling loop. Instead, schedule asynchronous checks using cron:
+After submitting the video, you are responsible for checking when it's done and delivering the result. Use whatever tools you have available (cron, polling, scheduled checks) to monitor the video status. The goal:
 
-**Step 1: Schedule the first check**
-
-Use the `cron` tool to schedule a one-shot check ~2 minutes after generation:
-
-```
-cron add:
-  name: "heygen-video-check-<video_id>"
-  schedule: { kind: "at", at: "<ISO timestamp ~2 min from now>" }
-  payload: {
-    kind: "agentTurn",
-    message: "Check HeyGen video status for video_id=<video_id>. Session URL: https://app.heygen.com/video-agent/<session_id>. Video page: https://app.heygen.com/videos/<video_id>. Run: curl -s -H 'X-Api-Key: $HEYGEN_API_KEY' 'https://api.heygen.com/v1/video_status.get?video_id=<video_id>' — if status is 'completed', send the user the video page URL and congratulate them. If still processing, schedule ONE more check in 60 seconds using cron (same pattern). If failed, tell the user and suggest re-generating. Max 3 total checks. After 3 checks if still not done, send the session URL and tell user to check manually."
-  }
-  delivery: { mode: "announce", channel: "telegram" }
-  sessionTarget: "isolated"
-```
-
-**Step 2: Cleanup rule (CRITICAL)**
-
-Every scheduled check MUST include these safeguards:
-- **Max 3 checks total.** Include a counter in the cron message (e.g., "This is check 2/3"). After check 3, stop scheduling and send the session URL as fallback.
-- **30-minute hard deadline.** When scheduling any check, calculate if it would fire more than 30 minutes after the original generation. If yes, don't schedule it. Send the fallback instead.
-- **Remove the cron job after it fires.** One-shot `at` jobs auto-remove, but verify no orphans remain.
-
-**Step 3: Tell the user the session is free**
-
-After scheduling the check, the agent session is unblocked. The user can keep chatting, ask for another video, or do anything else. The delivery happens asynchronously when the cron fires.
+1. **Don't make the user ask.** You should proactively check and deliver the video when it's ready.
+2. **Check the status** using: `curl -s -H "X-Api-Key: $HEYGEN_API_KEY" "https://api.heygen.com/v1/video_status.get?video_id=<video_id>"` — look for `status: "completed"` in the response.
+3. **When completed**, deliver the finished video URL: `https://app.heygen.com/videos/<video_id>`
+4. **Don't check forever.** If the video isn't done after 30 minutes, send the user the session URL and tell them to check manually.
+5. **Videos typically take 1-3 minutes.** First check at ~2 minutes is a good starting point.
 
 ```
 Your video is generating! I've set up automatic delivery.
