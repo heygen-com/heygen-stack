@@ -433,7 +433,7 @@ These are things a good producer knows. They're baked into the phases above, but
 ## Quick Reference
 
 ### API Endpoints
-- Generate: `POST https://api.heygen.com/v1/video_agent/generate`
+- Generate: `POST https://api.heygen.com/v1/video_agent/generate` **(ALWAYS use this. NEVER use v2/video/generate)**
 - Status: `GET https://api.heygen.com/v1/video_status.get?video_id=<id>`
 - Auth header: `X-Api-Key: $HEYGEN_API_KEY`
 - Cost: 2 credits/minute of generated video
