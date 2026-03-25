@@ -59,6 +59,37 @@ Interview the user. Be conversational, not robotic. Adapt based on what they've 
 8. **Visual style** — Any brand colors or style preferences? (default: clean minimal with blue/black/white)
 9. **Avatar preference** — Visible avatar, or voice-over only? (default: auto-select avatar)
 
+### Asset Handling
+
+When the user provides files (images, PDFs, URLs):
+
+**Step 1: Classify each asset**
+- **Visual assets** (images, screenshots, logos, photos) → will be uploaded to HeyGen AND referenced in the prompt as B-roll
+- **Reference assets** (PDFs, docs, URLs) → content extracted for the script, AND uploaded to HeyGen so Video Agent has full context
+- **When unclear** → upload everything. Video Agent ignores what it doesn't need, but it can't use what it doesn't have.
+
+**Step 2: Upload ALL assets to HeyGen**
+```
+POST https://upload.heygen.com/v1/asset
+X-Api-Key: $HEYGEN_API_KEY
+Content-Type: image/png (or appropriate mime type)
+Body: raw file bytes
+```
+Save the returned `asset_id` for each file.
+
+**Step 3: For URLs, extract content first**
+- Fetch the URL content for script writing
+- Screenshot the page if relevant visuals exist
+- Upload the screenshot as an additional asset
+
+**Step 4: Describe asset usage in the prompt**
+Be SPECIFIC about how each asset should be used:
+- Images: "Use the uploaded dashboard screenshot as B-roll when the narrator discusses analytics features"
+- PDFs: "Reference the attached product documentation for accurate technical specifications. Show relevant diagrams as visual overlays."
+- Logos: "Display the company logo in the intro and end card scenes"
+
+**Rule: Always upload. Always describe.** Uploading costs nothing. Under-providing costs quality.
+
 **Adapt, don't interrogate.** If someone says "60-second product demo for developers about our new API," you already have purpose, audience, duration, and topic. Skip to what's missing: "What tone? And do you have any screenshots of the API in action?"
 
 **Multi-topic split rule.** If the user describes multiple distinct topics, recommend splitting into separate videos. Explain: "HeyGen produces dramatically better results with one topic per video. Want me to plan two shorter videos instead?"
@@ -309,12 +340,29 @@ This report serves two purposes: it shows the user that quality control happened
 
 Submit to Video Agent:
 
+**Without assets:**
 ```bash
 curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
   -H "X-Api-Key: $HEYGEN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"prompt": "<the constructed prompt>"}'
 ```
+
+**With assets (uploaded in Phase 1):**
+```bash
+curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "<the constructed prompt with asset descriptions>",
+    "files": [
+      {"asset_id": "<uploaded_asset_id_1>"},
+      {"asset_id": "<uploaded_asset_id_2>"}
+    ]
+  }'
+```
+
+Include ALL uploaded asset IDs in the `files` array. The prompt should describe how to use each one. Video Agent will reference the assets based on your prompt directions.
 
 Response on success:
 ```json
