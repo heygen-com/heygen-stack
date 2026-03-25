@@ -29,6 +29,17 @@ When you invoke this skill, start your response with a brief announcement:
 
 Then continue with the skill flow. This helps the user understand which skill is active and why.
 
+## Pre-Flight: Check the Learning Log
+
+Before starting ANY new video, check for `heygen-video-producer-log.jsonl` in the workspace root (`/Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl`). If it exists, scan the last 10 entries for patterns:
+
+- **Duration consistently short?** Increase word budget beyond the 1.4x baseline. If `duration_ratio` averages below 0.65, use 1.6x instead.
+- **Certain topic types score well?** Reuse that structure (scene count, media mix, tone).
+- **Reviewer keeps revising the same issue?** Pre-fix it this time.
+- **Specific concerns keep recurring?** Address them proactively.
+
+The log is a learning loop. Use it.
+
 ## Mode Detection
 
 Read the user's request and pick one mode:
@@ -107,6 +118,21 @@ Write a narrator script using these rules:
 - 30s = ~75 words. 60s = ~150 words. 90s = ~225 words. 2 min = ~300 words.
 - Count the words. If over budget, cut. Never deliver over-length.
 
+### Duration Padding Rule (1.4x)
+
+Video Agent consistently delivers ~70% of target duration. To compensate, **use 1.4x the user's target duration when calculating word budget.**
+
+If user wants 60s, budget for 84s (126 words at 150 wpm → write ~190 words). This compensates for Video Agent's ~70% compression.
+
+| User wants | Script budget | Tell Video Agent |
+|------------|--------------|------------------|
+| 30s | 63 words (42s) | "45-second video" |
+| 60s | 126 words (84s) | "85-second video" |
+| 90s | 189 words (126s) | "130-second video" |
+| 120s | 252 words (168s) | "170-second video" |
+
+Based on observed data: 30s target → actual 20s (67%), 60s target → actual 36-47s (60-78%), 120s target → actual 84s (70%). The 1.4x padding brings actual output within 15% of the user's target.
+
 ### Structure by Type
 
 **Product Demo:** Hook (5s) → Problem (10s) → Solution demo (30s) → CTA (15s)
@@ -155,7 +181,7 @@ Transform the script/brief into an optimized Video Agent prompt. The user doesn'
 ### Prompt Construction Rules
 
 1. **Narrator framing.** Always frame as: "A [tone] narrator [explains/walks through/presents]..." Never "Create a video about..."
-2. **Duration signal.** State target: "This is a [duration]-second video."
+2. **Duration signal (PADDED).** When signaling duration to Video Agent, use **1.4x the user's target**. If user wants 60s, tell Video Agent "This is an 85-second video." Video Agent will compress it to approximately the right length. See the Duration Padding table in Phase 2 for exact values. The user-facing review should still show the user's original target.
 3. **Asset anchoring.** If assets exist, be SPECIFIC about how to use them: "Use the attached product screenshots as B-roll when discussing features." "Reference the attached PDF for accurate technical specifications." Vague references = random placement.
 4. **Tone calibration.** Use specific tone words: "confident and conversational" / "energetic, like a tech YouTuber" / "calm and authoritative, like a Bloomberg anchor" / "warm and approachable, like explaining to a friend."
 5. **One topic.** If the script covers one topic cleanly, state it explicitly: "This video covers ONE topic: [topic]."
@@ -443,6 +469,63 @@ Happy with it? Or want me to adjust?
 → Slow it down / speed it up
 → Try a completely different approach
 ```
+
+### Completion Status Report
+
+After delivering the video, always append a completion status:
+
+```
+STATUS: DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
+```
+
+**Statuses:**
+
+- **DONE** — Video completed, reviewer approved, duration within 15% of target. All good.
+- **DONE_WITH_CONCERNS** — Video completed but with issues the user should know about. List each concern with a recommended fix. Examples: duration was >20% off target, reviewer had to REVISE the prompt, assets weren't used as directed.
+- **BLOCKED** — Cannot proceed. State what's blocking (API error, insufficient credits, prompt rejected twice). State what was tried and recommend what user should do.
+- **NEEDS_CONTEXT** — Missing information. State exactly what's needed.
+
+Format in delivery:
+```
+📊 **Status: DONE**
+All checks passed. Duration within target. Reviewer approved first pass.
+```
+
+```
+📊 **Status: DONE_WITH_CONCERNS**
+⚠️ Duration was 25% under target (45s vs 60s target). Recommend re-generating with a longer script.
+⚠️ Reviewer revised the prompt (score 6/10 → improved). Original had weak scene transitions.
+```
+
+```
+📊 **Status: BLOCKED**
+❌ API returned 402 (insufficient credits) on two attempts.
+Tried: waited 60s, retried. Same error.
+Recommendation: Check your HeyGen account credits at app.heygen.com/settings.
+```
+
+### Escalation Rule
+
+**If the reviewer REJECTs the prompt twice (score <5 both times), STOP.** Do not loop. Do not try a third time. Bad work is worse than no work.
+
+Report to the user:
+```
+📊 **Status: BLOCKED**
+❌ Prompt was rejected by quality review twice. Issues:
+  1. [First rejection reason]
+  2. [Second rejection reason]
+This means the brief may need fundamental rework. Let's step back and revisit what this video should accomplish.
+```
+
+### Self-Evaluation Log Entry
+
+After EVERY video generation (successful or not), write a JSON line to `heygen-video-producer-log.jsonl` in the workspace root:
+
+```bash
+echo '{"timestamp":"<ISO-8601>","video_id":"<video_id>","session_id":"<session_id>","prompt_type":"full_producer|enhanced|quick_shot","target_duration":<user_target_seconds>,"actual_duration":<actual_or_null>,"duration_ratio":<actual/target_or_null>,"reviewer_score":"<X/10>","reviewer_verdict":"APPROVE|REVISE|REJECT","word_count":<script_words>,"scene_count":<num_scenes>,"status":"DONE|DONE_WITH_CONCERNS|BLOCKED","concerns":["<list>"],"what_worked":"<brief>","what_to_improve":"<brief>","topic":"<topic>"}' >> /Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl
+```
+
+**Always log.** Even blocked or failed attempts. The log is how we learn. If `actual_duration` isn't known yet (video still rendering), log what you know and note `"actual_duration": null`.
 
 ### Iteration Loop
 
