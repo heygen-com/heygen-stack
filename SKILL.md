@@ -269,6 +269,8 @@ Video Agent accepts an optional `avatar_id` parameter alongside the prompt. When
 
 **NEVER use talking photos.** Filter them out of all results. Avatars only.
 
+**NEVER create or generate avatars.** Do not call any avatar creation, photo avatar, or image generation endpoints (e.g. `/v1/pacific/text2image.generate`, `/v1/pacific/photar.upload`, `/v2/photo_avatar`, or any similar endpoint). These are legacy APIs. This skill only DISCOVERS existing avatars and SELECTS from them. If the user wants a new avatar, tell them to create one in the HeyGen dashboard at app.heygen.com, then come back and it will be discoverable.
+
 #### Step 1: Discover Custom Avatars
 
 Call `GET /v2/avatar_group.list` to find the user's avatar groups. For each group, call `GET /v2/avatar_group/{group_id}/avatars` to get the looks.
@@ -305,7 +307,7 @@ If they want a visible presenter:
 
 Show preview images if they want to see them. Let them pick a specific look → use that `avatar_id`.
 
-**If no custom avatars** (stock only), have a natural conversation:
+**If no custom avatars** (stock only), have a natural conversation. Do NOT offer to create or generate a custom avatar — that's outside this skill's scope:
 > "What kind of presenter fits this video? Think about who your audience would trust."
 
 Let them describe it. Examples:
