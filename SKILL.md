@@ -261,79 +261,88 @@ Scene types to use: Intro, Hook, Problem Statement, Solution, Feature Showcase, 
 
 The single biggest upgrade: paste the FULL script directly into the prompt. Video Agent follows it scene-by-scene while improving flow, timing, and visuals automatically. When in Full Producer mode, ALWAYS construct a scene-labeled script with visual directions and VO text, then send the entire thing as the prompt.
 
-### Avatar Conversation Flow
+### Avatar and Voice Selection
 
-Video Agent is **prompt-driven** — you describe the avatar in the prompt text and Video Agent picks the best match. There is no `avatar_id` or `voice_id` parameter. This means avatar selection is a **conversation**, not a dropdown.
+Video Agent accepts an optional `avatar_id` parameter alongside the prompt. When provided, it uses that exact avatar. When omitted, it picks the closest match from the prompt description. **Always try to resolve a specific `avatar_id`** — it gives the user exact control.
 
-**NEVER auto-select an avatar without asking.** No more defaulting to "a casual-confident male narrator." The user should feel involved in choosing who appears in their video.
+**NEVER auto-select an avatar without asking.** No defaulting to stock avatars when the user has custom ones. The user should confirm who appears in their video.
 
-#### Step 1: Check for Previously Used Avatars
+**NEVER use talking photos.** Filter them out of all results. Avatars only.
 
-Before asking anything, check `heygen-video-producer-log.jsonl` for this user's past generations. If they have previous videos, extract what avatar descriptions were used.
+#### Step 1: Discover Custom Avatars
 
-If previous avatars exist, present them:
-> "Last time you used [description from previous prompt]. Want to use the same presenter, the same one with a different look, or start fresh?"
+Call `GET /v2/avatar_group.list` to find the user's avatar groups. For each group, call `GET /v2/avatar_group/{group_id}/avatars` to get the looks.
 
-Three options:
-1. **Same avatar** — reuse the exact description from their last video
-2. **Same avatar, different look** — same person but different setting/outfit/pose. Ask what to change.
-3. **Start fresh** — go to Step 2
+Filter results:
+- **Keep:** avatars (studio avatars, instant avatars, motion avatars)
+- **Discard:** talking_photos (always filter these out, never offer them)
 
-If no previous videos exist, go straight to Step 2.
+If the user has custom avatars with multiple looks, note each look's `avatar_id`, name, and `preview_image_url`.
 
-#### Step 2: Check for Custom Avatars
+#### Step 2: Check Last-Used Avatar
 
-Call `GET /v2/avatars` and look for non-stock avatars. Detection heuristic:
-- UUID-style avatar IDs (e.g., `a1b2c3d4-...`) = custom/photo avatar
-- IDs starting with a name + descriptive suffix (e.g., `Abigail_expressive_...`) = stock avatar
+Check `heygen-video-producer-log.jsonl` for this user's past generations. If they have previous videos, find the `avatar_id` and look name used last.
 
-If the user has **custom avatars** (photo avatars, studio avatars, instant avatars):
-> "I see you have [N] custom avatar(s): [names]. Want to use one of these, or create something new?"
+If a last-used avatar exists, **default to it**:
+> "Last time you used [Avatar Name — Look Name]. Use her again?"
 
-If they pick a custom avatar and you want to confirm you've got the right one, **share the preview image** with them:
-> "This one? [preview_image_url]"
+- **"Yes" / confirmation** → use that `avatar_id`, move to voice direction
+- **"Show me all looks"** → present all looks from that avatar group with preview images, let them pick
+- **"Different avatar" / "Start fresh"** → go to Step 3
 
-If the account only has stock avatars (the typical case), skip this and go to Step 3.
+If no previous videos exist, go to Step 3.
 
-#### Step 3: The Creative Conversation
+#### Step 3: Avatar Conversation
 
 Ask: **"Do you want a visible presenter, or voice-over only?"**
 
-If voice-over only → done. Use: `"This video uses voice-over narration only. No visible avatar or presenter."`
+If voice-over only → done. No `avatar_id` needed. Use in prompt: `"Voice-over narration only. No visible presenter."`
 
-If they want a presenter, have a conversation about it. Don't just ask for "gender, style, energy" as a checklist. Instead, ask naturally:
+If they want a visible presenter:
 
-> "What kind of presenter fits this video? Think about who your audience would trust or pay attention to."
+**If custom avatars were found in Step 1**, present them first:
+> "You have [Avatar Name] with [N] looks: [list names]. Want to use one of these?"
 
-Let them describe it however they want. They might say:
-- "A young woman, kind of like a tech YouTuber" → `"A young female presenter with an energetic, approachable tech-YouTuber style in a modern workspace."`
-- "Someone corporate, male, older" → `"A mature male presenter in professional business attire, calm and authoritative delivery, corporate office setting."`
-- "I don't care, you pick" → Ask one follow-up: "What's the vibe — more formal/corporate or more casual/creator?" Then pick something fitting.
-- "Use Abigail" → They named a stock avatar by name. Use: `"Use Abigail as the presenter."` Video Agent knows its stock avatars.
+Show preview images if they want to see them. Let them pick a specific look → use that `avatar_id`.
 
-**If you're unsure you understood what they want**, describe it back to them before proceeding:
-> "So I'm picturing: a mid-30s female presenter, casual but polished, sitting at a desk with a laptop. Sound right?"
+**If no custom avatars** (stock only), have a natural conversation:
+> "What kind of presenter fits this video? Think about who your audience would trust."
+
+Let them describe it. Examples:
+- "A young woman, tech YouTuber vibe" → describe in prompt, Video Agent picks closest match
+- "Someone corporate, male" → describe in prompt
+- "Use Abigail" → they named a stock avatar. Use in prompt: `"Use Abigail as the presenter."`
+- "I don't care" → ask one follow-up: "More formal or more casual?" Then pick.
+
+Confirm your understanding before proceeding:
+> "So I'm picturing: [description]. Sound right?"
 
 #### Step 4: Voice Direction
 
 After avatar is settled, confirm voice:
-- If they described the avatar with enough detail, infer the voice: "I'll match the voice — [American accent, upbeat delivery]. Work for you?"
-- If non-English video, confirm language and accent: `"Deliver the narration in Brazilian Portuguese with a native accent."`
+- If they described the avatar with enough detail, infer the voice: "I'll match the voice — [accent, delivery style]. Work for you?"
+- If non-English video, confirm language and accent.
 - If they have strong voice preferences, let them describe it.
 
-#### How to Write It in the Prompt
+#### How to Pass It to the API
 
-Combine avatar + voice into one direction block at the end of the prompt:
-- **Described presenter:** `"A [description] presenter delivers the narration in a [setting]. [Voice direction]."`
-- **Named stock avatar:** `"Use [Name] as the presenter. [Voice direction]."`
-- **Custom avatar by ID:** `"Use avatar [avatar_name] as the presenter. [Voice direction]."` (Video Agent may not match custom avatars by name alone — be honest about this.)
-- **Voice-over only:** `"This video uses voice-over narration only. No visible avatar. [Voice direction]."`
+The `avatar_id` parameter and the prompt description work together:
+
+```json
+{
+  "prompt": "...[script and directions]...",
+  "avatar_id": "05bf07b91de446a3b6e5d47c48214857"
+}
+```
+
+- **Custom avatar with known ID** → pass `avatar_id` as top-level parameter AND describe the avatar in the prompt for voice/delivery direction.
+- **Stock avatar by name** → no `avatar_id` parameter. Describe in prompt: `"Use [Name] as the presenter."`
+- **Described presenter (no specific ID)** → no `avatar_id` parameter. Full description in prompt.
+- **Voice-over only** → no `avatar_id` parameter. State in prompt: `"Voice-over narration only."`
 
 #### Limitations (Be Honest)
 
-Video Agent picks the **closest match** to your description, not an exact one. For custom avatars, prompt-driven matching is especially unreliable. If the user needs pixel-perfect control over a specific custom avatar with a specific pose, tell them this skill uses Video Agent's auto-selection, and suggest they use the Avatar Video API directly for exact `avatar_id` control.
-
-<!-- TODO: Replace when new avatar APIs ship. Current GET /v2/avatars returns 1287 unfiltered results with most fields null. New APIs expected to support search, filtering, and better metadata. -->
+When using `avatar_id`, Video Agent uses that exact avatar. Without it, Video Agent picks the **closest match** from stock avatars based on the prompt description. Stock avatar matching is approximate, not exact. Custom avatar matching by name alone in the prompt is unreliable — always use `avatar_id` for custom avatars.
 
 ### Orientation Mapping
 - YouTube / web / LinkedIn → `landscape`
@@ -379,6 +388,8 @@ This is the FULL assembled prompt exactly as it would be sent to the API (using 
 
 ```
 [Avatar direction from conversation — e.g. "A young male tech YouTuber in a modern workspace" or "Use Abigail as the presenter"] walks developers through HeyGen's Video Agent API, showing how one API call produces a complete video. This is an 85-second video covering ONE topic: the Video Agent API.
+
+Note: If a custom avatar was selected in the Avatar Conversation Flow, the `avatar_id` is passed as a separate top-level parameter alongside this prompt. The prompt still describes the avatar's delivery style and setting for Video Agent's direction.
 
 Scene 1: Intro (Motion Graphics) — 8s
   Visual: (Motion Graphics) HeyGen logo animates in on dark blue background. Title text "Video Agent API" types on below.
@@ -476,12 +487,23 @@ When the user says "go", "generate", "ship it", or "looks good" → proceed to A
 
 Submit to Video Agent:
 
-**Without assets:**
+**Basic (prompt only):**
 ```bash
 curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
   -H "X-Api-Key: $HEYGEN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"prompt": "<the constructed prompt>"}'
+```
+
+**With custom avatar (from Avatar Conversation Flow):**
+```bash
+curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "<the constructed prompt>",
+    "avatar_id": "<avatar_id from discovery>"
+  }'
 ```
 
 **With assets (uploaded in Phase 1):**
@@ -491,6 +513,7 @@ curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": "<the constructed prompt with asset descriptions>",
+    "avatar_id": "<optional, from discovery>",
     "files": [
       {"asset_id": "<uploaded_asset_id_1>"},
       {"asset_id": "<uploaded_asset_id_2>"}
@@ -498,7 +521,7 @@ curl -s -X POST "https://api.heygen.com/v1/video_agent/generate" \
   }'
 ```
 
-Include ALL uploaded asset IDs in the `files` array. The prompt should describe how to use each one. Video Agent will reference the assets based on your prompt directions.
+`avatar_id` is optional. Include it when the user selected a specific custom avatar look. Omit it when using stock avatars by name or voice-over only. Include ALL uploaded asset IDs in the `files` array. The prompt should describe how to use each one.
 
 Response on success:
 ```json
