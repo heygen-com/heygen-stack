@@ -290,7 +290,9 @@ curl -s "https://api.heygen.com/v3/avatars/looks?group_id=<group_id>&limit=50" \
 
 Each look has an `id` — this is the `avatar_id` you pass to the API.
 
-Avatar types: `studio_avatar`, `video_avatar`, `photo_avatar`. Photo avatars support `motion_prompt` and `expressiveness`.
+Avatar types: `studio_avatar`, `photo_avatar`. Photo avatars support `motion_prompt` and `expressiveness`.
+
+> ⛔ **NEVER use `video_avatar` type with Video Agent.** The Video Agent cannot render video_avatar looks as narrators (they fail with "Talking Photo not found" even with explicit avatar_id). When browsing avatars, **skip any result where `avatar_type === "video_avatar"`** and do not present it to the user. If the user specifically asks for a video_avatar look, explain the limitation and suggest a `studio_avatar` or `photo_avatar` alternative.
 
 **ALWAYS show the preview image** when presenting an avatar look to the user. Each look response includes `preview_image_url` — display it inline so the user can see exactly what they're choosing. Never just list names.
 
@@ -319,6 +321,8 @@ curl -s "https://api.heygen.com/v3/avatars/looks?group_id=<group_id>&limit=10" \
 ```
 
 Show each look's `preview_image_url` so the user picks the exact outfit/setting.
+
+> ⛔ **Filter out `video_avatar` looks.** When displaying results from any avatar endpoint, skip looks where `avatar_type === "video_avatar"`. These cannot be rendered by Video Agent. Only present `studio_avatar` and `photo_avatar` looks.
 
 **Why group-first:** The flat `/v3/avatars/looks?ownership=public` endpoint returns 50+ results for only 3 unique people per page. Group-level browsing (2 calls) gives much better discovery UX. Confirm before proceeding.
 
@@ -372,6 +376,8 @@ curl -X POST "https://api.heygen.com/v3/avatars" \
   }'
 ```
 
+> ⚠️ **Video avatars created here CAN be used with `POST /v3/videos` (direct avatar video API), but CANNOT be used with `POST /v3/video-agents` (Video Agent).** If the user creates a video avatar and wants to use the Video Agent pipeline, they must use a different avatar type.
+
 All three return an `avatar_item` with `id` — use this as `avatar_id` in video generation.
 
 Files can be provided as `{"type": "url", "url": "..."}`, `{"type": "asset_id", "asset_id": "..."}`, or `{"type": "base64", "data": "...", "content_type": "..."}`.
@@ -421,8 +427,10 @@ The Video Agent (`POST /v3/video-agents`) accepts `avatar_id` and `voice_id` as 
 ```
 
 - **Custom avatar with known ID** → pass `avatar_id` AND describe delivery style in prompt
-- **Stock avatar by name** → describe in prompt, omit `avatar_id`
-- **Voice-over only** → omit `avatar_id`, state in prompt
+- **Stock avatar** → **ALWAYS look up the `avatar_id` first** via the discovery flow above, then pass it explicitly. NEVER omit `avatar_id` and rely on Video Agent auto-selection — it fails.
+- **Voice-over only** → omit `avatar_id`, state in prompt: "Voice-over narration only."
+
+> ⛔ **Hard rule: every video with a visible presenter MUST have an explicit `avatar_id`.** Video Agent's internal avatar auto-selection is broken (narrator tags like `{{@narrator_xxx}}` fail to resolve). The only safe path without an `avatar_id` is voice-over-only mode.
 
 ---
 
@@ -438,7 +446,7 @@ curl -s "https://api.heygen.com/v3/avatars/looks/<avatar_id>" \
 ```
 
 From the response, extract:
-- `avatar_type`: `"photo_avatar"` | `"studio_avatar"` | `"video_avatar"`
+- `avatar_type`: `"photo_avatar"` | `"studio_avatar"` (if `"video_avatar"`, **STOP — go back to discovery and pick a different look**)
 - `preview_image_url`: use this to determine orientation (Step 2)
 
 ### Step 2: Determine avatar orientation
@@ -456,8 +464,9 @@ Use `avatar_type` as the heuristic (the API does not return background metadata)
 | `avatar_type` | Background? | Reason |
 |---|---|---|
 | `studio_avatar` | ✅ Yes | Recorded in a real studio with a scene |
-| `video_avatar` | ✅ Yes | Recorded in a real environment |
 | `photo_avatar` | ❌ No | Created from a static photo, typically no scene background |
+
+> ⛔ If `avatar_type === "video_avatar"` reached this point, something went wrong. Go back to avatar discovery and select a `studio_avatar` or `photo_avatar` instead.
 
 ### Step 4: Build correction blocks
 
@@ -496,10 +505,11 @@ from the message.
 
 | avatar_type | Orientation Match? | Corrections |
 |---|---|---|
-| `studio_avatar` / `video_avatar` | ✅ matched | None |
-| `studio_avatar` / `video_avatar` | ❌ mismatched | Framing note only (A or B) |
+| `studio_avatar` | ✅ matched | None |
+| `studio_avatar` | ❌ mismatched | Framing note only (A or B) |
 | `photo_avatar` | ✅ matched | Background note only (C) |
 | `photo_avatar` | ❌ mismatched | Framing note (A or B) + Background note (C) |
+| `video_avatar` | any | ⛔ **BLOCKED — do not proceed. Go back and pick a different avatar.** |
 
 ### Step 5: Log the correction
 
@@ -550,6 +560,18 @@ Rules: No per-scene timestamps. No settings block. Scene labels are creative nam
 **One-Shot (default):** Single API call, prompt must be complete. Best for well-defined videos.
 
 **Interactive Session (for complex/iterative videos):** Multi-turn conversation with Video Agent before final generation. Use when the user wants to collaborate with the agent or refine direction iteratively.
+
+### Pre-Flight Validation (run before EVERY API call)
+
+Before calling `POST /v3/video-agents`, check ALL of these. If any fail, **STOP and fix before submitting:**
+
+| # | Check | Pass | Fail action |
+|---|-------|------|-------------|
+| 1 | Presenter video? (not voice-over-only) | `avatar_id` is set | ⛔ Go back to avatar discovery. NEVER submit without `avatar_id` for presenter videos. |
+| 2 | Avatar type safe? | `avatar_type` is `studio_avatar` or `photo_avatar` | ⛔ `video_avatar` breaks Video Agent. Pick a different look. |
+| 3 | Session ID capture plan? | You will extract `session_id` from the response | ⛔ Don't proceed until you commit to logging it. |
+
+If all three pass, proceed to the API call.
 
 ### One-Shot API Call
 
