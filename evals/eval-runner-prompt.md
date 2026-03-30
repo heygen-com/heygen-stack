@@ -20,7 +20,7 @@ For each scenario, record:
 - **Expected:** [from scenario file]
 - **Actual:** [what actually happened]
 - **Video ID:** [id or "N/A - dry run"]
-- **🎬 Video:** [Video Page](https://app.heygen.com/videos/{video_id}) | [Session](https://app.heygen.com/video-agent?session={session_id})
+- **🎬 Video:** [Video Page](https://app.heygen.com/videos/{video_id}) | [Session](https://app.heygen.com/video-agent/{session_id})
 - **Duration:** [actual]s vs [target]s ([ratio]%)
 - **Avatar:** [which avatar used, how selected]
 - **Aspect Correction:** [was Phase 3.5 triggered? what was injected?]
@@ -117,4 +117,4 @@ Ken reviews every video. Fill in after watching each.
 - Be harsh. The point is to find problems.
 - **ALWAYS capture both `video_id` AND `session_id` from the POST /v3/video-agents response.** Both are needed for the eval doc links:
   - Video Page: `https://app.heygen.com/videos/{video_id}`
-  - Session: `https://app.heygen.com/video-agent?session={session_id}`
+  - Session: `https://app.heygen.com/video-agent/{session_id}`
