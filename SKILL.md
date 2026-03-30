@@ -882,37 +882,44 @@ Assembled prompt (with 1.4x padding → 85-second budget), sent to `POST /v3/vid
 
 ## Known Issues & Troubleshooting
 
-### P1: Stock Avatar Auto-Selection Can Stall Video Agent (Open — Under Investigation)
+### P1: Video Agent "Talking Photo Not Found" Error & Stock Avatar Failures
 
-**Discovered:** March 30, 2026 (Round 3 autoresearch testing)
+**Discovered:** March 30, 2026 (Round 3 autoresearch testing + Ken's investigation)
 
-**Symptoms:**
-- Video Agent session stays in "planning" phase indefinitely (30+ minutes)
-- `GET /v3/videos/{video_id}` returns `"status": "pending"` with no progress
-- No rendering ever starts. The agent-level processing never transitions to video generation.
+**Error message:** "The Talking Photo for the current narrator could not be found. Ask the user to select a different avatar before generating the video."
 
-**Affected Scenarios:**
-Both failures share the same pattern: stock avatar auto-selection + landscape orientation.
+**Root Cause (confirmed):**
+The Video Agent internally assigns narrator tags (`{{@narrator_xxx}}`) even when you provide an explicit `avatar_id`. For `video_avatar` types, the agent converts the avatar to an internal image reference (`{{@image_xxx}}`) which then fails to resolve as a renderable "Talking Photo." This causes the session to either:
+1. Stall indefinitely in "processing" (no error surfaced via API)
+2. Show the "Talking Photo not found" error in the session UI
 
-| Scenario | Avatar Type | Orientation | Session ID | Video ID | Outcome |
-|----------|-------------|-------------|------------|----------|---------|
-| S3 | studio_avatar (stock) | landscape | `7cbcacdd-d376-43dd-8979-06beb0bc2416` | `2a1c4456ebcf4227aa88c7b4cdd2b012` | Stuck in planning >30 min |
-| S5 | video_avatar (stock) | landscape | `e774b8b3-6909-4ca8-99ae-d2ce1a43a843` | `74a7c72796f44295ac94ba37964677e5` | Stuck in planning >30 min |
+**What works vs what breaks:**
 
-**Session URLs:**
-- S3: https://app.heygen.com/video-agent/7cbcacdd-d376-43dd-8979-06beb0bc2416
-- S5: https://app.heygen.com/video-agent/e774b8b3-6909-4ca8-99ae-d2ce1a43a843
+| Avatar Type | With explicit avatar_id | Without avatar_id |
+|-------------|------------------------|-------------------|
+| `photo_avatar` (custom) | ✅ Works reliably | ❌ Not tested |
+| `studio_avatar` (stock) | ✅ Works (confirmed: Bryce_public_2, Bryce_public_5) | ❌ Stalls in planning |
+| `video_avatar` (stock) | ❌ Fails ("Talking Photo not found") | ❌ Stalls in planning |
 
-**What works fine:**
-- Custom avatars with explicit `avatar_id` (8/8 completed in same test round, 89-174% duration accuracy)
-- Dry-run mode (no API call, no stall)
+**Key finding:** `video_avatar` type is broken in Video Agent even with an explicit `avatar_id`. The agent cannot animate video_avatar looks as narrators.
 
-**Root Cause Hypothesis:**
-When no `avatar_id` is provided and the Video Agent must auto-select a stock avatar, it may enter a planning loop (possibly evaluating avatar options against the scene requirements) that doesn't resolve within a reasonable timeframe. This is a Video Agent backend issue, not a prompt or skill issue.
+**Retries with evidence:**
 
-**Status:** Reported to HeyGen engineering team (March 30). Awaiting investigation results.
+| Attempt | Avatar | Type | avatar_id | Session | Video | Outcome |
+|---------|--------|------|-----------|---------|-------|---------|
+| S3 original | auto | stock | none | [Session](https://app.heygen.com/video-agent/7cbcacdd-d376-43dd-8979-06beb0bc2416) | [Video](https://app.heygen.com/videos/2a1c4456ebcf4227aa88c7b4cdd2b012) | ❌ Stuck >30min |
+| S3 retry | Bryce | studio_avatar | Bryce_public_2 | [Session](https://app.heygen.com/video-agent/172b8684-72cb-4312-88a9-64be3179ffa1) | [Video](https://app.heygen.com/videos/ee3d91f814d54befaf18349dd002ceda) | ✅ 44.7s |
+| S5 original | auto | stock | none | [Session](https://app.heygen.com/video-agent/e774b8b3-6909-4ca8-99ae-d2ce1a43a843) | [Video](https://app.heygen.com/videos/74a7c72796f44295ac94ba37964677e5) | ❌ Stuck >30min |
+| S5 retry 1 | Kevin | video_avatar | c8f428c5... | [Session](https://app.heygen.com/video-agent/83a739a8-792b-494d-9ff2-e96767a4b3da) | [Video](https://app.heygen.com/videos/7e5f180e4d114393a672c7f7a1d24e2f) | ❌ "Talking Photo not found" |
+| S5 retry 2 | Bryce | studio_avatar | Bryce_public_5 | [Session](https://app.heygen.com/video-agent/aa5e7d93-7a6d-4d6a-9225-5930b52de02c) | [Video](https://app.heygen.com/videos/497f42bc60084e8db474caf2013cc654) | ⏳ generating |
 
-**Workaround:** Always provide an explicit `avatar_id` when possible. Use the avatar discovery flow (Phase 1) to let users pick an avatar before generation. If using stock avatars, pre-select a specific look_id via `GET /v3/avatars/looks?group_id={group_id}` rather than relying on Video Agent auto-selection.
+**Status:** Confirmed as Video Agent backend bug. Reported to HeyGen engineering.
+
+**Hard rules for the skill:**
+1. **ALWAYS provide an explicit `avatar_id`.** Never let Video Agent auto-select.
+2. **NEVER use `video_avatar` type with Video Agent.** Use `studio_avatar` or `photo_avatar` only.
+3. During avatar discovery, filter results: if `avatar_type === "video_avatar"`, warn the user it may not work with Video Agent and suggest a `studio_avatar` or `photo_avatar` alternative.
+4. If no avatar is specified and user wants stock, default to a known-working `studio_avatar` (e.g., Bryce, Daphne).
 
 ---
 
