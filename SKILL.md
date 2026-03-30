@@ -428,31 +428,42 @@ The Video Agent (`POST /v3/video-agents`) accepts `avatar_id` and `voice_id` as 
 
 ## Phase 3.5 — Aspect Ratio & Background Pre-Check
 
-**Run this automatically when `avatar_id` is set, before entering Phase 4.**
+**Run this automatically when `avatar_id` is set, before entering Phase 4. Also runs in Quick Shot mode when avatar_id is present.**
 
-### Step 1: Fetch the avatar look's preview image
+### Step 1: Fetch the avatar look metadata
 
 ```bash
 curl -s "https://api.heygen.com/v3/avatars/looks/<avatar_id>" \
   -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
-Check `preview_image_url` from the response. Determine its aspect ratio (portrait vs landscape) by fetching the image dimensions or inferring from the look's `avatar_type` and preview.
+From the response, extract:
+- `avatar_type`: `"photo_avatar"` | `"studio_avatar"` | `"video_avatar"`
+- `preview_image_url`: use this to determine orientation (Step 2)
 
-### Step 2: Detect mismatches
+### Step 2: Determine avatar orientation
 
-| Avatar Image | Requested Orientation | Action |
+Fetch the preview image and check its pixel dimensions (width × height).
+
+- **width > height** → landscape avatar
+- **height > width** → portrait avatar
+- **Fetch fails or no preview** → assume portrait (safer default, triggers correction)
+
+### Step 3: Determine if background exists
+
+Use `avatar_type` as the heuristic (the API does not return background metadata):
+
+| `avatar_type` | Background? | Reason |
 |---|---|---|
-| Portrait (9:16) | `"landscape"` | **Inject landscape correction prompt** |
-| Landscape (16:9) | `"portrait"` | **Inject portrait correction prompt** |
-| Matched | Any | No action needed |
-| No preview / unknown | Any | **Inject background safety prompt** |
+| `studio_avatar` | ✅ Yes | Recorded in a real studio with a scene |
+| `video_avatar` | ✅ Yes | Recorded in a real environment |
+| `photo_avatar` | ❌ No | Created from a static photo, typically no scene background |
 
-### Step 3: Inject correction into the prompt
+### Step 4: Build correction blocks
 
-**Do NOT ask the user about this.** Silently append the appropriate correction block to the end of the constructed prompt, right before submission.
+Based on Steps 2-3, build zero or more correction blocks. **All corrections are appended verbatim to the end of the prompt text in Phase 4, inside the `prompt` field sent to POST /v3/video-agents.** Do NOT ask the user. Do NOT log without injecting.
 
-**Portrait avatar → Landscape video (most common):**
+**A) Orientation mismatch — Portrait avatar → Landscape video (most common):**
 ```
 FRAMING NOTE: The selected avatar image is in portrait orientation (9:16) but
 this video is landscape (16:9). Frame the presenter from the chest up, centered
@@ -462,7 +473,7 @@ tone (studio, office, or contextually appropriate setting). Do NOT add black bar
 or pillarboxing. The avatar should feel natural in the 16:9 frame.
 ```
 
-**Landscape avatar → Portrait video:**
+**B) Orientation mismatch — Landscape avatar → Portrait video:**
 ```
 FRAMING NOTE: The selected avatar image is in landscape orientation (16:9) but
 this video is portrait (9:16). Reframe the presenter to fill the portrait canvas
@@ -471,9 +482,9 @@ to extend vertically if needed. Do NOT add letterboxing. The avatar should fill
 the portrait frame comfortably.
 ```
 
-**Avatar with no/transparent background (or unknown backdrop):**
+**C) Missing background — photo_avatar type:**
 ```
-BACKGROUND NOTE: The selected avatar has no background or a transparent backdrop.
+BACKGROUND NOTE: The selected avatar is a photo avatar with no scene background.
 Use AI Image tool to place the presenter in a clean, professional environment
 appropriate to the video's tone. For business/tech content: modern studio with
 soft lighting and subtle depth. For casual content: bright, minimal space with
@@ -481,9 +492,20 @@ natural light. The background should complement the presenter without distractin
 from the message.
 ```
 
-### Step 4: Log the correction
+**Corrections can stack.** A portrait photo_avatar in a landscape video gets BOTH the framing note (A) AND the background note (C).
 
-Add `"aspect_correction": "portrait_to_landscape" | "landscape_to_portrait" | "background_fill" | "none"` to the learning log entry for this video.
+| avatar_type | Orientation Match? | Corrections |
+|---|---|---|
+| `studio_avatar` / `video_avatar` | ✅ matched | None |
+| `studio_avatar` / `video_avatar` | ❌ mismatched | Framing note only (A or B) |
+| `photo_avatar` | ✅ matched | Background note only (C) |
+| `photo_avatar` | ❌ mismatched | Framing note (A or B) + Background note (C) |
+
+### Step 5: Log the correction
+
+Add these fields to the learning log entry:
+- `"aspect_correction"`: `"portrait_to_landscape"` | `"landscape_to_portrait"` | `"background_fill"` | `"both"` | `"none"`
+- `"avatar_type"`: the raw value from the API
 
 ---
 
@@ -753,7 +775,7 @@ All checks passed. Duration within target.
 After EVERY generation (successful or not), append to `heygen-video-producer-log.jsonl`:
 
 ```bash
-echo '{"timestamp":"<ISO-8601>","video_id":"<id>","session_id":"<session_id_or_null>","prompt_type":"full_producer|enhanced|quick_shot|interactive","target_duration":<seconds>,"padded_duration":<padded_seconds>,"actual_duration":<actual_or_null>,"duration_ratio":<ratio_or_null>,"padding_multiplier":<1.3|1.4|1.6>,"word_count":<words>,"scene_count":<scenes>,"avatar_id":"<id_or_null>","voice_id":"<id_or_null>","style_id":"<id_or_null>","orientation":"landscape|portrait","aspect_correction":"portrait_to_landscape|landscape_to_portrait|background_fill|none","files_attached":<count>,"generation_path":"video_agent|avatar_video|interactive_session","status":"DONE|DONE_WITH_CONCERNS|BLOCKED","concerns":["<list>"],"what_worked":"<brief>","what_to_improve":"<brief>","topic":"<topic>"}' >> /Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl
+echo '{"timestamp":"<ISO-8601>","video_id":"<id>","session_id":"<session_id_or_null>","prompt_type":"full_producer|enhanced|quick_shot|interactive","target_duration":<seconds>,"padded_duration":<padded_seconds>,"actual_duration":<actual_or_null>,"duration_ratio":<ratio_or_null>,"padding_multiplier":<1.3|1.4|1.6>,"word_count":<words>,"scene_count":<scenes>,"avatar_id":"<id_or_null>","voice_id":"<id_or_null>","style_id":"<id_or_null>","orientation":"landscape|portrait","aspect_correction":"portrait_to_landscape|landscape_to_portrait|background_fill|both|none","avatar_type":"photo_avatar|studio_avatar|video_avatar|null","files_attached":<count>,"generation_path":"video_agent|avatar_video|interactive_session","status":"DONE|DONE_WITH_CONCERNS|BLOCKED","concerns":["<list>"],"what_worked":"<brief>","what_to_improve":"<brief>","topic":"<topic>"}' >> /Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl
 ```
 
 **New fields explained:**
