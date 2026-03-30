@@ -267,9 +267,22 @@ Video Agent accepts an optional `avatar_id` parameter alongside the prompt. When
 
 **NEVER auto-select an avatar without asking.** No defaulting to stock avatars when the user has custom ones. The user should confirm who appears in their video.
 
-**NEVER use talking photos.** Filter them out of all results. Avatars only.
+**NEVER use the legacy photo avatar API.** No calling `/v2/photo_avatar/*` endpoints (group create, train, add_motion, talking_photo). No using `type: "talking_photo"` in video generation. No calling `/v2/video/generate` for avatar videos. These are all legacy paths. The ONLY way to create an avatar from a photo is the **Avatar IV path** described below.
 
-#### Step 1: Discover Custom Avatars
+**NEVER generate avatar images from text prompts.** No calling `/v1/pacific/text2image.generate`, `/v1/pacific/photar.upload`, or any similar internal endpoint. Avatars come from real photos or from HeyGen's stock library.
+
+#### Two Avatar Paths
+
+There are exactly two ways to get an avatar in a video:
+
+1. **Existing avatar** (stock or custom) → discover via API, pass `avatar_id` to Video Agent
+2. **New avatar from user's photo** → Avatar IV path (`/v2/video/av4/generate`)
+
+Nothing else. No third option.
+
+#### Path A: Using Existing Avatars
+
+##### A1: Discover Custom Avatars
 
 Call `GET /v2/avatar_group.list` to find the user's avatar groups. For each group, call `GET /v2/avatar_group/{group_id}/avatars` to get the looks.
 
@@ -279,7 +292,7 @@ Filter results:
 
 If the user has custom avatars with multiple looks, note each look's `avatar_id`, name, and `preview_image_url`.
 
-#### Step 2: Check Last-Used Avatar
+##### A2: Check Last-Used Avatar
 
 Check `heygen-video-producer-log.jsonl` for this user's past generations. If they have previous videos, find the `avatar_id` and look name used last.
 
@@ -288,11 +301,11 @@ If a last-used avatar exists, **default to it**:
 
 - **"Yes" / confirmation** → use that `avatar_id`, move to voice direction
 - **"Show me all looks"** → present all looks from that avatar group with preview images, let them pick
-- **"Different avatar" / "Start fresh"** → go to Step 3
+- **"Different avatar" / "Start fresh"** → go to A3
 
-If no previous videos exist, go to Step 3.
+If no previous videos exist, go to A3.
 
-#### Step 3: Avatar Conversation
+##### A3: Avatar Conversation
 
 Ask: **"Do you want a visible presenter, or voice-over only?"**
 
@@ -300,12 +313,14 @@ If voice-over only → done. No `avatar_id` needed. Use in prompt: `"Voice-over 
 
 If they want a visible presenter:
 
-**If custom avatars were found in Step 1**, present them first:
+**If custom avatars were found in A1**, present them first:
 > "You have [Avatar Name] with [N] looks: [list names]. Want to use one of these?"
 
 Show preview images if they want to see them. Let them pick a specific look → use that `avatar_id`.
 
-**If no custom avatars** (stock only), have a natural conversation:
+**If they want to use their own photo** → go to Path B (Avatar IV).
+
+**If no custom avatars and no photo** (stock only), have a natural conversation:
 > "What kind of presenter fits this video? Think about who your audience would trust."
 
 Let them describe it. Examples:
@@ -317,14 +332,14 @@ Let them describe it. Examples:
 Confirm your understanding before proceeding:
 > "So I'm picturing: [description]. Sound right?"
 
-#### Step 4: Voice Direction
+##### A4: Voice Direction
 
 After avatar is settled, confirm voice:
 - If they described the avatar with enough detail, infer the voice: "I'll match the voice — [accent, delivery style]. Work for you?"
 - If non-English video, confirm language and accent.
 - If they have strong voice preferences, let them describe it.
 
-#### How to Pass It to the API
+##### How to Pass Existing Avatars to the API
 
 The `avatar_id` parameter and the prompt description work together:
 
@@ -340,9 +355,90 @@ The `avatar_id` parameter and the prompt description work together:
 - **Described presenter (no specific ID)** → no `avatar_id` parameter. Full description in prompt.
 - **Voice-over only** → no `avatar_id` parameter. State in prompt: `"Voice-over narration only."`
 
-#### Limitations (Be Honest)
+##### Limitations (Be Honest)
 
 When using `avatar_id`, Video Agent uses that exact avatar. Without it, Video Agent picks the **closest match** from stock avatars based on the prompt description. Stock avatar matching is approximate, not exact. Custom avatar matching by name alone in the prompt is unreliable — always use `avatar_id` for custom avatars.
+
+#### Path B: Avatar IV (Create Avatar from Photo)
+
+When the user wants to use their own photo as the presenter, use the **Avatar IV** path. This is HeyGen's latest avatar technology with natural motion and improved quality. It generates a video directly from a photo — no group creation, no training, no legacy steps.
+
+**IMPORTANT:** Avatar IV is a DIFFERENT generation path than Video Agent. When the user provides a photo for their avatar, you do NOT use `/v1/video_agent/generate`. You use `/v2/video/av4/generate` instead. The script and prompt construction (Phase 2-3) still apply — you just submit to a different endpoint.
+
+##### B1: Get the Photo
+
+The user provides a photo (file upload, URL, or path). Requirements:
+- Format: JPEG or PNG
+- Resolution: minimum 512x512px
+- Clear, front-facing face with good lighting
+- Simple background preferred
+
+If the photo quality is questionable, mention it: "This photo might work, but Avatar IV produces best results with a clear, well-lit headshot. Want to try it or use a different photo?"
+
+##### B2: Upload the Photo
+
+```bash
+curl -X POST "https://upload.heygen.com/v1/asset" \
+  -H "Content-Type: image/jpeg" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  --data-binary @/path/to/photo.jpg
+```
+
+Returns `image_key` (e.g. `"image/741299e941764988b432ed3a6757878f/original.jpg"`).
+
+##### B3: Generate with Avatar IV
+
+```bash
+curl -X POST "https://api.heygen.com/v2/video/av4/generate" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "image_key": "<image_key from upload>",
+    "script": "<the narrator script from Phase 2>",
+    "voice_id": "<voice_id>",
+    "video_orientation": "landscape",
+    "video_title": "<video title>"
+  }'
+```
+
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `image_key` | string | ✓ | From upload response |
+| `script` | string | ✓ | The narrator script (plain text, no scene labels) |
+| `voice_id` | string | ✓ | Voice to use (see voice selection below) |
+| `video_orientation` | string | | `"landscape"`, `"portrait"`, or `"square"` |
+| `video_title` | string | | Title for the video |
+| `fit` | string | | `"cover"` or `"contain"` |
+| `custom_motion_prompt` | string | | Describe motion/expressions (e.g. "confident, gesturing while explaining") |
+| `enhance_custom_motion_prompt` | boolean | | Let AI enhance the motion prompt |
+
+Returns `video_id`. Poll with `GET /v1/video_status.get?video_id=<id>` same as Video Agent.
+
+##### B4: Voice Selection for Avatar IV
+
+Avatar IV requires an explicit `voice_id` (unlike Video Agent which can infer voice from prompt). To find available voices:
+
+```bash
+curl -s "https://api.heygen.com/v2/voices" \
+  -H "X-Api-Key: $HEYGEN_API_KEY"
+```
+
+Ask the user about voice preference (accent, gender, energy) and pick the closest match. If unsure, ask: "What should this person sound like? Any accent preference?"
+
+##### Key Differences: Avatar IV vs Video Agent
+
+| | Video Agent | Avatar IV |
+|---|---|---|
+| **Endpoint** | `/v1/video_agent/generate` | `/v2/video/av4/generate` |
+| **Input** | Prompt (full creative direction) | Script + image_key + voice_id |
+| **Avatar source** | Stock library or `avatar_id` | User's uploaded photo |
+| **B-roll/visuals** | Video Agent adds them automatically | Avatar only, no B-roll |
+| **Scene planning** | Automatic | None — single continuous take |
+| **Best for** | Produced videos with scenes, graphics, transitions | Talking-head / narrator from custom photo |
+
+**When Avatar IV is the right choice:** The user has a specific photo they want as the presenter and wants a talking-head style video. The tradeoff is no automatic B-roll, motion graphics, or scene transitions.
+
+**When Video Agent is better:** The user wants a produced video with multiple scenes, B-roll, graphics, and transitions. Use stock avatars or existing custom avatars via `avatar_id`.
 
 ### Orientation Mapping
 - YouTube / web / LinkedIn → `landscape`
