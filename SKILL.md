@@ -304,6 +304,8 @@ Let them describe what they want. Confirm before proceeding.
 
 **ALWAYS show a playable voice preview** when presenting voice options. Each voice response includes `preview_audio_url` — share it so the user can hear the voice before committing. When listing multiple voices, show name + language + gender + preview link for each.
 
+**Handling missing/broken previews:** Some voices return bare `s3://` paths or `null` for `preview_audio_url` instead of signed HTTPS URLs. These are not playable. When this happens: (1) note "(no preview available)" next to the voice, (2) offer to generate a short TTS sample via `POST /v3/voices/speech` so the user can still hear it before choosing.
+
 ### Path B: Create a New Avatar
 
 Use `POST /v3/avatars` to create a new avatar. Three types:
