@@ -52,6 +52,14 @@ Read the user's request and pick one mode:
 
 If unclear, default to Full Producer. It's better to ask one smart question than generate a mediocre video.
 
+### Preview / Dry-Run Mode
+
+If the user says **"dry run"**, **"preview"**, **"don't generate yet"**, or **"show me the payload"** — set the `dry_run` flag. That's it.
+
+**The entire pipeline runs identically.** Same discovery, same script, same prompt construction. The ONLY difference: at the very end of Phase 4, instead of calling the API, present a creative preview and wait for approval.
+
+There is NO separate dry-run logic. No dry-run-specific templates. No branching. One pipeline, one path, one gate at the end.
+
 ---
 
 ## Phase 1 — Discovery
@@ -68,7 +76,7 @@ Interview the user. Be conversational, not robotic. Adapt based on what they've 
 6. **Assets** — Any screenshots, URLs, PDFs, images, or brand guidelines?
 7. **Key message** — What's the ONE thing the viewer should remember?
 8. **Visual style** — Any brand colors or style preferences? (default: clean minimal with blue/black/white)
-9. **Avatar preference** — Visible avatar, or voice-over only? (default: auto-select avatar)
+9. **Avatar preference** — Visible presenter or voice-over only? If presenter, what vibe? (gender, style, energy). Don't offer to browse avatars. (default: auto-select)
 10. **Language** — What language should the narration be in? (default: English). For non-English, specify in the prompt: "Deliver the narration in [language]."
 
 ### Asset Handling
@@ -255,12 +263,33 @@ The single biggest upgrade: paste the FULL script directly into the prompt. Vide
 
 ### Avatar and Voice Selection
 
-Video Agent auto-selects an appropriate avatar and voice based on the prompt content. To influence the selection, describe the presenter in the prompt:
-- **Avatar:** "Use a professional female avatar with a warm, confident delivery"
-- **Voice:** "The narrator should have a calm, authoritative male voice with an American accent"
-- **No avatar:** "No avatar needed, only voice-over narration" (must be explicit or Video Agent defaults to showing an avatar)
+Video Agent does NOT accept `avatar_id` or `voice_id` as API parameters. All avatar selection is **prompt-driven** — describe what you want in the prompt text, and Video Agent picks the best match.
 
-Video Agent does not accept `avatar_id` or `voice_id` parameters. All selection is prompt-driven.
+#### What to Ask
+
+In Full Producer mode, ask ONE question: **"Do you want a visible avatar presenter, or voice-over only?"**
+
+If they want a presenter, ask what vibe: gender, style, energy level. That's it. Don't offer to browse avatars or list groups. The current avatar APIs aren't built for that experience.
+
+#### How to Translate It Into the Prompt
+
+- **Wants a presenter:** `"A [gender] presenter with a [style] appearance delivers the narration in a [setting] environment."` Example: `"A confident female presenter in a modern office delivers the narration."`
+- **Named a specific avatar** (e.g., "use Abigail"): `"Use Abigail as the presenter."` Video Agent knows its stock avatars by name.
+- **Voice-over only:** `"This video uses voice-over narration only. No visible avatar or presenter."`
+- **No preference:** `"Use a professional presenter appropriate for [audience]."` Let Video Agent auto-select.
+
+#### Voice Direction
+
+Include voice direction alongside avatar direction in the prompt:
+- `"The narrator speaks with a calm, confident American accent."`
+- `"Use a warm, energetic female voice."`
+- Non-English: `"Deliver the narration in [language] with a native accent."`
+
+#### Limitations (Be Honest)
+
+Video Agent picks the CLOSEST match to your description, not an exact one. Users cannot select a specific custom avatar by ID through this skill. If exact avatar matching is critical (specific custom avatar, specific pose), recommend the `heygen-avatar-video` skill instead, which uses the Avatar Video API with direct `avatar_id` control.
+
+<!-- TODO: Replace this section when new avatar APIs ship. Current APIs (GET /v2/avatars, GET /v2/avatar_group.list) return unfiltered bulk data unsuitable for interactive selection. New APIs expected to support search, filtering, and better metadata. -->
 
 ### Orientation Mapping
 - YouTube / web / LinkedIn → `landscape`
@@ -345,6 +374,59 @@ Proceed to Phase 4.
 ---
 
 ## Phase 4 — Generate
+
+### Pre-Submit Gate
+
+This is the ONLY place dry-run mode diverges from the normal flow.
+
+- **Dry-run mode**: Present the creative preview (below), then wait for explicit go-ahead.
+- **Full Producer** (no dry-run): User already approved the script in Phase 2. Proceed to API call.
+- **Quick Shot**: Generate immediately, no confirmation needed.
+
+#### Creative Preview (dry-run output)
+
+Present the video as a **pitch**, not a spec sheet. The user should read this and think *"oh, this is going to be good"* — not *"looks correct."*
+
+```
+🎬 Here's what I'm making:
+
+[One opinionated sentence describing the creative direction and vibe.
+ e.g. "A Fireship-style breakdown of why agents can do everything except make a video."]
+~[duration], [orientation], [avatar description or "voice-over only"].
+
+---
+
+[SCENE LABEL]
+*([tone/delivery cue, e.g. "conspiratorial, leaning in"])*
+"[Script line — full text]"
+[inline visual cue, e.g. "[animated checklist, items checking off one by one]"]
+
+[SCENE LABEL]
+*([tone cue])*
+"[Script line]"
+[visual cue]
+
+...
+
+---
+
+[One-line logline that sells the whole video.
+ e.g. "45 seconds that make agents without video feel incomplete."]
+
+Say **go** to generate, or tell me what to change.
+```
+
+**Rules for the creative preview:**
+- NO per-scene timestamps. Video Agent decides pacing.
+- NO settings block. No bullet-point summary of duration/orientation/avatar/assets.
+- NO padding math or implementation details.
+- Scene labels are short creative names ("THE HOOK", "THE GAP"), not numbered specs.
+- Include a tone/delivery cue per scene in italics — this shows what the video will *feel* like.
+- Include inline visual cues in brackets — reads cinematic, like a screenplay.
+- End with a logline: one sentence that makes the user want to hit go.
+- The full constructed prompt (with all technical details, style blocks, media types) lives behind the scenes. If a power user asks to see it, show it. Otherwise, hide the sausage-making.
+
+When the user says "go", "generate", "ship it", or "looks good" → proceed to API call below. The prompt has already been constructed — just submit it.
 
 ### API Call
 
