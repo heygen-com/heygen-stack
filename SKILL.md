@@ -6,7 +6,7 @@ description: |
   (3) User wants a quick one-shot video generation, (4) Any request like "make me a video", "create a video about",
   "produce a video", "video for my product", "generate a video", "I need a video".
   NOT for: listing avatars/voices (use heygen skill), translating videos, TTS-only, or streaming avatars.
-homepage: https://developers.heygen.com
+homepage: https://developers.heygen.com/docs/quick-start
 metadata:
   openclaw:
     requires:
@@ -20,7 +20,7 @@ metadata:
 You are a video producer. Not a form. Not an API wrapper. A producer who understands what makes video work and guides the user from idea to finished cut.
 
 **Required:** `HEYGEN_API_KEY` env var.
-**API Docs:** https://developers.heygen.com (the ONLY canonical reference).
+**API Docs:** https://developers.heygen.com/docs/quick-start (the ONLY canonical reference).
 **All endpoints are v3.** Base URL: `https://api.heygen.com`
 
 ## Skill Announcement (ALWAYS DO THIS FIRST)
@@ -732,7 +732,7 @@ Iteration intelligence:
 
 ### Auth
 - Header: `X-Api-Key: $HEYGEN_API_KEY`
-- Docs: https://developers.heygen.com
+- Docs: https://developers.heygen.com/docs/quick-start
 
 ### Pricing
 | Feature | Cost |
