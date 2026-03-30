@@ -271,6 +271,8 @@ Each look has an `id` — this is the `avatar_id` you pass to the API.
 
 Avatar types: `studio_avatar`, `video_avatar`, `photo_avatar`. Photo avatars support `motion_prompt` and `expressiveness`.
 
+**ALWAYS show the preview image** when presenting an avatar look to the user. Each look response includes `preview_image_url` — display it inline so the user can see exactly what they're choosing. Never just list names.
+
 To browse by group:
 ```bash
 # List avatar groups
@@ -282,7 +284,8 @@ curl -s "https://api.heygen.com/v3/avatars/looks?group_id=<group_id>&limit=50" \
   -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
-**A2: Check last-used avatar** from `heygen-video-producer-log.jsonl`. If found:
+**A2: Check last-used avatar** from `heygen-video-producer-log.jsonl`. If found, fetch that look's details via `GET /v3/avatars/looks/{look_id}` and show the preview image:
+> [preview image displayed]
 > "Last time you used [Avatar Name — Look Name]. Use her again?"
 
 **A3: Avatar conversation** — ask: "Do you want a visible presenter, or voice-over only?"
@@ -298,6 +301,8 @@ curl -s "https://api.heygen.com/v3/avatars/looks?ownership=public&limit=20" \
 Let them describe what they want. Confirm before proceeding.
 
 **A4: Voice direction** — after avatar is settled, confirm voice preferences (accent, delivery style, language).
+
+**ALWAYS show a playable voice preview** when presenting voice options. Each voice response includes `preview_audio_url` — share it so the user can hear the voice before committing. When listing multiple voices, show name + language + gender + preview link for each.
 
 ### Path B: Create a New Avatar
 
