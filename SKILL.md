@@ -426,6 +426,67 @@ The Video Agent (`POST /v3/video-agents`) accepts `avatar_id` and `voice_id` as 
 
 ---
 
+## Phase 3.5 — Aspect Ratio & Background Pre-Check
+
+**Run this automatically when `avatar_id` is set, before entering Phase 4.**
+
+### Step 1: Fetch the avatar look's preview image
+
+```bash
+curl -s "https://api.heygen.com/v3/avatars/looks/<avatar_id>" \
+  -H "X-Api-Key: $HEYGEN_API_KEY"
+```
+
+Check `preview_image_url` from the response. Determine its aspect ratio (portrait vs landscape) by fetching the image dimensions or inferring from the look's `avatar_type` and preview.
+
+### Step 2: Detect mismatches
+
+| Avatar Image | Requested Orientation | Action |
+|---|---|---|
+| Portrait (9:16) | `"landscape"` | **Inject landscape correction prompt** |
+| Landscape (16:9) | `"portrait"` | **Inject portrait correction prompt** |
+| Matched | Any | No action needed |
+| No preview / unknown | Any | **Inject background safety prompt** |
+
+### Step 3: Inject correction into the prompt
+
+**Do NOT ask the user about this.** Silently append the appropriate correction block to the end of the constructed prompt, right before submission.
+
+**Portrait avatar → Landscape video (most common):**
+```
+FRAMING NOTE: The selected avatar image is in portrait orientation (9:16) but
+this video is landscape (16:9). Frame the presenter from the chest up, centered
+in the landscape canvas. Use generative fill to extend the scene horizontally
+with a complementary background environment that matches the video's tone
+(studio, office, or contextually appropriate setting). Do NOT add black bars
+or pillarboxing. The avatar should feel natural in the 16:9 frame.
+```
+
+**Landscape avatar → Portrait video:**
+```
+FRAMING NOTE: The selected avatar image is in landscape orientation (16:9) but
+this video is portrait (9:16). Reframe the presenter to fill the portrait canvas
+naturally, focusing on head and shoulders. Use generative fill to extend
+vertically if needed. Do NOT add letterboxing. The avatar should fill the
+portrait frame comfortably.
+```
+
+**Avatar with no/transparent background (or unknown backdrop):**
+```
+BACKGROUND NOTE: The selected avatar has no background or a transparent backdrop.
+Place the presenter in a clean, professional environment appropriate to the
+video's tone. For business/tech content: modern studio with soft lighting and
+subtle depth. For casual content: bright, minimal space with natural light.
+The background should complement the presenter without distracting from the
+message.
+```
+
+### Step 4: Log the correction
+
+Add `"aspect_correction": "portrait_to_landscape" | "landscape_to_portrait" | "background_fill" | "none"` to the learning log entry for this video.
+
+---
+
 ## Phase 4 — Generate
 
 ### Pre-Submit Gate
@@ -692,7 +753,7 @@ All checks passed. Duration within target.
 After EVERY generation (successful or not), append to `heygen-video-producer-log.jsonl`:
 
 ```bash
-echo '{"timestamp":"<ISO-8601>","video_id":"<id>","session_id":"<session_id_or_null>","prompt_type":"full_producer|enhanced|quick_shot|interactive","target_duration":<seconds>,"padded_duration":<padded_seconds>,"actual_duration":<actual_or_null>,"duration_ratio":<ratio_or_null>,"padding_multiplier":<1.3|1.4|1.6>,"word_count":<words>,"scene_count":<scenes>,"avatar_id":"<id_or_null>","voice_id":"<id_or_null>","style_id":"<id_or_null>","orientation":"landscape|portrait","files_attached":<count>,"generation_path":"video_agent|avatar_video|interactive_session","status":"DONE|DONE_WITH_CONCERNS|BLOCKED","concerns":["<list>"],"what_worked":"<brief>","what_to_improve":"<brief>","topic":"<topic>"}' >> /Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl
+echo '{"timestamp":"<ISO-8601>","video_id":"<id>","session_id":"<session_id_or_null>","prompt_type":"full_producer|enhanced|quick_shot|interactive","target_duration":<seconds>,"padded_duration":<padded_seconds>,"actual_duration":<actual_or_null>,"duration_ratio":<ratio_or_null>,"padding_multiplier":<1.3|1.4|1.6>,"word_count":<words>,"scene_count":<scenes>,"avatar_id":"<id_or_null>","voice_id":"<id_or_null>","style_id":"<id_or_null>","orientation":"landscape|portrait","aspect_correction":"portrait_to_landscape|landscape_to_portrait|background_fill|none","files_attached":<count>,"generation_path":"video_agent|avatar_video|interactive_session","status":"DONE|DONE_WITH_CONCERNS|BLOCKED","concerns":["<list>"],"what_worked":"<brief>","what_to_improve":"<brief>","topic":"<topic>"}' >> /Users/heyeve/.openclaw/workspace/heygen-video-producer-log.jsonl
 ```
 
 **New fields explained:**
@@ -700,6 +761,7 @@ echo '{"timestamp":"<ISO-8601>","video_id":"<id>","session_id":"<session_id_or_n
 - `padded_duration` — the duration you told Video Agent (after multiplier). Compare with `actual_duration` to calibrate.
 - `padding_multiplier` — which multiplier was used (1.3, 1.4, or 1.6). Helps tune the padding table over time.
 - `voice_id`, `orientation`, `files_attached` — full generation context for pattern analysis.
+- `aspect_correction` — tracks whether a framing/background correction was injected. Helps measure if corrections improve output quality.
 
 **Always log.** Even failed attempts. The log is how we learn.
 
