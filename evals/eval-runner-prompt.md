@@ -54,61 +54,36 @@ For each scenario, record:
 
 ## After All Scenarios
 
-Write a Notion doc under the provided parent page with this structure:
+### Output: Notion Database Rows
 
-### Page Title: "HeyGen Video Producer Eval — Round [N]"
+Write results to the **Eval Tracker** database: `collection://17f54098-a085-4234-83ce-55c280266d73`
 
-### Content Structure:
+For EACH scenario, create one row using `notion-create-pages` with `data_source_id: 17f54098-a085-4234-83ce-55c280266d73`.
 
-```markdown
-# HeyGen Video Producer Eval — Round [N]
-**Theme:** [round theme]
-**Date:** [date]
-**Tester:** Adam (blank-slate, fresh SKILL.md read)
-**Skill version:** [git commit hash from main]
-
-## Summary
-- Scenarios run: X/10
-- Videos generated: X/10 (X dry-runs)
-- P1 issues: X | P2: X | P3: X
-- Overall skill score: X/100
-
-## Per-Scenario Results
-[paste each scenario result block from above]
-
-## Aggregate Findings
-
-| # | Priority | Finding | Affected Scenarios | Recommendation |
-|---|----------|---------|-------------------|----------------|
-| 1 | P1 | ... | S3, S7 | ... |
-
-## Metrics
-- Avg duration accuracy: X%
-- Aspect correction triggered: X/10 scenarios
-- Correction success rate: X/Y (did injected prompts fix the issue?)
-- Videos with black bars despite correction: X/10 (pending Ken's visual review)
-- Videos with missing backgrounds despite correction: X/10 (pending Ken's visual review)
-- Avg score: X/10
-
-## 🧑 Human Evaluation Tracker
-Ken reviews every video. Fill in after watching each.
-
-| Scenario | Video Page | Session | Quality (1-10) | Visual Issues | Script Quality | Avatar/Voice Fit | Ken's Verdict | Notes |
-|----------|-----------|---------|----------------|---------------|----------------|-----------------|---------------|-------|
-| S1 | [Video](url) | [Session](url) | _ | _ | _ | _ | _ | _ |
-[...one row per scenario...]
-
-**Columns guide:**
-- **Quality (1-10):** Overall video quality
-- **Visual Issues:** Black bars, cropping, background problems, framing
-- **Script Quality:** Was the content good? Tone right? Pacing?
-- **Avatar/Voice Fit:** Did the avatar look/sound right for the content?
-- **Ken's Verdict:** ✅ Ship / 🛠️ Fix needed / ❌ Redo
-- **Notes:** Anything else — what was wrong, what was surprisingly good
-
-## Raw Notes
-[anything else worth noting — API errors, timing, unexpected behavior]
+Properties per row:
 ```
+"Scenario": "R{round}-S{number}: {short name}"     ← TITLE
+"Round": {round_number}                              ← NUMBER
+"Fix Tested": "{what fix or path this tests}"        ← TEXT
+"Prompt": "{the exact prompt used}"                  ← TEXT (truncate to ~200 chars if long)
+"Video": "https://app.heygen.com/videos/{video_id}"  ← URL (or null for dry-run/non-generation)
+"Session": "https://app.heygen.com/video-agent/{session_id}" ← URL
+"Target (s)": {target_seconds}                       ← NUMBER
+"Actual (s)": {actual_seconds_or_null}               ← NUMBER
+"Duration %": {percentage_as_integer}                 ← NUMBER (e.g. 106 for 106%)
+"Avatar Type": "photo_avatar|studio_avatar|video_avatar|none" ← SELECT
+"Phase 3.5 Fired": "__YES__" or "__NO__"             ← CHECKBOX
+"Corrections": ["A: Portrait→Landscape", "C: Background Fill"] ← MULTI_SELECT (array)
+"Status": "✅ Complete|⚠️ Stuck Pending|❌ Failed|🔄 Running" ← SELECT
+"Adam Score": {1-10}                                 ← NUMBER
+"Findings": "[P1] {description}. Fix: {recommendation}" ← TEXT
+"Ken Verdict": "—"                                   ← SELECT (Ken fills in later)
+"Ken Notes": ""                                      ← TEXT (Ken fills in later)
+```
+
+**Batch create:** Use a single `notion-create-pages` call with all scenarios as an array when possible. This is faster and avoids rate limits.
+
+**After creating rows**, also log to `heygen-video-producer-log.jsonl` as before (for machine-readable history).
 
 ## Rules
 
