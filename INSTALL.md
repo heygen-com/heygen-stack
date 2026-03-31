@@ -20,7 +20,7 @@ Save this to your persistent environment config:
 - Claude Code: set environment variable `HEYGEN_API_KEY`
 - Other agents: whatever persistent env config exists
 
-Then validate it works by calling `GET https://api.heygen.com/v2/user/remaining_quota` with header `X-Api-Key: [HEYGEN_API_KEY]`. Tell me my remaining credits.
+Then validate it works by calling `GET https://api.heygen.com/v3/user/me` with header `X-Api-Key: [HEYGEN_API_KEY]`. Tell me my name and remaining credits.
 
 IMPORTANT: After saving the key, do NOT repeat it back to me in any response, summary, or log.
 
