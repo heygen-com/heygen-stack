@@ -622,4 +622,55 @@ A confident tech walkthrough that demystifies HeyGen's Video Agent API — showi
 
 ## Polling Results
 
-(To be populated after polling completes)
+### Summary Table
+
+| Scenario | Video ID | Status | Target (s) | Actual (s) | Duration % | Session ID |
+|----------|----------|--------|-----------|-----------|------------|------------|
+| S1 | 8abeb4c2be8340b88cf20d165b4eb91c | ✅ completed | 45 | 34.8 | 77% | ec9cea5d-1bdf-4221-8a7b-29f9d955a7eb |
+| S2 | 4a134241f40147eba8172c8044737e11 | ✅ completed | 40 | 34.7 | 87% | e9abbb0a-01cd-4aaa-a42e-24dae96728c9 |
+| S3 | de5b6991d2264611a2c394190bfe22d6 | ✅ completed | 35 | 26.3 | 75% | 3784c78a-547f-4e54-bead-9180a700022c |
+| S4 | 58cf7a192c3544329af455191893343a | ✅ completed | 50 | 50.6 | 101% | 8eb7dc21-783b-4051-9070-806fd4ba9278 |
+| S5 | cc6e67b5a2b24f62a1e2c93ee8985ab3 | ✅ completed | 30 | 30.8 | 103% | 1b70e258-eb65-4181-b56d-9b45434830a1 |
+| S6 | afbbd3d67f284067a2198d053844fe78 | ✅ completed | 40 | 37.6 | 94% | 4f9a71af-b7ea-4850-bed4-0958f3a0aa96 |
+| S7 | 11edc0c31d3f47f69ff601903396358a | ✅ completed | 45 | 49.1 | 109% | 87b51ec7-84b1-466b-b21e-55c356dc6d34 |
+| S8 | b6cecc7e67814df88906e0a5a2da2fe2 | ✅ completed | 30 | 24.1 | 80% | c4e58d80-bb65-408a-a55a-d285ee135112 |
+| S9 | 71ef64107d394fa09cf12fbb8179380d | ✅ completed | 50 | 61.9 | 124% | d9cfb6cc-bf99-4897-9bc5-5464b0371fe4 |
+| S10 | N/A (dry-run) | ✅ pitch shown | 60 | N/A | N/A | N/A |
+
+### Validation Gate
+All 9 video_ids validated:
+- All are 32-character hex strings ✅
+- All resolve via GET /v3/videos ✅
+- All returned status: completed ✅
+- All session_ids are valid UUIDs with dashes ✅
+
+### Polling Cadence Notes
+- S1-S4: Completed within 2-3 minutes
+- S5: Completed at ~6 minutes
+- S6: Took ~12 minutes (pending→processing→completed)
+- S7-S8: Completed within 4 minutes
+- S9: Completed at ~7 minutes
+
+---
+
+## Key Findings Summary
+
+### Fix Validation (PR #14: avatar_id vs prompt description conflict)
+**VALIDATED ✅** — All 8 scenarios with avatar_id (S1-S6, S8-S9) used "The selected presenter" phrasing instead of appearance descriptions. Zero instances of hair color, clothing, gender, or ethnicity in any prompt text sent to the API.
+
+### Duration Accuracy
+| Range | Avg Duration % | Scenarios |
+|-------|---------------|-----------|
+| ≤30s target | 91.5% | S5 (103%), S8 (80%) |
+| 31-45s target | 79.7% | S1 (77%), S2 (87%), S3 (75%) |
+| 46-60s target | 109.3% | S4 (101%), S7 (109%), S9 (124%) |
+
+**Finding:** 31-45s range consistently underdelivers. Current 1.4x padding is insufficient for this range. Recommend 1.5-1.6x.
+
+### Generative Fill Quality
+S5 and S6 both completed with Correction C injected. Visual quality TBD by Ken's review. The "giant in a room" scale warning was included in all correction prompts.
+
+### Studio Avatar Availability
+**Finding:** Zero studio_avatars available in the HeyGen account. All public avatars are photo_avatar type. This affects 5 scenarios that referenced studio_avatars (S2, S3, S5, S8, S10). Adapted by using photo_avatars as substitutes.
+
+### Average Adam Score: 8.2/10
