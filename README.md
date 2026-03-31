@@ -2,29 +2,34 @@
 
 Your AI video producer. Tell it what you need, it handles the rest.
 
-Turns ideas into polished HeyGen narrator videos through an intelligent production pipeline — scripting, prompt engineering, quality review, generation, and delivery.
+Turns ideas into polished HeyGen narrator videos through an intelligent production pipeline — scripting, prompt engineering, avatar selection, quality review, and delivery.
 
-## The Problem
+## Why This Exists
 
-Video Agent is powerful but one-shot. The quality of the output is 100% determined by the quality of the input prompt. Most users write flat paragraphs that produce generic, forgettable videos. This skill sits between you and the API like a senior video producer — it interviews, writes, crafts, reviews, and delivers.
+HeyGen's [Video Agent](https://developers.heygen.com/docs/quick-start) is powerful but one-shot. The quality of the output is 100% determined by the quality of the input prompt. Most users write flat paragraphs that produce generic, forgettable videos.
+
+This skill sits between you and the API like a senior video producer. It interviews you, writes a script, engineers an optimized prompt with scene structure and visual direction, selects the right avatar, handles aspect ratio corrections, attaches your assets, and delivers a finished video.
 
 **Without this skill:** 60s target → 36s actual. Flat prompt. No visual direction. Generic result.
-**With this skill:** 60s target → ~55s actual. Scene-structured prompt with style blocks, media types, narrator framing, and independent quality review.
 
-## Install
+**With this skill:** 60s target → ~55s actual. Scene-structured prompt with style blocks, narrator framing, media types, and avatar matched by ID.
+
+## Quick Start
+
+### Install
 
 ```bash
-# ClawHub
 clawhub install heygen-video-producer
-
-# Or manually
-git clone https://github.com/heygen-com/heygen-video-producer.git
-cp -r heygen-video-producer ~/.openclaw/skills/
 ```
 
-## Setup
+Or clone directly:
+```bash
+git clone https://github.com/heygen-com/heygen-video-producer.git ~/.openclaw/skills/heygen-video-producer
+```
 
-Requires a [HeyGen API key](https://app.heygen.com/settings/api):
+### Setup
+
+Add your [HeyGen API key](https://app.heygen.com/settings/api) to your OpenClaw config:
 
 ```json
 {
@@ -36,99 +41,142 @@ Requires a [HeyGen API key](https://app.heygen.com/settings/api):
 }
 ```
 
-## Usage
+### Use It
 
-### Basic
 ```
-"Make me a video about our new feature"
-"I need a video explaining MCP to developers"
-"Create a quick 30-second announcement about our new pricing"
-```
-
-### Specific
-```
-"Make a 60-second product demo about HeyGen's Video Agent API, aimed at developers, casual-confident tone"
-"Create a 2-minute explainer about why AI agents need video capabilities, for a technical audience"
-"Produce a sales pitch video for our enterprise clients, professional tone, 90 seconds"
-```
-
-### With assets
-```
-"Make a product demo using these screenshots of our dashboard" [attach files]
-"Create an explainer video based on this PDF documentation" [attach PDF]
-"I have a blog post at https://example.com — turn it into a 60-second video summary"
-```
-
-### Quick generation
-```
-"Just generate this: A confident narrator explains the three key benefits of our API in 30 seconds"
-"Quick video, don't ask questions: 60-second overview of HeyGen for developers"
-```
-
-### Multi-language
-```
-"Create a 60-second product demo narrated in Brazilian Portuguese"
-"Make a Japanese explainer about our API for the Tokyo team"
+"Make me a 60-second video about our new API"
+"Create a product demo using these screenshots" [attach files]
+"Quick video: 30-second overview of our pricing changes"
+"Turn this blog post into a video: https://example.com/post"
 ```
 
 ## How It Works
 
-**Three modes:**
+### Three Modes
 
-| You provide | Mode | What happens |
-|-------------|------|-------------|
-| An idea | Full Producer | Interviews → scripts → engineers prompt → reviews → generates |
-| A prompt | Enhanced Prompt | Optimizes your prompt → reviews → generates |
-| "Just generate this" | Quick Shot | Generates directly, no review, maximum speed |
+| You say | Mode | What happens |
+|---------|------|-------------|
+| An idea or topic | **Producer** | Interviews → scripts → prompt engineers → generates |
+| A written prompt | **Enhanced Prompt** | Optimizes your prompt → generates |
+| "Just generate this" | **Quick Shot** | Generates directly, no interview |
 
-**Production pipeline:**
+Add **"dry run"** to any request to preview the full prompt without spending API credits.
 
-1. **Discovery** — Conversational interview (adapts, doesn't interrogate)
-2. **Script** — Narrator-optimized, 150 wpm pacing, 1.4x duration padding
-3. **Prompt Engineering** — Scene-by-scene structure, visual style, media types
-4. **Generate** — Video Agent API with asset attachments
-5. **Deliver** — Session URL immediately, video URL on completion, status tracking
+### Five-Phase Pipeline
+
+```
+Discovery → Script → Prompt Engineering → Generate → Deliver
+```
+
+1. **Discovery** — Conversational interview. Captures topic, audience, tone, duration, assets. Adapts depth to complexity.
+2. **Script** — 150 wpm pacing with duration padding (1.6x for short videos, 1.3x for long). Scene-by-scene structure.
+3. **Prompt Engineering** — Visual style blocks, media type direction, narrator framing. Scene labels with VO + visual + media type per scene.
+4. **Generate** — Submits to `POST /v3/video-agents` with avatar_id, voice selection, and asset attachments. Polls for completion.
+5. **Deliver** — Session URL immediately (for interactive follow-up), video URL on completion, duration accuracy report.
+
+### Avatar Selection
+
+The skill discovers and selects avatars through the HeyGen API, not by describing them in the prompt:
+
+- **Custom avatars** — looks up by name, passes `avatar_id` to the API
+- **Stock avatars** — browses avatar groups with preview images, selects by ID
+- **Voice-over only** — no avatar, narration only
+
+**Important:** when `avatar_id` is set, the prompt never describes the avatar's appearance. Video Agent ignores the `avatar_id` parameter if the prompt text describes a different-looking person. The prompt only includes delivery style and background/environment notes.
+
+### Asset Handling
+
+The skill classifies every URL and file attachment:
+
+| Asset type | What happens |
+|-----------|-------------|
+| Direct file URL (PDF, image) | Downloads → uploads via `/v3/assets` → passes `asset_id` |
+| HTML page (blog, docs) | Fetches content → summarizes → adds context to prompt |
+| Attached file | Uploads to HeyGen → referenced in prompt |
+| Auth-walled URL | Checks access, notifies user if inaccessible — never fabricates content |
+
+### Aspect Ratio Corrections (Phase 3.5)
+
+Before submitting, the skill checks for avatar/video orientation mismatches:
+
+- Portrait avatar in landscape video → injects reframing correction
+- Studio avatar with transparent background → triggers generative fill
+- Landscape avatar in portrait video → adjusts framing notes
+
+Correction prompts use explicit trigger phrases that Video Agent recognizes and executes.
 
 ## What Makes It Different
 
-This isn't an API wrapper. It's encoded video production expertise:
+This isn't an API wrapper. It encodes video production expertise:
 
-- **Duration intelligence** — compensates for Video Agent's ~70% compression with 1.4x padding. You ask for 60s, you get ~60s.
-- **Scene-by-scene prompting** — not flat paragraphs. Structured scenes with Visual + VO + media type per scene.
-- **Visual style enforcement** — style blocks with colors, fonts, and presets (minimalistic, cinematic, bold, etc.)
-- **Media type matrix** — automatically picks motion graphics for data, stock for real environments, AI-generated for concepts.
-- **One-shot optimization** — all best practices applied before generation. No wasted credits on bad prompts.
-- **Asset handling** — uploads all attachments to HeyGen, describes how each should be used in the video.
-- **Learning loop** — logs every generation to `heygen-video-producer-log.jsonl`. Reads past results to improve future videos.
-- **Completion status** — DONE / DONE_WITH_CONCERNS / BLOCKED / NEEDS_CONTEXT after every generation.
-
-## Evaluation
-
-Run prompt quality evals without spending credits:
-
-```
-# Dry-run: test prompt quality against 8 baselines
-Read evals/run-eval.md and follow instructions
-
-# Compare two eval runs
-Read evals/compare.md and follow instructions
-```
-
-Baselines from batch test (March 24, 2026) in `evals/test-prompts.json`.
+- **Duration intelligence** — compensates for Video Agent's compression with variable padding (1.6x ≤30s, 1.4x mid-range, 1.3x ≥120s)
+- **Scene-by-scene prompting** — structured scenes with Visual + VO + media type, not flat paragraphs
+- **Visual style enforcement** — style blocks with colors, fonts, and presets (minimalistic, cinematic, bold, corporate, etc.) plus HeyGen's curated style system
+- **Avatar-by-ID** — explicit `avatar_id` for ~97% duration accuracy vs ~80% with auto-selection
+- **One-shot optimization** — all best practices applied before generation. No wasted credits.
+- **Learning loop** — logs every generation to `heygen-video-producer-log.jsonl` with duration accuracy, settings, and self-evaluation scores
+- **Multi-language** — supports any language HeyGen offers: "Create a 60-second demo narrated in Brazilian Portuguese"
 
 ## API
 
-Uses [HeyGen Video Agent](https://developers.heygen.com/docs/quick-start) (`POST /v3/video-agents`). Video Agent: $0.0333/sec, Avatar videos: $0.1/sec.
+All endpoints are **v3**. Base URL: `https://api.heygen.com`
+
+| Endpoint | Purpose |
+|----------|---------|
+| `POST /v3/video-agents` | Primary — prompt-driven video generation |
+| `GET /v3/videos/{id}` | Poll for completion |
+| `GET /v3/avatars/looks` | Avatar discovery (with group filtering) |
+| `GET /v3/voices` | Voice listing with preview URLs |
+| `POST /v3/assets` | Upload files for attachment |
+| `POST /v3/videos` | Direct control path (avatar videos) |
+
+**Pricing:** Video Agent $0.0333/sec · Avatar videos $0.1/sec
+
+## Evaluation
+
+The skill includes a multi-round autoresearch evaluation framework:
+
+```
+evals/
+├── eval-runner-prompt.md     # Eval runner instructions + scoring rubric
+├── autoresearch-loop.md      # Loop infrastructure docs
+├── dry-run.md                # 8 dry-run prompt quality scenarios
+├── run-eval.md               # How to run prompt quality evals
+├── round-{2..7}-scenarios.md # Per-round test scenarios
+└── test-prompts.json         # Baseline prompts from batch test
+```
+
+Run a dry-run eval (no API credits):
+```
+Read evals/run-eval.md and follow instructions
+```
+
+Run a full autoresearch round:
+```
+Read evals/eval-runner-prompt.md and the latest round-N-scenarios.md
+```
+
+Results are tracked in the [Eval Tracker](https://www.notion.so/a1b997926fe646929ef46cd6144d4b91) Notion database with per-scenario scoring, video/session URLs, and human verdicts.
+
+## Known Issues
+
+| Issue | Status | Workaround |
+|-------|--------|------------|
+| `video_avatar` type fails with "Talking Photo not found" | HeyGen backend bug, fix in progress | Use `studio_avatar` or `photo_avatar` instead |
+| Duration variance (±20%) | Expected — Video Agent controls final timing | Padding rules compensate |
+| Interactive sessions stuck at `processing` | Backlogged | Use one-shot mode |
+| `files[]` URL attachment blocked by CDN/WAF | Known limitation | Download → upload → `asset_id` (primary path) |
 
 ## Requirements
 
 - `HEYGEN_API_KEY` environment variable
 - OpenClaw, Claude Code, or any agent that reads SKILL.md files
 
-## Inspired By
+## Links
 
-- [gstack](https://github.com/garrytan/gstack) — Skills that encode process and judgment, not just tool access
-- [HeyGen Video Agent Prompt Guide](https://www.heygen.com/blog/video-agent-prompt-guide) — Official best practices
+- [HeyGen API Docs](https://developers.heygen.com/docs/quick-start)
+- [Video Agent Prompt Guide](https://www.heygen.com/blog/video-agent-prompt-guide)
+- [HeyGen Remote MCP Server](https://mcp.heygen.com)
 
 ## License
 
