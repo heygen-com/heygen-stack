@@ -123,3 +123,26 @@ Ken reviews every video. Fill in after watching each.
   - Video Page: `https://app.heygen.com/videos/{video_id}`
 - If the POST response doesn't include `session_id`, document that as a P1 finding.
 - **Every row in the Human Evaluation Tracker MUST have a Session link.** "n/a" is only acceptable for dry-run scenarios.
+
+## ⛔ MANDATORY VALIDATION GATE (before writing to Notion)
+
+**After completing all scenarios and BEFORE creating the Notion doc**, you MUST run this validation step:
+
+For EVERY video_id you recorded (except dry-runs):
+```bash
+curl -s "https://api.heygen.com/v3/videos/{video_id}" -H "X-Api-Key: $HEYGEN_API_KEY"
+```
+
+Check each response:
+1. The response MUST return a valid JSON object with `data.video_id` matching your recorded ID.
+2. The `video_id` MUST be a full 32-character hex string (e.g. `c4b5a87dc32748f89f717576ee01d5aa`). If yours is shorter, it's wrong.
+3. The `session_id` MUST be a valid UUID with dashes (e.g. `c87582f1-fc0f-4074-a7e5-b5140336c734`).
+
+**If ANY video_id fails validation:**
+- Mark that scenario as `❌ UNVERIFIED — video_id did not resolve via GET /v3/videos`
+- Do NOT fabricate or guess IDs. If you lost the ID, say so.
+- Re-run the scenario if time permits. If not, mark it as incomplete.
+
+**If MORE THAN 3 scenarios fail validation, STOP and report the failure to Eve. Do not write a Notion doc with unverified data.**
+
+This gate exists because fabricated video IDs waste Ken's review time. Every link in the Notion doc must work.
