@@ -221,7 +221,10 @@ Transform the script/brief into an optimized Video Agent prompt. The user doesn'
 
 ### Prompt Construction Rules
 
-1. **Narrator framing.** Always frame as: "[Avatar description] [explains/walks through/presents]..." Never "Create a video about..."
+> ⛔ **CRITICAL — Avatar Description vs avatar_id Conflict:**
+> When you pass `avatar_id` as an API parameter, the prompt text must NOT describe the avatar's appearance (hair color, clothing, gender, ethnicity, etc.). Video Agent treats the prompt as the primary directive and will IGNORE the `avatar_id` parameter if the prompt describes a different-looking person. Only include: delivery style ("energetic tone"), background/environment notes, and "the selected presenter." This is the #1 cause of avatar mismatch in testing.
+
+1. **Narrator framing.** When `avatar_id` is set: do NOT describe the avatar's appearance in the prompt. Say: "The selected presenter [explains/walks through/presents]..." Only include delivery style and background/environment notes. When no `avatar_id`: describe desired presenter or say "Voice-over narration only." Never start with "Create a video about..."
 2. **Duration signal (PADDED).** Use 1.4x the user's target in the prompt. If user wants 60s, tell Video Agent "85-second video."
 3. **Asset anchoring.** Be SPECIFIC: "Use the attached product screenshots as B-roll when discussing features."
 4. **Tone calibration.** Specific words: "confident and conversational" / "energetic, like a tech YouTuber" / "calm and authoritative."
@@ -480,8 +483,9 @@ The Video Agent (`POST /v3/video-agents`) accepts `avatar_id` and `voice_id` as 
 }
 ```
 
-- **Custom avatar with known ID** → pass `avatar_id` AND describe delivery style in prompt
-- **Stock avatar** → **prefer looking up the `avatar_id`** via the discovery flow above and passing it explicitly. Auto-selection works but is less reliable.
+- **Custom avatar with known ID** → pass `avatar_id`. Do NOT describe the avatar's appearance in the prompt (Video Agent ignores `avatar_id` when the prompt describes a different look). Only mention delivery style and background/environment.
+- **Stock avatar with known ID** → same rule: pass `avatar_id`, do NOT describe avatar appearance in prompt. Only delivery style + background notes.
+- **No avatar_id (auto-select)** → describe desired presenter appearance in prompt. Less reliable (~80% duration accuracy vs ~97% with explicit ID).
 - **Voice-over only** → omit `avatar_id`, state in prompt: "Voice-over narration only."
 
 > 💡 **Best practice: always provide an explicit `avatar_id` for presenter videos.** Video Agent can auto-select, but explicit IDs give more predictable results (97.6% duration accuracy vs ~80% without).
@@ -614,7 +618,7 @@ Present the video as a **pitch**, not a spec sheet:
 🎬 Here's what I'm making:
 
 [One opinionated sentence describing creative direction and vibe.]
-~[duration], [orientation], [avatar description or "voice-over only"].
+~[duration], [orientation], [avatar name or "voice-over only" — NO appearance description when avatar_id is set].
 
 ---
 
