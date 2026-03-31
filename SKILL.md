@@ -40,8 +40,8 @@ Before doing anything else, check if `HEYGEN_API_KEY` is available in the enviro
    > (Don't have a HeyGen account? [Sign up free](https://app.heygen.com/signup) — no credit card needed.)
 
 2. When the user pastes a key, **immediately**:
-   - Validate it: `GET https://api.heygen.com/v2/remaining_quota` with header `X-Api-Key: <key>`
-   - If valid: persist the key to the agent's environment config (e.g., `openclaw.json` under `env.vars.HEYGEN_API_KEY`, or the platform's equivalent). Report remaining credits.
+   - Validate it: `GET https://api.heygen.com/v2/user/remaining_quota` with header `X-Api-Key: <key>`
+   - If valid (200 + `data.remaining_quota` present): persist the key to the agent's environment config (e.g., `openclaw.json` under `env.vars.HEYGEN_API_KEY`, or the platform's equivalent). Report remaining credits from `data.remaining_quota`.
    - If invalid (401/403): tell the user the key didn't work and ask them to double-check it.
 
 3. After successful validation, respond:
