@@ -63,9 +63,25 @@ Two paths for every asset:
 
 ### Style Selection
 
-- **API Styles** (`style_id`): Curated templates via `GET /v3/video-agents/styles`.
-- **Prompt Styles**: Custom colors/typography/motion in prompt text. See [references/prompt-styles.md](references/prompt-styles.md).
-- Use both together, one, or neither depending on the video.
+Two approaches — use one or combine both:
+
+**1. API Styles (`style_id`)** — Curated visual templates. One parameter replaces all visual direction.
+```bash
+curl -s "https://api.heygen.com/v3/video-agents/styles?tag=cinematic&limit=10" \
+  -H "X-Api-Key: $HEYGEN_API_KEY"
+```
+Tags: `cinematic`, `retro-tech`, `iconic-artist`, `pop-culture`, `handmade`, `print`. Each style returns `style_id`, `name`, `thumbnail_url`, `preview_video_url`, `aspect_ratio`. Pass `style_id` to `POST /v3/video-agents`.
+
+**Show users thumbnails + preview videos before choosing.** Browse by tag, show 3-5 options with previews, let user pick. If a style has a fixed `aspect_ratio`, match orientation to it.
+
+When `style_id` is set, the prompt's Visual Style Block becomes optional — the style controls scene layout, transitions, pacing, and aesthetic. You can still add specific media type guidance or color overrides.
+
+**2. Prompt Styles** — Full manual control via prompt text. See [references/prompt-styles.md](references/prompt-styles.md).
+
+**When to use which:**
+- User has no strong visual preference → browse API styles, pick one
+- User wants specific brand colors/fonts/motion → prompt style
+- User wants a curated look + specific media types → `style_id` + selective prompt additions
 
 ### Avatar
 
