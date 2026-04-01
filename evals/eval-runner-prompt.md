@@ -7,12 +7,13 @@ You are testing the HeyGen Video Producer skill as a fresh user. You have ZERO p
 1. `cd /Users/heyeve/.openclaw/workspace/skills/heygen-video-producer && git checkout main && git pull origin main`
 2. Read `SKILL.md` completely. This is your only guide.
 3. Your HeyGen API key is in env var `HEYGEN_API_KEY`.
+4. **Always add `incognito_mode: true`** to every `POST /v3/video-agents` call. This prevents cross-session memory from influencing results and ensures clean, reproducible evaluations.
 
 ## Write-First Pattern (CRITICAL)
 
 After EACH scenario's POST /v3/video-agents call completes, IMMEDIATELY write a Notion row to the Eval Tracker BEFORE polling for completion. This ensures data survives timeouts.
 
-**Step 1: Submit** → POST /v3/video-agents, capture video_id + session_id from response.
+**Step 1: Submit** → POST /v3/video-agents with `incognito_mode: true`, capture video_id + session_id from response.
 **Step 2: Write Notion row** → Status: "🔄 Running", with video_id, session_id, prompt, avatar, target duration, corrections fired. All fields you know AT SUBMISSION TIME.
 **Step 3: Move to next scenario** → Do NOT wait for video completion before moving on.
 **Step 4: After ALL scenarios submitted** → Poll all video_ids in a batch loop. Update each Notion row with actual duration, duration %, score, findings.
@@ -120,7 +121,7 @@ curl -s "https://api.heygen.com/v3/videos/{video_id}" -H "X-Api-Key: $HEYGEN_API
 ```
 
 Check each response:
-1. The response MUST return a valid JSON object with `data.video_id` matching your recorded ID.
+1. The response MUST return a valid JSON object with `data.id` matching your recorded video_id.
 2. The `video_id` MUST be a full 32-character hex string (e.g. `c4b5a87dc32748f89f717576ee01d5aa`). If yours is shorter, it's wrong.
 3. The `session_id` MUST be a valid UUID with dashes (e.g. `c87582f1-fc0f-4074-a7e5-b5140336c734`).
 

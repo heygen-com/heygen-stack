@@ -24,7 +24,12 @@ All endpoints use base URL `https://api.heygen.com` with header `X-Api-Key: $HEY
 | **TTS** | POST | `/v3/voices/speech` |
 | **List Styles** | GET | `/v3/video-agents/styles` |
 | **Upload Asset** | POST | `/v3/assets` |
-| **Webhooks** | POST/GET/DELETE | `/v3/webhooks` |
+| **Webhooks: Register** | POST | `/v3/webhooks` |
+| **Webhooks: List** | GET | `/v3/webhooks` |
+| **Webhooks: Delete** | DELETE | `/v3/webhooks/{id}` |
+| **Webhooks: Event Types** | GET | `/v3/webhooks/event-types` |
+| **Webhooks: Event History** | GET | `/v3/webhooks/events` |
+| **Overdub** | POST | `/v3/overdubs` |
 
 ## Video Agent — One-Shot
 
@@ -41,7 +46,9 @@ curl -s -X POST "https://api.heygen.com/v3/video-agents" \
     "files": [
       {"type": "asset_id", "asset_id": "<uploaded_id>"}
     ],
-    "callback_url": "<optional webhook URL>"
+    "callback_url": "<optional webhook URL>",
+    "callback_id": "<optional custom ID for webhook payload>",
+    "incognito_mode": false
   }'
 ```
 
@@ -55,6 +62,7 @@ curl -s -X POST "https://api.heygen.com/v3/video-agents" \
 | `files` | array | | File objects: `{type, url/asset_id/data}` |
 | `callback_url` | string | | Webhook URL for completion notification |
 | `callback_id` | string | | Custom ID included in webhook payload |
+| `incognito_mode` | boolean | | Disables cross-session memory injection/extraction. Use for evals. |
 
 Response: `{"data": {"video_id": "abc123", "session_id": "sess_xyz789"}}`
 
@@ -152,19 +160,48 @@ Completion includes `video_url`, `thumbnail_url`, `duration`.
 
 ## Webhooks
 
+### Inline Callback (Simplest)
+
+Add `callback_url` + `callback_id` directly to your `POST /v3/video-agents` or `POST /v3/video-agents/sessions` request:
+```json
+{"prompt": "...", "callback_url": "https://your-server.com/hook", "callback_id": "my-ref-123"}
+```
+HeyGen POSTs to your URL when the video completes or fails. Payload includes `video_id`, `video_url`, `callback_id`.
+
+### Registered Webhooks (Persistent)
+
 ```bash
-# Register
+# Register endpoint for specific event types
 curl -X POST "https://api.heygen.com/v3/webhooks" \
   -H "X-Api-Key: $HEYGEN_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/webhook", "events": ["video.completed"]}'
+  -d '{"url": "https://example.com/webhook", "events": ["video_agent.success", "video_agent.fail"]}'
 
-# List
+# List registered webhooks
 curl -s "https://api.heygen.com/v3/webhooks" -H "X-Api-Key: $HEYGEN_API_KEY"
 
 # Delete
 curl -X DELETE "https://api.heygen.com/v3/webhooks/<id>" -H "X-Api-Key: $HEYGEN_API_KEY"
+
+# Browse delivered events (filter by type or entity)
+curl -s "https://api.heygen.com/v3/webhooks/events?event_type=video_agent.success&limit=10" \
+  -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
+
+### Event Types
+
+| Event | Description |
+|-------|-------------|
+| `avatar_video.success` | Avatar video completed |
+| `avatar_video.fail` | Avatar video failed |
+| `video_agent.success` | Video Agent session completed |
+| `video_agent.fail` | Video Agent session failed |
+| `video_translate.success/fail` | Translation completed/failed |
+| `photo_avatar_generation.success/fail` | Photo avatar created/failed |
+| `photo_avatar_train.success/fail` | Photo avatar trained/failed |
+| `live_avatar.success/fail` | Live avatar session ended |
+
+Each event payload: `{event_id, event_type, event_data: {video_id, video_url, callback_id}, created_at}`
 
 ## Video Management
 
