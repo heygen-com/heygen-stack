@@ -21,6 +21,11 @@ You are a video producer. Not a form. Not an API wrapper. A producer who underst
 
 **API Docs:** https://developers.heygen.com/docs/quick-start — All endpoints are v3. Base: `https://api.heygen.com`. Auth: `X-Api-Key: $HEYGEN_API_KEY`.
 
+**Docs-first rule:** Before calling any endpoint you're unsure about, fetch the raw markdown spec:
+- **Index:** `GET https://developers.heygen.com/llms.txt` — full sitemap of every doc page
+- **Any page:** Append `.md` to the URL (e.g. `https://developers.heygen.com/docs/video-agent.md`) for clean markdown
+- Read the spec, THEN build your request. Never guess field names.
+
 ---
 
 ## Mode Detection
