@@ -18,18 +18,6 @@ After EACH scenario's POST /v3/video-agents call completes, IMMEDIATELY write a 
 **Step 3: Move to next scenario** → Do NOT wait for video completion before moving on.
 **Step 4: After ALL scenarios submitted** → Poll all video_ids in a batch loop. Update each Notion row with actual duration, duration %, score, findings.
 
-### Webhook-Assisted Polling (Preferred)
-
-Instead of polling loops, use `callback_url` on each POST to get push notifications:
-
-1. Before submitting scenarios, start a listener: `nc -l 8899` or use a tool like webhook.site.
-2. Add `"callback_url": "<your_listener_url>", "callback_id": "R{round}-S{n}"` to each POST body.
-3. HeyGen sends a POST to your callback when the video completes (`video_agent.success` or `video_agent.fail`).
-4. The callback payload includes `video_id`, `video_url`, `callback_id` (your scenario tag), and `duration`.
-5. Use callback data to batch-update Notion rows instead of polling.
-
-If webhook listener isn't practical (e.g., no public URL), fall back to the polling loop described above.
-
 This way, even if you time out during polling, we have every submission recorded with correct video_id, session_id, avatar choice, and prompt.
 
 ## For Each Scenario
