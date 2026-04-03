@@ -203,9 +203,10 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 ### Steps
 
 1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type` and `preview_image_url`
-2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait. Fetch fails = assume portrait.
-3. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
-4. **Build correction blocks** from the matrix. Append to prompt silently.
+2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait, **width == height = square**. Fetch fails = assume portrait.
+3. **Square avatar handling:** If avatar image is square (1:1), it will NOT match either landscape or portrait. Always apply framing correction to fill the target orientation. Without this, the video will have black bars.
+4. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
+5. **Build correction blocks** from the matrix. Append to prompt silently.
 
 ### Correction Matrix
 
@@ -213,12 +214,16 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 |---|---|---|---|
 | `photo_avatar` | ✅ matched | (n/a) | None |
 | `photo_avatar` | ❌ mismatched | (n/a) | Framing correction |
+| `photo_avatar` | ◻ square | (n/a) | Framing correction (always) |
 | `studio_avatar` | ✅ matched | ✅ Yes | None |
 | `studio_avatar` | ✅ matched | ❌ No | Background correction |
 | `studio_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
 | `studio_avatar` | ❌ mismatched | ❌ No | Framing + Background |
+| `studio_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
+| `studio_avatar` | ◻ square | ❌ No | Framing + Background |
 | `video_avatar` | ✅ matched | ✅ Yes | None |
 | `video_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
+| `video_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
 
 ### Framing Correction (portrait↔landscape mismatch)
 
