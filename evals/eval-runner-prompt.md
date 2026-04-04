@@ -50,6 +50,8 @@ For each scenario, record:
 - **Avatar:** [which avatar used, how selected]
 - **Payload Flags:** incognito_mode=[true/false], style_id=[value/none], avatar_id=[value/none], orientation=[value]
 - **Aspect Correction:** [was Phase 3.5 triggered? what was injected?]
+- **Look Created:** [was a new look created under the avatar group? group_id + new look_id, or "reused <look_id>" if fast-path]
+- **Group ID:** [avatar group_id from Phase 3.5 metadata fetch]
 - **Assets Provided:** [list of assets with types, or "none"]
 - **Classification:** [per-asset: type → route chosen (contextualize/attach/both) + reason]
 - **User Questions Asked:** [0 if none. List any questions the skill asked about asset routing.]
@@ -103,6 +105,8 @@ Properties per row:
 "Corrections": ["A: Portrait→Landscape", "C: Background Fill"] ← MULTI_SELECT (array)
 "Incognito Mode": "__YES__" or "__NO__"              ← CHECKBOX (was incognito_mode:true in payload?)
 "Style ID Used": "{style_id value or empty}"          ← TEXT (the actual style_id, or empty string if none)
+"Look Created": "new:<look_id>|reused:<look_id>|none"   ← TEXT (was a new look created, an existing one reused, or no correction needed?)
+"Group ID": "{group_id or empty}"                       ← TEXT (avatar group_id from Phase 3.5 metadata fetch)
 "Status": "✅ Complete|⚠️ Stuck Pending|❌ Failed|🔄 Running" ← SELECT
 "Adam Score": {1-10}                                 ← NUMBER
 "Findings": "[P1] {description}. Fix: {recommendation}" ← TEXT

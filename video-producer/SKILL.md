@@ -197,10 +197,11 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 ### Steps
 
-1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type` and `preview_image_url`
+1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type`, `group_id`, and `preview_image_url`
 2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait. Fetch fails = assume portrait.
 3. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
 4. **Build correction blocks** from the matrix. Append to prompt silently.
+5. **Look-first rule:** When corrections create a new avatar variant (generative fill, bg extension), save it as a **new look** under the same `group_id` — NOT a new avatar group. See [../references/phase-3-5.md](../references/phase-3-5.md) for the API call.
 
 ### Correction Matrix
 

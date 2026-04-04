@@ -73,7 +73,14 @@ After avatar is settled, confirm voice preferences (accent, delivery style, lang
 
 ## Path B: Create a New Avatar
 
-Use `POST /v3/avatars`. Three types:
+Use `POST /v3/avatars`. Supports two modes:
+
+**Mode 1 — New character** (omit `avatar_group_id`): Creates a new person with their own group.
+**Mode 2 — New look** (include `avatar_group_id`): Adds a variation to an existing character.
+
+Always use Mode 2 when the avatar already exists and you're creating a variant (different outfit, orientation fix, bg change). Only use Mode 1 for genuinely new characters.
+
+Three creation types:
 
 **Photo avatar (from user's photo):**
 ```bash
@@ -83,7 +90,8 @@ curl -X POST "https://api.heygen.com/v3/avatars" \
   -d '{
     "type": "photo",
     "name": "My Avatar",
-    "file": {"type": "url", "url": "https://example.com/headshot.jpg"}
+    "file": {"type": "url", "url": "https://example.com/headshot.jpg"},
+    "avatar_group_id": "<optional — include to add look to existing character>"
   }'
 ```
 Photo requirements: JPEG or PNG, min 512x512, clear front-facing face, good lighting.
@@ -96,7 +104,8 @@ curl -X POST "https://api.heygen.com/v3/avatars" \
   -d '{
     "type": "prompt",
     "name": "Tech Presenter",
-    "prompt": "Young professional woman, modern workspace, confident smile"
+    "prompt": "Young professional woman, modern workspace, confident smile",
+    "avatar_group_id": "<optional — include to add look to existing character>"
   }'
 ```
 Prompt max: 200 characters. Optional: up to 3 `reference_images`.
@@ -109,11 +118,12 @@ curl -X POST "https://api.heygen.com/v3/avatars" \
   -d '{
     "type": "video",
     "name": "My Video Avatar",
-    "file": {"type": "asset_id", "asset_id": "<uploaded_asset_id>"}
+    "file": {"type": "asset_id", "asset_id": "<uploaded_asset_id>"},
+    "avatar_group_id": "<optional — include to add look to existing character>"
   }'
 ```
 
-All three return `avatar_item` with `id` — use as `avatar_id`.
+All three return `avatar_item` with `id` (look_id) and `group_id` — use `id` as `avatar_id` for videos.
 
 Files: `{"type": "url", "url": "..."}`, `{"type": "asset_id", "asset_id": "..."}`, or `{"type": "base64", "data": "...", "content_type": "..."}`.
 
