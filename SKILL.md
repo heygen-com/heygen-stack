@@ -38,19 +38,17 @@ Read the user's request and route:
 If the user asks for a video but has no avatar file and wants a custom character:
 > "Want me to create an avatar for this character first? It'll give you consistent identity across all your videos."
 
-## Shared State
+## Shared Resources
 
-Skills communicate through `AVATAR-<NAME>.md` files at the workspace root:
+**references/** — Shared reference docs used by both skills. Loaded on-demand, never every turn. Contains API specs, avatar discovery flows, prompt craft guides, troubleshooting.
+
+**AVATAR-<NAME>.md** — Skills communicate through avatar files at the workspace root:
 - avatar-designer writes them (avatar_id, group_id, voice_id)
 - video-producer reads them (picks up avatar + voice automatically)
 - Human-readable AND machine-readable. One file per character.
 
 ## Install
 
-Copy this into your agent:
+See [INSTALL.md](INSTALL.md) for copy-paste setup instructions.
 
-```
-Install heygen-stack: run `git clone --single-branch --depth 1 https://github.com/eve-builds/heygen-stack.git ~/.openclaw/skills/heygen-stack`
-```
-
-Then set your `HEYGEN_API_KEY` env var and you're ready.
+Quick: `clawhub install heygen-stack` or `git clone https://github.com/heygen-com/heygen-stack.git` into your skills directory. Set `HEYGEN_API_KEY` and go.

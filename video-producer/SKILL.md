@@ -53,7 +53,7 @@ Two paths for every asset:
 - **Path B (Attach):** Upload to HeyGen via `POST /v3/assets` or `files[]`. For visuals the viewer should see.
 - **A+B (Both):** Summarize for script AND attach original.
 
-📖 **Full routing matrix and upload examples → [references/asset-routing.md](references/asset-routing.md)**
+📖 **Full routing matrix and upload examples → [../references/asset-routing.md](../references/asset-routing.md)**
 
 **Key rules:**
 - HTML URLs cannot go in `files[]` (Video Agent rejects `text/html`). Web pages are always Path A.
@@ -76,7 +76,7 @@ Tags: `cinematic`, `retro-tech`, `iconic-artist`, `pop-culture`, `handmade`, `pr
 
 When `style_id` is set, the prompt's Visual Style Block becomes optional — the style controls scene layout, transitions, pacing, and aesthetic. You can still add specific media type guidance or color overrides.
 
-**2. Prompt Styles** — Full manual control via prompt text. See [references/prompt-styles.md](references/prompt-styles.md).
+**2. Prompt Styles** — Full manual control via prompt text. See [../references/prompt-styles.md](../references/prompt-styles.md).
 
 **When to use which:**
 - User has no strong visual preference → browse API styles, pick one
@@ -85,7 +85,7 @@ When `style_id` is set, the prompt's Visual Style Block becomes optional — the
 
 ### Avatar
 
-📖 **Full avatar discovery flow, creation APIs, voice selection → [references/avatar-discovery.md](references/avatar-discovery.md)**
+📖 **Full avatar discovery flow, creation APIs, voice selection → [../references/avatar-discovery.md](../references/avatar-discovery.md)**
 
 **Decision flow:**
 1. Ask: "Visible presenter or voice-over only?"
@@ -167,7 +167,7 @@ Include an intro sequence, outro sequence, and chapter breaks using Motion Graph
 
 **Brand-specific:** Include hex codes (`#1E40AF`), font families (`Inter`), and which media types to prefer per scene type.
 
-📖 **Style presets (Minimalistic, Cinematic, Bold, etc.) → [references/official-prompt-guide.md](references/official-prompt-guide.md)**
+📖 **Style presets (Minimalistic, Cinematic, Bold, etc.) → [../references/official-prompt-guide.md](../references/official-prompt-guide.md)**
 
 ### Media Type Selection
 
@@ -181,9 +181,9 @@ Video Agent supports three media types. Guide it explicitly or it guesses (often
 
 Be explicit in the prompt: "Use motion graphics for the statistics, stock footage for the office scene, AI-generated visuals for the futuristic concept."
 
-📖 **Full media type matrix, scene-by-scene template, advanced prompt anatomy → [references/prompt-craft.md](references/prompt-craft.md)**
-📖 **Named styles (Deconstructed, Swiss Pulse, etc.) → [references/prompt-styles.md](references/prompt-styles.md)**
-📖 **Motion vocabulary and B-roll → [references/motion-vocabulary.md](references/motion-vocabulary.md)**
+📖 **Full media type matrix, scene-by-scene template, advanced prompt anatomy → [../references/prompt-craft.md](../references/prompt-craft.md)**
+📖 **Named styles (Deconstructed, Swiss Pulse, etc.) → [../references/prompt-styles.md](../references/prompt-styles.md)**
+📖 **Motion vocabulary and B-roll → [../references/motion-vocabulary.md](../references/motion-vocabulary.md)**
 
 ### Orientation
 
@@ -250,7 +250,7 @@ transparent, solid-color, or gradient background.
 
 ### API Call
 
-📖 **Full request/response schemas, interactive sessions, webhooks → [references/api-reference.md](references/api-reference.md)**
+📖 **Full request/response schemas, interactive sessions, webhooks → [../references/api-reference.md](../references/api-reference.md)**
 
 ```bash
 curl -s -X POST "https://api.heygen.com/v3/video-agents" \
@@ -301,4 +301,4 @@ If user wants changes: adjust prompt based on feedback, re-generate. Never retry
 - **One idea per video.** Single-topic produces dramatically better results.
 - **Write for the ear.** If you wouldn't say it to a friend, rewrite it.
 
-📖 **Known issues → [references/troubleshooting.md](references/troubleshooting.md)**
+📖 **Known issues → [../references/troubleshooting.md](../references/troubleshooting.md)**
