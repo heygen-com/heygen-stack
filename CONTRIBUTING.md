@@ -85,3 +85,66 @@ When Eve updates the skill without Ken online:
 2. Post PR link to Ken on Telegram
 3. Wait for review before merging
 4. Never push directly to main
+
+---
+
+## How We Test: The Autoresearch Loop
+
+This skill was built through 20 rounds of automated evaluation, producing 80+ videos. The methodology is inspired by Karpathy's autoresearch concept: define scenarios, run them blind, classify failures, fix the skill, repeat.
+
+### The Loop
+
+```
+┌──────────────────────────────────────────────────────┐
+│  1. DESIGN — Write 10 test scenarios                 │
+│     Each has: user prompt, expected behavior,        │
+│     avatar config, target duration, what to watch    │
+├──────────────────────────────────────────────────────┤
+│  2. EXECUTE — Fresh agent runs all 10 blind          │
+│     No prior context. Only reads SKILL.md.           │
+│     Logs: video_id, payload, duration, corrections   │
+├──────────────────────────────────────────────────────┤
+│  3. EVALUATE — Score each scenario 1-10              │
+│     Write results to tracking database (Notion)      │
+│     Classify issues: P0 (broken) → P3 (cosmetic)    │
+├──────────────────────────────────────────────────────┤
+│  4. FIX — Address P0/P1 findings in SKILL.md         │
+│     Open PR with findings → fixes mapping            │
+│     Human reviews videos + diffs before merge        │
+├──────────────────────────────────────────────────────┤
+│  5. REPEAT — Next round targets regressions +        │
+│     new edge cases. Each round builds on the last.   │
+└──────────────────────────────────────────────────────┘
+```
+
+### Why This Works
+
+**The tester agent reads only SKILL.md.** No tribal knowledge, no chat history, no "you know what I mean." If the skill file doesn't say it clearly, the agent gets it wrong. This surfaces documentation gaps that human review misses.
+
+**Scenarios escalate.** Early rounds test happy paths ("make a 30s product demo"). Later rounds push boundaries: square avatars, style_id combinations, 90-second long-form, Quick Shot mode, look reuse across scenarios.
+
+**Fixes are surgical.** Each round produces a branch, a PR, and a clear mapping from finding to fix. No rewrites unless the architecture is wrong.
+
+### What We Learned (R1–R20)
+
+| Finding | Round | Impact |
+|---------|-------|--------|
+| SKILL.md at 57KB consumed ~15K tokens/turn | R10 | Refactored to 259 lines (78% reduction) |
+| avatar_id + appearance text in prompt conflict | R7 | Narrator framing rule: omit appearance when avatar_id set |
+| Phase 3.5 corrections silently failed without explicit tool trigger | R3 | Added prescriptive "Use AI Image tool" language |
+| Timestamps per scene make delivery robotic | R8 | Switched to natural flow + tone description |
+| 365% duration overshoot on short videos | R12 | Script framing directive added |
+| Square (1:1) avatars letterboxed with black bars | R18 | Square detection + correction blocks D/E |
+| Corrections created new avatar groups instead of looks | R20 | Look-first architecture (new looks under existing group) |
+
+### Running Your Own Evals
+
+The `evals/` directory (gitignored, not shipped) contains our scenario files and runner prompt. To run your own:
+
+1. Create `evals/round-N-scenarios.md` with 10 scenarios
+2. Each scenario needs: user prompt, avatar config, target duration, orientation, what to watch for
+3. Have a fresh agent (no prior context) read SKILL.md and execute all 10
+4. Score results, classify issues, fix SKILL.md, open PR
+5. Repeat until the round scores 9+/10 average
+
+The concept matters more than the tooling. Any agent framework can run this loop. The key insight: **the skill file is the product, and the eval loop is the compiler.**
