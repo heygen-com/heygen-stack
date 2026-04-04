@@ -216,27 +216,39 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 | `video_avatar` | ✅ matched | ✅ Yes | None |
 | `video_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
 
+### Avatar Visual Style Detection (CRITICAL)
+
+Before building correction blocks, examine the avatar's `preview_image_url` to classify its visual style:
+- **Photorealistic** (real human photo) → fill with photorealistic environment
+- **Animated/Illustrated** (cartoon, cel-shaded, flat colors) → fill with matching illustrated environment
+- **3D Rendered** (CG character, Pixar-like) → fill with matching 3D environment
+- **Stylized** (watercolor, sketch, pixel art) → fill with matching artistic environment
+
+**The background MUST match the avatar's aesthetic.** An animated avatar gets an animated background. A photo avatar gets a photo background. Mismatched styles look terrible.
+
+📖 **Full style detection table, fill directives per style, correction templates → [../references/phase-3-5.md](../references/phase-3-5.md)**
+
 ### Framing Correction (portrait↔landscape mismatch)
 
-Append to prompt — replace `{source}` and `{target}` with actual orientations:
+Append to prompt — replace `{source}`, `{target}`, and `{FILL_DIRECTIVE}` (from style detection):
 ```
 FRAMING NOTE: The avatar image is {source} but this video is {target}. YOU MUST
 generate a new variant using AI Image tool to generative fill and extend the
-canvas to {target} orientation. Create a HYPER PHOTO-REALISTIC environment
-(real photography, not CGI/stock). Correct lighting, natural shadows, depth-of-field
-blur. Do NOT use original uncropped. Do NOT add black bars or letterboxing.
+canvas to {target} orientation. {FILL_DIRECTIVE}
+Correct lighting, natural shadows, consistent art style throughout.
+Do NOT use original uncropped. Do NOT add black bars or letterboxing.
 Do NOT leave transparent or missing background.
 ```
 
 ### Background Correction (studio_avatar only, no background)
 
-**Not for photo_avatar.** Append to prompt:
+**Not for photo_avatar.** Append to prompt — replace `{FILL_DIRECTIVE}` (from style detection):
 ```
 BACKGROUND NOTE: This studio avatar has no background. YOU MUST use AI Image tool
-to generate a HYPER PHOTO-REALISTIC background (real photography, not CGI/stock).
-Business: real studio/office/podcast set. Casual: real room with natural light.
-Correct lighting, natural shadows, shallow depth-of-field. Do NOT leave any
-transparent, solid-color, or gradient background.
+to generate a background that MATCHES THE AVATAR'S VISUAL STYLE. {FILL_DIRECTIVE}
+Business: studio/office/podcast set. Casual: room with natural light.
+Correct lighting, natural shadows, art style consistency with the avatar.
+Do NOT leave any transparent, solid-color, or gradient background.
 ```
 
 ---

@@ -24,6 +24,22 @@ Fetch the preview image and check pixel dimensions (width × height).
 
 **Square avatars are common** (profile photos, AI-generated character art, etc.). HeyGen only supports 16:9 and 9:16 video output — there is no 1:1 option. A square avatar in either orientation will produce black bars/letterboxing unless generative fill is applied.
 
+## Step 2.5: Detect Avatar Visual Style
+
+Examine the avatar's `preview_image_url` to classify its visual style. This determines how the generative fill environment should look. **The background must match the avatar's aesthetic.**
+
+| Visual Style | Detection Signals | Fill Directive |
+|---|---|---|
+| **Photorealistic** | Real human photo, natural skin texture, camera-shot look | `HYPER PHOTO-REALISTIC environment. Real photography: actual office spaces, real studios, genuine room interiors with natural imperfections. NOT CGI. NOT stock photo. NOT 3D-rendered.` |
+| **Animated / Illustrated** | Cartoon style, flat colors, cel shading, anime, illustrated character | `environment that MATCHES THE AVATAR'S ILLUSTRATED/ANIMATED STYLE. Use the same art style, color palette, and rendering technique as the avatar itself. If the avatar is cartoon-style, the background must be cartoon-style. If cel-shaded, the background must be cel-shaded. Do NOT use photorealistic backgrounds with illustrated avatars.` |
+| **3D Rendered** | CG character, Pixar-like, game-style 3D model, smooth shading | `3D-RENDERED environment that matches the avatar's rendering style. Same lighting model, material quality, and level of stylization. Think game cutscene or animated film — consistent with the character's visual fidelity.` |
+| **Stylized / Artistic** | Watercolor, sketch, pixel art, or other artistic rendering | `environment in the SAME ARTISTIC STYLE as the avatar. Match the medium (watercolor, sketch, pixel art, etc.), color palette, line weight, and texture. The background should look like it was created by the same artist using the same technique.` |
+| **Unknown / Can't determine** | Preview fetch failed or ambiguous | Default to `HYPER PHOTO-REALISTIC` (safest for most avatars) |
+
+**How to classify:** Look at the preview image. If the avatar looks like a photograph of a real person → Photorealistic. If it has visible brush strokes, flat colors, outlines, or cartoon features → Animated/Illustrated. If it looks like a 3D render (smooth surfaces, CG lighting) → 3D Rendered. If it's clearly an artistic style (watercolor, sketch) → Stylized.
+
+Store the detected style as `avatar_visual_style` for use in correction blocks below. Use the corresponding Fill Directive text wherever `{FILL_DIRECTIVE}` appears in the correction templates.
+
 ## Step 3: Determine if background exists
 
 | `avatar_type` | Background? | Reason |
@@ -43,17 +59,16 @@ FRAMING NOTE: The selected avatar image is in portrait orientation (9:16) but
 this video is landscape (16:9). YOU MUST generate a new variant of the avatar
 image before using it in this video. Use AI Image tool to:
 1. Generate a landscape (16:9) version of the presenter image
-2. Generative fill to extend the scene horizontally — add a HYPER PHOTO-REALISTIC
-   environment. Think real photography: actual office spaces, real studios with
-   visible equipment, genuine room interiors with natural imperfections.
-   NOT CGI. NOT stock photo. NOT 3D-rendered. Real-world photographic quality.
+2. Generative fill to extend the scene horizontally — add a {FILL_DIRECTIVE}
 3. Frame the presenter from chest up, centered in the landscape canvas
-4. The background MUST look like a real photograph — correct lighting direction,
-   natural shadows, depth-of-field blur on background elements, realistic scale.
-   NOT a solid color, NOT transparent, NOT a gradient, NOT synthetic/CGI.
+4. The background MUST visually match the avatar's own style and rendering.
+   Correct lighting direction, natural shadows, consistent art style throughout.
+   NOT a solid color, NOT transparent, NOT a gradient.
 Do NOT use the original portrait image uncropped. Do NOT add black bars or
 pillarboxing. Do NOT leave a transparent or missing background.
 ```
+
+Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detected `avatar_visual_style`.
 
 ### B) Landscape avatar → Portrait video
 
@@ -62,16 +77,17 @@ FRAMING NOTE: The selected avatar image is in landscape orientation (16:9) but
 this video is portrait (9:16). YOU MUST generate a new variant of the presenter
 image before using it. Use AI Image tool to:
 1. Generate a portrait (9:16) version of the presenter image
-2. Generative fill to extend vertically — add HYPER PHOTO-REALISTIC environment
-   above and below the presenter (real ceiling, real floor, room depth with
-   natural imperfections). Think real photography, not CGI or stock imagery.
+2. Generative fill to extend vertically — add {FILL_DIRECTIVE}
+   Extend above and below the presenter with environment consistent with their style.
 3. Focus on head and shoulders, presenter centered in portrait frame
-4. The background MUST look like a real photograph — correct lighting,
-   natural shadows, depth-of-field blur. NOT a solid color, NOT transparent,
-   NOT a gradient, NOT synthetic/CGI.
+4. The background MUST visually match the avatar's own style and rendering.
+   Correct lighting, natural shadows, consistent art style throughout.
+   NOT a solid color, NOT transparent, NOT a gradient.
 Do NOT use the original landscape image uncropped. Do NOT add letterboxing.
 Do NOT leave transparent or missing background areas.
 ```
+
+Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detected `avatar_visual_style`.
 
 ### D) Square avatar → Landscape video
 
@@ -81,17 +97,17 @@ landscape (16:9). HeyGen does not support square video output — without
 correction, the video will have black bars on both sides. YOU MUST generate a
 new variant of the avatar image before using it. Use AI Image tool to:
 1. Generate a landscape (16:9) version of the presenter image
-2. Generative fill to extend the scene horizontally — add a HYPER PHOTO-REALISTIC
-   environment on both sides. Think real photography: actual office spaces, real
-   studios with visible equipment, genuine room interiors with natural imperfections.
-   NOT CGI. NOT stock photo. NOT 3D-rendered. Real-world photographic quality.
+2. Generative fill to extend the scene horizontally — add a {FILL_DIRECTIVE}
+   Extend on both sides with environment consistent with the avatar's visual style.
 3. Frame the presenter centered in the landscape canvas
-4. The background MUST look like a real photograph — correct lighting direction,
-   natural shadows, depth-of-field blur on background elements, realistic scale.
-   NOT a solid color, NOT transparent, NOT a gradient, NOT synthetic/CGI.
+4. The background MUST visually match the avatar's own style and rendering.
+   Correct lighting direction, natural shadows, consistent art style throughout.
+   NOT a solid color, NOT transparent, NOT a gradient.
 Do NOT use the original square image uncropped. Do NOT add black bars or
 pillarboxing. Do NOT leave a transparent or missing background.
 ```
+
+Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detected `avatar_visual_style`.
 
 ### E) Square avatar → Portrait video
 
@@ -101,16 +117,17 @@ portrait (9:16). HeyGen does not support square video output — without
 correction, the video will have black bars on top and bottom. YOU MUST generate
 a new variant of the presenter image before using it. Use AI Image tool to:
 1. Generate a portrait (9:16) version of the presenter image
-2. Generative fill to extend vertically — add HYPER PHOTO-REALISTIC environment
-   above and below the presenter (real ceiling, real floor, room depth with
-   natural imperfections). Think real photography, not CGI or stock imagery.
+2. Generative fill to extend vertically — add {FILL_DIRECTIVE}
+   Extend above and below the presenter with environment consistent with their style.
 3. Frame the presenter centered in the portrait canvas
-4. The background MUST look like a real photograph — correct lighting,
-   natural shadows, depth-of-field blur. NOT a solid color, NOT transparent,
-   NOT a gradient, NOT synthetic/CGI.
+4. The background MUST visually match the avatar's own style and rendering.
+   Correct lighting, natural shadows, consistent art style throughout.
+   NOT a solid color, NOT transparent, NOT a gradient.
 Do NOT use the original square image uncropped. Do NOT add letterboxing.
 Do NOT leave transparent or missing background areas.
 ```
+
+Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detected `avatar_visual_style`.
 
 ### C) Missing background — studio_avatar only
 
@@ -118,27 +135,26 @@ Do NOT leave transparent or missing background areas.
 
 ```
 BACKGROUND NOTE: The selected studio avatar has NO scene background (transparent
-or solid color). YOU MUST generate a HYPER PHOTO-REALISTIC background environment
-before using this avatar. Use AI Image tool to:
-1. Generate a variant of the presenter image WITH a full background scene that
-   looks like REAL PHOTOGRAPHY — not CGI, not 3D-rendered, not stock imagery
-2. For business/tech content: place in a REAL modern studio (visible mic stands,
-   actual monitors with content on screen, cable management, real desk surfaces),
-   a real office (imperfect bookshelves, actual papers, natural desk clutter),
-   or a real podcast set (acoustic panels, real lighting rigs, visible equipment)
-3. For casual content: place in a REAL room (actual furniture with wear, real
-   plants not perfect renders, natural window light with shadows, genuine
-   café/kitchen details)
-4. The presenter MUST look NATURAL in the environment:
+or solid color). YOU MUST generate a background environment that MATCHES THE
+AVATAR'S VISUAL STYLE before using this avatar. Use AI Image tool to:
+1. Generate a variant of the presenter image WITH a full background scene.
+   {FILL_DIRECTIVE}
+2. For business/tech content: place in a modern studio, office, or podcast set.
+   For casual content: place in a room, café, or outdoor scene.
+   The setting should match both the content tone AND the avatar's art style.
+3. The presenter MUST look NATURAL in the environment:
    - Correct lighting direction matching the room's light source
    - Realistic scale (waist-up or chest-up framing)
    - Natural shadows on and from the presenter
-   - Depth-of-field blur on background (shallow DOF, like a real camera)
-5. Do NOT leave ANY transparent, solid-color, or gradient background
-6. Do NOT make the presenter look oversized relative to the environment
-7. The final image should be INDISTINGUISHABLE from a real photograph.
-The result should look like the presenter was actually filmed in that location.
+   - Art style consistency between avatar and background
+4. Do NOT leave ANY transparent, solid-color, or gradient background
+5. Do NOT make the presenter look oversized relative to the environment
+6. The background rendering style should be INDISTINGUISHABLE from the avatar's
+   own rendering style — same medium, same level of detail, same color treatment.
+The result should look like the presenter belongs in that environment.
 ```
+
+Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detected `avatar_visual_style`.
 
 ## Correction Stacking Matrix
 
@@ -235,6 +251,7 @@ This eliminates redundant generative fill on repeated videos with the same avata
 Add to learning log entry:
 - `"aspect_correction"`: `"portrait_to_landscape"` | `"landscape_to_portrait"` | `"square_to_landscape"` | `"square_to_portrait"` | `"background_fill"` | `"both"` | `"none"`
 - `"avatar_type"`: the raw value from the API
+- `"avatar_visual_style"`: `"photorealistic"` | `"animated"` | `"3d_rendered"` | `"stylized"` | `"unknown"`
 - `"look_created"`: `true` | `false` (was a new look created under the group?)
 - `"look_reused"`: `true` | `false` (was a pre-existing corrected look found and reused?)
 - `"group_id"`: the avatar group ID
