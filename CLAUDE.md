@@ -120,3 +120,4 @@ Validated across 18 rounds of testing (80+ videos):
 7. **Dry-run before API.** Always offer.
 8. **Quick Shot mode: omit avatar_id, let Video Agent auto-select.**
 9. **video_avatar type has a known backend bug.** Document in troubleshooting.
+10. **Look-first architecture.** Corrections (frame fix, bg fill, orientation) create new looks under the same avatar group, NOT new groups. `avatar_group_id` param on `POST /v3/avatars`. Keeps accounts clean and enables look reuse across videos.

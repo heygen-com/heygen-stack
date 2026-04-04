@@ -205,10 +205,12 @@ POST https://api.heygen.com/v3/video-agents
 
 When the user wants to refine:
 
-- **"Adjust the prompt"** → tweak appearance text, regenerate (Mode 1, new character unless they want to keep the group)
-- **"Add a new look"** → Mode 2 with existing group_id. Add to Looks in AVATAR file.
+- **"Adjust the prompt"** → Mode 2 with existing group_id (keeps the character, adds a new look). Only Mode 1 if they say "start completely over."
+- **"Add a new look"** / **"different outfit"** / **"landscape version"** → Mode 2 with existing group_id. Add to Looks in AVATAR file.
 - **"Try a different voice"** → back to Phase 3
 - **"Start completely over"** → Mode 1, new character. Overwrite HeyGen section.
+
+**Default to Mode 2 (new look under same group).** Only create a new group when the user explicitly wants a different character identity. This keeps the account clean and makes looks reusable across skills.
 
 Each iteration updates the AVATAR file. The file is always the source of truth.
 
