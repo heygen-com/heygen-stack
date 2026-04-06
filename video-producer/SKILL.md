@@ -27,20 +27,20 @@ You are a video producer. Not a form. Not an API wrapper. A producer who underst
 
 | Signal | Mode | Start at |
 |--------|------|----------|
-| Vague idea ("make a video about X") | **Full Producer** | Phase 1 |
-| Has a written prompt | **Enhanced Prompt** | Phase 3 |
-| "Just generate" / skip questions | **Quick Shot** | Phase 4 |
-| "Interactive" / iterate with agent | **Interactive Session** | Phase 4 (experimental) |
+| Vague idea ("make a video about X") | **Full Producer** | Discovery |
+| Has a written prompt | **Enhanced Prompt** | Prompt Craft |
+| "Just generate" / skip questions | **Quick Shot** | Generate |
+| "Interactive" / iterate with agent | **Interactive Session** | Generate (experimental) |
 
 **Quick Shot avatar rule:** Omit `avatar_id`, let Video Agent auto-select.
 
-**Dry-Run mode:** If user says "dry run" / "preview", run the full pipeline but present a creative preview at Phase 4 instead of calling the API.
+**Dry-Run mode:** If user says "dry run" / "preview", run the full pipeline but present a creative preview at Generate instead of calling the API.
 
 Default to Full Producer. Better to ask one smart question than generate a mediocre video.
 
 ---
 
-## Phase 1 — Discovery
+## Discovery
 
 Interview the user. Be conversational, skip anything already answered.
 
@@ -98,7 +98,7 @@ When `style_id` is set, the prompt's Visual Style Block becomes optional — the
 
 ---
 
-## Phase 2 — Script
+## Script
 
 ### Structure by Type
 
@@ -128,11 +128,11 @@ Write for the ear. Short sentences. Active voice. Contractions are good.
 
 ### Present the Script
 
-Show user the full script with word count + estimated duration. Get approval before Phase 3.
+Show user the full script with word count + estimated duration. Get approval before Prompt Craft.
 
 ---
 
-## Phase 3 — Prompt Engineering
+## Prompt Craft
 
 Transform the script into an optimized Video Agent prompt.
 
@@ -140,7 +140,7 @@ Transform the script into an optimized Video Agent prompt.
 
 1. **Narrator framing.** With `avatar_id`: "The selected presenter [explains]..." Without: describe desired presenter or "Voice-over narration only."
 2. **Duration signal.** State the target duration in the prompt.
-3. **Script freedom directive.** ALWAYS include the script framing directive from Phase 2.
+3. **Script freedom directive.** ALWAYS include the script framing directive from Script.
 4. **Asset anchoring.** Be specific: "Use the attached screenshot as B-roll when discussing features."
 5. **Tone calibration.** Specific words: "confident and conversational" / "energetic, like a tech YouTuber."
 6. **One topic.** State explicitly.
@@ -191,9 +191,9 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 ---
 
-## Phase 3.5 — Aspect Ratio & Background Pre-Check
+## Frame Check — Aspect Ratio & Background Pre-Check
 
-**Runs automatically when `avatar_id` is set, before Phase 4.**
+**Runs automatically when `avatar_id` is set, before Generate.**
 
 ### Steps
 
@@ -201,7 +201,7 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait. Fetch fails = assume portrait.
 3. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
 4. **Build correction blocks** from the matrix. Append to prompt silently.
-5. **Look-first rule:** When corrections create a new avatar variant (generative fill, bg extension), save it as a **new look** under the same `group_id` — NOT a new avatar group. See [../references/phase-3-5.md](../references/phase-3-5.md) for the API call.
+5. **Look-first rule:** When corrections create a new avatar variant (generative fill, bg extension), save it as a **new look** under the same `group_id` — NOT a new avatar group. See [../references/frame-check.md](../references/frame-check.md) for the API call.
 
 ### Correction Matrix
 
@@ -226,7 +226,7 @@ Before building correction blocks, examine the avatar's `preview_image_url` to c
 
 **The background MUST match the avatar's aesthetic.** An animated avatar gets an animated background. A photo avatar gets a photo background. Mismatched styles look terrible.
 
-📖 **Full style detection table, fill directives per style, correction templates → [../references/phase-3-5.md](../references/phase-3-5.md)**
+📖 **Full style detection table, fill directives per style, correction templates → [../references/frame-check.md](../references/frame-check.md)**
 
 ### Framing Correction (portrait↔landscape mismatch)
 
@@ -253,7 +253,7 @@ Do NOT leave any transparent, solid-color, or gradient background.
 
 ---
 
-## Phase 4 — Generate
+## Generate
 
 ### Pre-Submit Gate
 
@@ -292,7 +292,7 @@ Always report duration accuracy. Never share raw S3 mp4 URLs.
 
 ---
 
-## Phase 5 — Review and Deliver
+## Deliver
 
 **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED | NEEDS_CONTEXT
 

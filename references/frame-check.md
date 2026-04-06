@@ -1,6 +1,6 @@
-# Phase 3.5 — Aspect Ratio & Background Pre-Check
+# Frame Check — Aspect Ratio & Background Pre-Check
 
-Runs automatically when `avatar_id` is set, before Phase 4. Also runs in Quick Shot mode when avatar_id is present.
+Runs automatically when `avatar_id` is set, before Generate. Also runs in Quick Shot mode when avatar_id is present.
 
 ## Step 1: Fetch the avatar look metadata
 
@@ -181,7 +181,7 @@ Corrections can stack. A portrait photo_avatar in a landscape video gets BOTH A 
 
 ## Step 5: Save corrected variant as a new Look (Look-First Rule)
 
-When Phase 3.5 fires a correction (framing or background), the Video Agent generates a corrected avatar image internally. To avoid polluting the account with orphan avatar groups, **save the corrected variant as a new look under the SAME avatar group** instead of creating a new group.
+When Frame Check fires a correction (framing or background), the Video Agent generates a corrected avatar image internally. To avoid polluting the account with orphan avatar groups, **save the corrected variant as a new look under the SAME avatar group** instead of creating a new group.
 
 ### Why
 
@@ -233,7 +233,7 @@ If an `AVATAR-<NAME>.md` file exists in the workspace, append the new look to th
 - Last Synced: <ISO timestamp>
 ```
 
-This lets future video requests skip Phase 3.5 entirely when a pre-corrected look already exists for the target orientation.
+This lets future video requests skip Frame Check entirely when a pre-corrected look already exists for the target orientation.
 
 ### Fast-path: Skip correction if look already exists
 

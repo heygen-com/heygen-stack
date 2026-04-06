@@ -24,9 +24,9 @@ Turn an idea into a polished video. Handles the full pipeline:
 
 - **Discovery** — interviews you about purpose, audience, tone, duration
 - **Script** — structures content by type (demo, explainer, tutorial, pitch)
-- **Prompt Engineering** — transforms script into an optimized Video Agent prompt with style blocks, media type selection, and visual direction
-- **Aspect Ratio Correction** — detects avatar orientation mismatches and applies generative fill (no black bars, ever)
-- **Generation & Delivery** — submits to HeyGen API, polls, delivers share link with duration accuracy report
+- **Prompt Craft** — transforms script into an optimized Video Agent prompt with style blocks, media type selection, and visual direction
+- **Frame Check** — detects avatar orientation mismatches and applies generative fill (no black bars, ever)
+- **Generate & Deliver** — submits to HeyGen API, polls, delivers share link with duration accuracy report
 
 ```
 You: "Make a 45-second explainer about our API"
@@ -72,7 +72,7 @@ heygen-stack/
 │   ├── api-reference.md         # Endpoints, polling, interactive sessions, webhooks
 │   ├── asset-routing.md         # File upload, URL handling, content-type rules
 │   ├── avatar-discovery.md      # Avatar browsing, creation, voice selection
-│   ├── phase-3-5.md             # Aspect ratio correction logic
+│   ├── frame-check.md           # Aspect ratio correction logic
 │   ├── prompt-craft.md          # Advanced prompt construction
 │   ├── prompt-styles.md         # Named style presets (Cinematic, Swiss Pulse, etc.)
 │   ├── motion-vocabulary.md     # Camera movement and transition vocabulary
@@ -103,7 +103,7 @@ Video success rate improved from 6/10 to 10/10. SKILL.md went from 57KB to 12.8K
 
 Bugs caught that you won't hit:
 - Avatar ID + prompt text conflicts (avatar appearance described in prompt overrides the actual avatar)
-- Phase 3.5 silent failures (correction prompts missing explicit tool trigger phrases)
+- Frame Check silent failures (correction prompts missing explicit tool trigger phrases)
 - 365% duration overshoots on short videos (script freedom directive missing)
 - CDN-protected URLs causing silent content fabrication
 - Square avatars letterboxing with black bars (style-adaptive generative fill added)

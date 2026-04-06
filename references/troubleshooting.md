@@ -37,7 +37,7 @@ This tells Video Agent it can expand the script naturally instead of treating it
 
 Video Agent controls final video timing internally. Duration accuracy ranges from 79-174% of target across testing. This is NOT a bug.
 
-**Mitigation:** Variable padding multipliers (Phase 2):
+**Mitigation:** Variable padding multipliers (Script):
 - ≤30s target: 1.6x padding
 - 31-119s target: 1.4x padding
 - ≥120s target: 1.3x padding
@@ -47,11 +47,11 @@ Without `avatar_id`: ~80% accuracy average.
 
 ---
 
-## Phase 3.5 Correction Prompts Not Executing
+## Frame Check Correction Prompts Not Executing
 
 If aspect ratio corrections (generative fill, reframing) aren't applied, check:
 
-1. **Correction templates must be in SKILL.md, not just referenced.** If the agent only sees a summary pointer ("read references/phase-3-5.md"), it may skip loading the reference and generate without corrections. The full correction text blocks (A, B, C) are inlined in SKILL.md to prevent this.
+1. **Correction templates must be in SKILL.md, not just referenced.** If the agent only sees a summary pointer ("read references/frame-check.md"), it may skip loading the reference and generate without corrections. The full correction text blocks (A, B, C) are inlined in SKILL.md to prevent this.
 2. The correction prompt must include the exact phrase: **"Use AI Image tool to generative fill"** — without this trigger, Video Agent acknowledges the directive but doesn't execute it.
 3. **photo_avatar does NOT need Correction C** (background fill). Video Agent generates avatar + environment together for photo_avatars. Only apply framing corrections (A/B) for orientation mismatches. Correction C is for studio_avatars with transparent/empty backgrounds only.
 
@@ -59,7 +59,7 @@ If aspect ratio corrections (generative fill, reframing) aren't applied, check:
 
 ## Generative Fill Visual Quality
 
-Phase 3.5 correction prompts can produce synthetic-looking backgrounds. The bar is **hyper photo-realistic** — backgrounds should be indistinguishable from real photography.
+Frame Check correction prompts can produce synthetic-looking backgrounds. The bar is **hyper photo-realistic** — backgrounds should be indistinguishable from real photography.
 
 **Mitigation:**
 - All correction prompts (A, B, C) now include explicit "HYPER PHOTO-REALISTIC" + anti-CGI directives

@@ -17,18 +17,18 @@ heygen-stack/
 ├── avatar-designer/
 │   └── SKILL.md                # Avatar creation workflow (identity → avatar → voice → AVATAR file)
 ├── video-producer/
-│   └── SKILL.md                # Video production workflow (5-phase pipeline)
+│   └── SKILL.md                # Video production workflow (7-stage pipeline)
 ├── references/                 # Shared. Loaded on-demand by phase (NOT every turn)
-│   ├── avatar-discovery.md     # Phase 1: avatar lookup, voice selection, curl examples
-│   ├── asset-routing.md        # Phase 1: asset classification engine, upload flows
-│   ├── prompt-styles.md        # Phase 3: 6 prompt style templates
-│   ├── motion-vocabulary.md    # Phase 3: camera/transition vocabulary
-│   ├── prompt-craft.md         # Phase 3: prompt construction deep-dive
-│   ├── official-prompt-guide.md# Phase 3: HeyGen's own prompt research
-│   ├── phase-3-5.md            # Phase 3.5: aspect ratio correction logic + examples
-│   ├── api-reference.md        # Phase 4: endpoints, polling, interactive sessions, errors
+│   ├── avatar-discovery.md     # Discovery: avatar lookup, voice selection, curl examples
+│   ├── asset-routing.md        # Discovery: asset classification engine, upload flows
+│   ├── prompt-styles.md        # Prompt Craft: 6 prompt style templates
+│   ├── motion-vocabulary.md    # Prompt Craft: camera/transition vocabulary
+│   ├── prompt-craft.md         # Prompt Craft: prompt construction deep-dive
+│   ├── official-prompt-guide.md# Prompt Craft: HeyGen's own prompt research
+│   ├── frame-check.md          # Frame Check: aspect ratio correction logic + examples
+│   ├── api-reference.md        # Generate: endpoints, polling, interactive sessions, errors
 │   ├── troubleshooting.md      # Known issues, workarounds, duration variance
-│   └── reviewer-prompt.md      # Phase 5: self-evaluation rubric
+│   └── reviewer-prompt.md      # Deliver: self-evaluation rubric
 └── evals/                      # Dev-only test infrastructure (not shipped to users)
     ├── eval-runner-prompt.md   # Instructions for eval subagent
     ├── autoresearch-loop.md    # Loop methodology docs
@@ -41,10 +41,10 @@ Each SKILL.md must stay under 300 lines. Skill files are injected into EVERY pro
 
 **What stays in SKILL.md:**
 - Frontmatter (name, description, triggers, env requirements)
-- Phase flow overview (what phases exist, when to enter each)
+- Stage flow overview (what stages exist, when to enter each)
 - Decision trees (mode detection, avatar path selection, style selection)
 - Critical rules that apply EVERY turn
-- Short "Read ../references/X.md for details" pointers at each phase
+- Short "Read ../references/X.md for details" pointers at each stage
 
 **What moves to references/:**
 - Curl examples and API request/response shapes
@@ -97,7 +97,7 @@ Evals are run by a subagent (typically Adam) that:
 
 - Database ID: `a1b997926fe646929ef46cd6144d4b91`
 - Data source ID: `17f54098-a085-4234-83ce-55c280266d73`
-- All properties TEXT except: Phase 3.5 Fired (CHECKBOX), Status/Avatar Type/Ken Verdict (SELECT)
+- All properties TEXT except: Frame Check Fired (CHECKBOX), Status/Avatar Type/Ken Verdict (SELECT)
 
 ### Regression Testing
 
@@ -105,7 +105,7 @@ After any SKILL.md refactor:
 1. Run standard 10-scenario suite from most recent round
 2. Compare duration accuracy, score, pass rate vs previous round
 3. Regression >10% avg score or >15% duration accuracy = revert
-4. Phase 3.5 must fire on same scenarios as before
+4. Frame Check must fire on same scenarios as before
 
 ## Key Decisions (Do Not Revisit Without Data)
 
@@ -116,7 +116,7 @@ Validated across 18 rounds of testing (80+ videos):
 3. **When avatar_id is set, omit appearance description from prompt.** Say "the selected presenter" instead.
 4. **Script-as-prompt approach.** Full scene-labeled script pasted into prompt.
 5. **Trust Video Agent for duration pacing.** No padding multipliers.
-6. **Phase 3.5 correction prompts need explicit "Use AI Image tool" trigger.**
+6. **Frame Check correction prompts need explicit "Use AI Image tool" trigger.**
 7. **Dry-run before API.** Always offer.
 8. **Quick Shot mode: omit avatar_id, let Video Agent auto-select.**
 9. **video_avatar type has a known backend bug.** Document in troubleshooting.

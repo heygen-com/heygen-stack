@@ -68,7 +68,7 @@ Format:
 
 1. **Be concise.** No video IDs, session IDs, or raw API responses in chat. The user sees the result, not the plumbing.
 2. **Polling is silent.** When polling for avatar readiness, do NOT send "Still processing..." updates. Poll silently. Only speak when: (a) the avatar is ready and you're showing the preview, or (b) it's been >2 minutes and you're giving a single "Taking longer than usual, still working on it" update.
-3. **One checkpoint per phase.** Show the result, ask for approval, wait. Don't bundle Phase 3 (voice) with Phase 2b (look approval) in the same message.
+3. **One checkpoint per stage.** Show the result, ask for approval, wait. Don't bundle Voice with Look Approval in the same message.
 4. **Show, don't dump.** When presenting the avatar preview, show the image and a 1-line summary ("Here's your avatar — portrait, realistic style"). Not a table of every parameter.
 
 ## Skill Announcement
@@ -79,7 +79,7 @@ Start every invocation with:
 
 ## Workflow
 
-### Phase 0 — Who Are We Creating?
+### First Look — Who Are We Creating?
 
 Determine the target identity:
 
@@ -90,10 +90,10 @@ Determine the target identity:
 If the AVATAR file exists and has a HeyGen section filled in:
 > "You already have an avatar set up. Want to add a new look, update it, or start fresh?"
 
-If the AVATAR file exists but HeyGen section is empty: proceed to Phase 2.
-If no AVATAR file exists: proceed to Phase 1.
+If the AVATAR file exists but HeyGen section is empty: proceed to Creation.
+If no AVATAR file exists: proceed to Identity.
 
-### Phase 1 — Identity Extraction
+### Identity
 
 **For the agent:** Read `SOUL.md`, `IDENTITY.md`, and existing `AVATAR-<NAME>.md` from the workspace. Extract appearance and voice traits.
 
@@ -108,7 +108,7 @@ Be upfront about the two paths:
 
 Write `AVATAR-<NAME>.md` with the Appearance and Voice sections filled in. Leave HeyGen section empty.
 
-### Phase 2 — Avatar Creation
+### Creation
 
 **API:** `POST https://api.heygen.com/v3/avatars`
 
@@ -172,9 +172,9 @@ Typical wait: 30-90 seconds for photo avatars, 1-3 minutes for prompt avatars. T
 
 **Do NOT proceed to video generation or voice selection until this check passes.** Videos submitted with an unready avatar will fail.
 
-> **⛔ HARD GATE: You MUST have a non-null `preview_image_url` from the polling response saved in a variable before continuing. If you do not have this URL, STOP. Do not proceed to Phase 2b, Phase 3, or any later phase.**
+> **⛔ HARD GATE: You MUST have a non-null `preview_image_url` from the polling response saved in a variable before continuing. If you do not have this URL, STOP. Do not proceed to Look Approval, Voice, or any later stage.**
 
-### Phase 2b — Look Approval
+### Look Approval
 
 Once the avatar is ready (preview URL available), show it to the user for approval:
 
@@ -182,7 +182,7 @@ Once the avatar is ready (preview URL available), show it to the user for approv
 2. Display the preview image to the user
 3. Ask:
    > "Here's your avatar. What do you think?"
-   > • **Looks good** → proceed to Phase 3 (voice)
+   > • **Looks good** → proceed to Voice
    > • **Adjust** [describe what to change] → create a new look under the same group (Mode 2) with an updated prompt, then poll + show again
    > • **Start over** → create a new character group (Mode 1) with a revised prompt
 
@@ -195,7 +195,7 @@ For photo avatars, usually 1 iteration is enough. If the user wants a different 
 
 **Do NOT skip this step.** Never proceed to voice selection without user approval of the look.
 
-> **⛔ HARD GATE: You MUST have received an explicit approval response ("looks good", "yes", "approve", thumbs up, or equivalent) from the user before continuing. If the user has not approved, STOP. Do not proceed to Phase 3 or any later phase. Silence is not approval.**
+> **⛔ HARD GATE: You MUST have received an explicit approval response ("looks good", "yes", "approve", thumbs up, or equivalent) from the user before continuing. If the user has not approved, STOP. Do not proceed to Voice or any later stage. Silence is not approval.**
 
 ---
 
@@ -212,11 +212,11 @@ Show the prompt to the user before creating:
 > **Settings:** Young Adult | Woman | East Asian | Realistic
 > Look good? (yes / adjust / completely different)
 
-### Phase 3 — Voice Selection
+### Voice
 
-> **⛔ PRECONDITION:** Before starting this phase, verify:
-> 1. You have a `preview_image_url` from polling (Phase 2 complete)
-> 2. The user explicitly approved the look (Phase 2b complete)
+> **⛔ PRECONDITION:** Before starting this stage, verify:
+> 1. You have a `preview_image_url` from polling (Creation complete)
+> 2. The user explicitly approved the look (Look Approval complete)
 >
 > If either is missing, GO BACK. Do not proceed.
 
@@ -232,14 +232,14 @@ GET https://api.heygen.com/v3/voices
 4. Present to user with preview audio links
 5. User picks one
 
-### Phase 4 — Save to AVATAR File
+### Save
 
 > **⛔ PRECONDITION:** Before saving, verify you have:
 > 1. A confirmed-ready `avatar_item.id` (preview_image_url was non-null)
 > 2. User approval of the look
-> 3. User-selected voice_id from Phase 3
+> 3. User-selected voice_id from Voice
 >
-> If any are missing, GO BACK to the incomplete phase.
+> If any are missing, GO BACK to the incomplete stage.
 
 Update the HeyGen section of `AVATAR-<NAME>.md`:
 
@@ -256,7 +256,7 @@ Update the HeyGen section of `AVATAR-<NAME>.md`:
 Tell the user:
 > "Avatar saved to AVATAR-<NAME>.md. Other skills like heygen-video-producer will pick it up automatically."
 
-### Phase 5 — Test (Optional)
+### Test (Optional)
 
 If the user wants to see their avatar in action:
 
@@ -273,12 +273,12 @@ POST https://api.heygen.com/v3/video-agents
 
 Iteration happens in two places:
 
-**During creation (Phase 2b loop):** User sees preview → adjusts → new look created → preview again. This is the primary iteration path. Most users settle in 1-3 rounds.
+**During creation (Look Approval loop):** User sees preview → adjusts → new look created → preview again. This is the primary iteration path. Most users settle in 1-3 rounds.
 
 **After creation (returning user):**
-- **"Adjust the look"** / **"try a different style"** → Mode 2 with existing group_id (adds a new look). Re-enter Phase 2b approval loop.
+- **"Adjust the look"** / **"try a different style"** → Mode 2 with existing group_id (adds a new look). Re-enter Look Approval loop.
 - **"Add a new look"** / **"different outfit"** / **"landscape version"** → Mode 2 with existing group_id. Add to Looks in AVATAR file.
-- **"Try a different voice"** → back to Phase 3
+- **"Try a different voice"** → back to Voice
 - **"Start completely over"** → Mode 1, new character. Overwrite HeyGen section.
 
 **Default to Mode 2 (new look under same group).** Only create a new group when the user explicitly wants a different character identity. This keeps the account clean and makes looks reusable across skills.
