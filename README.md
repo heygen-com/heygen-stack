@@ -5,42 +5,34 @@ Give your AI agent the ability to create professional videos. One install. One A
 **heygen-stack** is an AI skill that turns any coding agent (OpenClaw, Claude Code, Codex, etc.) into a video producer. It handles avatar creation, script writing, prompt engineering, aspect ratio correction, style selection, and delivery. Built by HeyGen.
 
 ```
-"Make a 60-second product demo for our new feature"
+"Hey, can you create a video introducing yourself?"
 ```
-→ Script → Prompt optimization → Avatar selection → Style → Video → Share link
+→ Avatar creation → Script → Prompt optimization → Style → Video → Share link
 
 ## Quick Start
 
-### OpenClaw
-```bash
-git clone https://github.com/heygen-com/heygen-stack.git ~/.openclaw/skills/heygen-stack
+Copy everything below, replace `[HEYGEN_API_KEY]` with your key from [app.heygen.com/settings/api](https://app.heygen.com/settings/api), and paste it into your AI agent:
+
+```
+Install the HeyGen Stack skill and configure my API key.
+
+Step 1 — Install the skill.
+Run: git clone https://github.com/heygen-com/heygen-stack.git
+into your skills directory:
+- OpenClaw: ~/.openclaw/skills/heygen-stack
+- Claude Code: ~/.claude/skills/heygen-stack
+
+Step 2 — Save my API key.
+My HeyGen API key is: [HEYGEN_API_KEY]
+Save this to your persistent environment config.
+Then validate by calling GET https://api.heygen.com/v3/user/me
+with header X-Api-Key. Tell me my name and remaining credits.
+
+Step 3 — Make a video.
+Create a video introducing yourself. 30-60 seconds, casual tone.
 ```
 
-> **ClawHub:** `clawhub install heygen-stack` — coming soon.
-
-### Claude Code
-```bash
-git clone https://github.com/heygen-com/heygen-stack.git ~/.claude/skills/heygen-stack
-```
-
-### Manual
-```bash
-git clone https://github.com/heygen-com/heygen-stack.git
-```
-
-Then set your API key:
-```bash
-export HEYGEN_API_KEY=your_key_here  # Get one at app.heygen.com/settings/api
-```
-
-Try it:
-```
-You: Make a 60-second video introducing my product. It's a developer tool
-     that helps teams ship faster. Tone: confident, modern. Include a
-     call-to-action at the end.
-```
-
-That's it. The skill handles script writing, prompt engineering, avatar selection, style, and delivery.
+That's it. The skill handles avatar creation, script writing, prompt engineering, aspect ratio correction, style, and delivery.
 
 ## What's Inside
 
