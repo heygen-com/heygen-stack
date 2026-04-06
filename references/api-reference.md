@@ -30,6 +30,7 @@ When in doubt about a field name or type, fetch the `.md` page before guessing.
 | **Get Avatar Look** | GET | `/v3/avatars/looks/{look_id}` |
 | **Create Avatar** | POST | `/v3/avatars` |
 | **List Voices** | GET | `/v3/voices` |
+| **Design Voice** | POST | `/v3/voices` |
 | **TTS** | POST | `/v3/voices/speech` |
 | **List Styles** | GET | `/v3/video-agents/styles` |
 | **Upload Asset** | POST | `/v3/assets` |
@@ -233,6 +234,48 @@ curl -X DELETE "https://api.heygen.com/v3/videos/<video_id>" -H "X-Api-Key: $HEY
 | 200 but no video_id | Retry once. If still failing, tell user to check dashboard. |
 
 **Asset upload failure:** Log which asset failed, proceed without it. Inform user.
+
+## Voice Design
+
+Generate custom voices from a natural language description. Returns 3 voice options per request.
+
+```bash
+curl -s -X POST "https://api.heygen.com/v3/voices" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "A calm, warm female voice with a slight Korean accent. Professional but approachable.",
+    "seed": 1
+  }'
+```
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `prompt` | string | ✓ | Natural language description of the desired voice |
+| `seed` | integer | | Controls which set of voices you get. Think of it as pagination. Different seeds = different options. |
+
+**Response:**
+```json
+{
+  "data": {
+    "seed": 1,
+    "voices": [
+      {
+        "voice_id": "kWwhw6YmjhNmgmLELlEy",
+        "name": "Calm Korean Pro",
+        "gender": "female",
+        "language": "English",
+        "preview_audio_url": "https://files2.heygen.ai/voice-design/previews/...",
+        "support_pause": true,
+        "support_locale": false,
+        "type": "public"
+      }
+    ]
+  }
+}
+```
+
+Returns 3 voices per seed. If none match, increment seed and try again. Each voice has a `preview_audio_url` (MP3) for user auditioning.
 
 ## Pricing
 

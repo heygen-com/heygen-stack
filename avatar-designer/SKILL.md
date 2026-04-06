@@ -54,8 +54,10 @@ Format:
 ## HeyGen
 - Avatar ID: <look_id — pass as avatar_id in videos>
 - Group ID: <character identity — reuse to add looks>
-- Voice ID: <matched voice>
+- Voice ID: <matched or designed voice>
 - Voice Name: <human-readable>
+- Voice Designed: <true if custom-designed, false if picked from catalog>
+- Voice Seed: <seed value used, if designed>
 - Looks: default=<id>, casual=<id>, ...
 - Last Synced: <ISO timestamp>
 ```
@@ -169,9 +171,42 @@ Show the prompt to the user before creating:
 > **Settings:** Young Adult | Woman | East Asian | Realistic
 > Look good? (yes / adjust / completely different)
 
-### Phase 3 — Voice Selection
+### Phase 3 — Voice
 
-Match a voice from HeyGen's library:
+Two paths: **Design** (generate a custom voice from description) or **Browse** (pick from HeyGen's library).
+
+Ask the user:
+> "Want me to design a custom voice based on your description, or browse existing voices?"
+
+Default to **Design** if the AVATAR file has a Voice section with personality traits.
+
+#### Path A — Voice Design (preferred)
+
+Generate voices from a natural language description using the Voice section from the AVATAR file.
+
+```bash
+POST https://api.heygen.com/v3/voices
+{
+  "prompt": "<built from AVATAR Voice section: tone, accent, energy, personality>",
+  "seed": 1
+}
+```
+
+Returns 3 voice options per seed. Present all 3 with inline audio previews:
+- Download each `preview_audio_url`: `curl -sL "<url>" -o /tmp/voice-design-<n>.mp3`
+- Send as audio attachment: `message(action:send, media:"/tmp/voice-design-<n>.mp3", caption:"Option <n>: <voice_name> — <gender>, <language>")` so it plays inline in Telegram/Discord
+- After all previews sent, present selection buttons
+
+If none match:
+> "None of these hitting right? I can try a different set (same description, different variations) or you can tweak the description."
+
+Increment `seed` and call again. Different seeds give completely different voice options from the same prompt.
+
+- Clean up /tmp files after user picks
+
+#### Path B — Voice Browse (fallback)
+
+Browse HeyGen's existing voice library:
 
 ```
 GET https://api.heygen.com/v3/voices
@@ -180,12 +215,7 @@ GET https://api.heygen.com/v3/voices
 1. Read the Voice section from the AVATAR file
 2. Filter by gender and language
 3. Pick top 3 candidates based on personality match
-4. Present to user with inline audio previews:
-   - Each voice has a `preview_audio_url` field (MP3)
-   - Download each preview: `curl -sL "<preview_audio_url>" -o /tmp/voice-preview-<n>.mp3`
-   - Send as audio attachment: `message(action:send, media:"/tmp/voice-preview-<n>.mp3", caption:"Option <n>: <voice_name> — <description>")` so it plays inline in Telegram/Discord
-   - After all previews sent, present selection buttons
-   - Clean up /tmp files after user picks
+4. Present with inline audio previews (same download + send pattern as Path A)
 5. User picks one
 
 ### Phase 4 — Save to AVATAR File
