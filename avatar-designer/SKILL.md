@@ -1,27 +1,15 @@
 ---
 name: heygen-avatar-designer
 description: |
-  Create and manage persistent AI avatar identities for video production.
-  Use when: the user wants a consistent on-camera identity across multiple videos, needs to create or update an avatar, or says "create my avatar", "design an avatar", "bring yourself to life", "give me a new look".
-  Creates reusable avatar + voice pairs stored as AVATAR-NAME.md for narrator and presenter videos.
-  Handles: silent 500-success detection, look-first group management, voice matching, and AVATAR file persistence.
-  NOT for: generating videos (use heygen-video-producer), cinematic clips or b-roll (use video_generate), translating videos, or TTS-only tasks.
+  Create HeyGen avatars for agents, users, or named characters. Manages the full lifecycle:
+  identity extraction, avatar generation, voice matching, and persistent storage.
+  Use when: (1) "create my avatar", "design an avatar", "bring yourself to life",
+  (2) "give me a new look", "add a casual variation",
+  (3) Setting up any character's visual + voice identity for HeyGen video.
+  NOT for: generating videos (use heygen-video-producer), translating videos, or TTS-only tasks.
 ---
 
-## Preamble (run first)
-
-```bash
-_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../../bin/update-check" 2>/dev/null || true)
-[ -n "$_UPD" ] && echo "$_UPD" || true
-```
-
-If output shows `UPGRADE_AVAILABLE <old> <new>`: tell the user "heygen-stack update available (v{old} → v{new}). Run `cd <skill-dir> && git pull` to update." Then continue with the skill normally.
-
-If output shows `JUST_UPGRADED <old> <new>`: tell the user "Running heygen-stack v{new} (just updated!)" and continue.
-
 # HeyGen Avatar Designer
-
-> **⛔ STOP.** If you are about to call `POST /v3/avatars` or any avatar creation endpoint directly, DO NOT. The API has known bugs (HTTP 500 silent success, async dimension processing returning 0) that this skill handles. Follow this pipeline instead.
 
 Create and manage HeyGen avatars for anyone: the agent, the user, or named characters. Handles identity extraction, avatar generation, voice selection, and saves everything to `AVATAR-<NAME>.md` for consistent reuse.
 
@@ -75,13 +63,6 @@ Format:
 **Top sections** (Appearance, Voice) are portable natural language. Any platform can use them.
 **HeyGen section** is runtime config with API IDs. Skills read this to make API calls.
 
-## UX Rules
-
-1. **Be concise.** No video IDs, session IDs, or raw API responses in chat. The user sees the result, not the plumbing.
-2. **Polling is silent.** When polling for avatar readiness, do NOT send "Still processing..." updates. Poll silently. Only speak when: (a) the avatar is ready and you're showing the preview, or (b) it's been >2 minutes and you're giving a single "Taking longer than usual, still working on it" update.
-3. **One checkpoint per stage.** Show the result, ask for approval, wait. Don't bundle Voice with Look Approval in the same message.
-4. **Show, don't dump.** When presenting the avatar preview, show the image and a 1-line summary ("Here's your avatar — portrait, realistic style"). Not a table of every parameter.
-
 ## Skill Announcement
 
 Start every invocation with:
@@ -90,7 +71,7 @@ Start every invocation with:
 
 ## Workflow
 
-### First Look — Who Are We Creating?
+### Phase 0 — Who Are We Creating?
 
 Determine the target identity:
 
@@ -101,25 +82,21 @@ Determine the target identity:
 If the AVATAR file exists and has a HeyGen section filled in:
 > "You already have an avatar set up. Want to add a new look, update it, or start fresh?"
 
-If the AVATAR file exists but HeyGen section is empty: proceed to Creation.
-If no AVATAR file exists: proceed to Identity.
+If the AVATAR file exists but HeyGen section is empty: proceed to Phase 2.
+If no AVATAR file exists: proceed to Phase 1.
 
-### Identity
+### Phase 1 — Identity Extraction
 
 **For the agent:** Read `SOUL.md`, `IDENTITY.md`, and existing `AVATAR-<NAME>.md` from the workspace. Extract appearance and voice traits.
 
 **For users/named characters:** Conversational onboarding. Ask naturally, not as a form:
 - "What do you look like? Age, hair, general vibe?"
 - "How would you describe your voice? Calm? Energetic? Any accent?"
-- "Do you have a reference photo? A headshot or clear photo of yourself gives the best results. Without one, I'll generate your look from your description — it'll capture the vibe but won't be an exact likeness."
-
-Be upfront about the two paths:
-- **With reference photo** → photo avatar, most faithful likeness. Best outcome.
-- **Without photo** → prompt-based avatar from identity description. Captures style/vibe but results vary. May take a few iterations to get right.
+- "Any reference photo I can work from?"
 
 Write `AVATAR-<NAME>.md` with the Appearance and Voice sections filled in. Leave HeyGen section empty.
 
-### Creation
+### Phase 2 — Avatar Creation
 
 **API:** `POST https://api.heygen.com/v3/avatars`
 
@@ -167,49 +144,6 @@ Body: file=@<photo_path>
 
 **Response:** Returns `avatar_item.id` (look ID) and `avatar_item.group_id` (character identity).
 
-**⚠️ Avatar creation is async.** The API returns success immediately, but the avatar is NOT ready for video generation yet. You MUST poll before proceeding:
-
-```bash
-# Poll until preview_image_url appears (avatar is ready)
-curl -s "https://api.heygen.com/v3/avatars/looks?group_id=<group_id>" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
-```
-
-Check every **10 seconds**. The avatar is ready when:
-- `preview_image_url` is non-null in the look response
-- `image_width` and `image_height` are non-zero
-
-Typical wait: 30-90 seconds for photo avatars, 1-3 minutes for prompt avatars. Timeout after 5 minutes and tell the user to check the HeyGen dashboard.
-
-**Do NOT proceed to video generation or voice selection until this check passes.** Videos submitted with an unready avatar will fail.
-
-> **⛔ HARD GATE: You MUST have a non-null `preview_image_url` from the polling response saved in a variable before continuing. If you do not have this URL, STOP. Do not proceed to Look Approval, Voice, or any later stage.**
-
-### Look Approval
-
-Once the avatar is ready (preview URL available), show it to the user for approval:
-
-1. Fetch the preview: `GET /v3/avatars/looks?group_id=<group_id>` → use `preview_image_url`
-2. Display the preview image to the user
-3. Ask:
-   > "Here's your avatar. What do you think?"
-   > • **Looks good** → proceed to Voice
-   > • **Adjust** [describe what to change] → create a new look under the same group (Mode 2) with an updated prompt, then poll + show again
-   > • **Start over** → create a new character group (Mode 1) with a revised prompt
-
-**This is a loop.** Keep iterating until the user approves. Each "adjust" creates a new look within the same group (cheap, keeps history). Only "start over" creates a new group.
-
-For prompt-based avatars, expect 1–3 iterations. Coach the user:
-> "Prompt-based avatars take some back and forth. Tell me what's off and I'll refine it."
-
-For photo avatars, usually 1 iteration is enough. If the user wants a different crop/pose, create a new look with different `orientation` or `pose` settings.
-
-**Do NOT skip this step.** Never proceed to voice selection without user approval of the look.
-
-> **⛔ HARD GATE: You MUST have received an explicit approval response ("looks good", "yes", "approve", thumbs up, or equivalent) from the user before continuing. If the user has not approved, STOP. Do not proceed to Voice or any later stage. Silence is not approval.**
-
----
-
 Map identity fields to HeyGen enums for the prompt:
 - **age**: Young Adult | Early Middle Age | Late Middle Age | Senior | Unspecified
 - **gender**: Man | Woman | Unspecified
@@ -223,13 +157,7 @@ Show the prompt to the user before creating:
 > **Settings:** Young Adult | Woman | East Asian | Realistic
 > Look good? (yes / adjust / completely different)
 
-### Voice
-
-> **⛔ PRECONDITION:** Before starting this stage, verify:
-> 1. You have a `preview_image_url` from polling (Creation complete)
-> 2. The user explicitly approved the look (Look Approval complete)
->
-> If either is missing, GO BACK. Do not proceed.
+### Phase 3 — Voice Selection
 
 Match a voice from HeyGen's library:
 
@@ -240,17 +168,15 @@ GET https://api.heygen.com/v3/voices
 1. Read the Voice section from the AVATAR file
 2. Filter by gender and language
 3. Pick top 3 candidates based on personality match
-4. Present to user with preview audio links
+4. Present to user with inline audio previews:
+   - Each voice has a `preview_audio_url` field (MP3)
+   - Download each preview: `curl -sL "<preview_audio_url>" -o /tmp/voice-preview-<n>.mp3`
+   - Send as audio attachment: `message(action:send, media:"/tmp/voice-preview-<n>.mp3", caption:"Option <n>: <voice_name> — <description>")` so it plays inline in Telegram/Discord
+   - After all previews sent, present selection buttons
+   - Clean up /tmp files after user picks
 5. User picks one
 
-### Save
-
-> **⛔ PRECONDITION:** Before saving, verify you have:
-> 1. A confirmed-ready `avatar_item.id` (preview_image_url was non-null)
-> 2. User approval of the look
-> 3. User-selected voice_id from Voice
->
-> If any are missing, GO BACK to the incomplete stage.
+### Phase 4 — Save to AVATAR File
 
 Update the HeyGen section of `AVATAR-<NAME>.md`:
 
@@ -267,7 +193,7 @@ Update the HeyGen section of `AVATAR-<NAME>.md`:
 Tell the user:
 > "Avatar saved to AVATAR-<NAME>.md. Other skills like heygen-video-producer will pick it up automatically."
 
-### Test (Optional)
+### Phase 5 — Test (Optional)
 
 If the user wants to see their avatar in action:
 
@@ -282,14 +208,11 @@ POST https://api.heygen.com/v3/video-agents
 
 ## Iteration Flow
 
-Iteration happens in two places:
+When the user wants to refine:
 
-**During creation (Look Approval loop):** User sees preview → adjusts → new look created → preview again. This is the primary iteration path. Most users settle in 1-3 rounds.
-
-**After creation (returning user):**
-- **"Adjust the look"** / **"try a different style"** → Mode 2 with existing group_id (adds a new look). Re-enter Look Approval loop.
+- **"Adjust the prompt"** → Mode 2 with existing group_id (keeps the character, adds a new look). Only Mode 1 if they say "start completely over."
 - **"Add a new look"** / **"different outfit"** / **"landscape version"** → Mode 2 with existing group_id. Add to Looks in AVATAR file.
-- **"Try a different voice"** → back to Voice
+- **"Try a different voice"** → back to Phase 3
 - **"Start completely over"** → Mode 1, new character. Overwrite HeyGen section.
 
 **Default to Mode 2 (new look under same group).** Only create a new group when the user explicitly wants a different character identity. This keeps the account clean and makes looks reusable across skills.
