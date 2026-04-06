@@ -173,16 +173,16 @@ Show the prompt to the user before creating:
 
 ### Phase 3 — Voice
 
-Two paths: **Design** (generate a custom voice from description) or **Browse** (pick from HeyGen's library).
+Two paths: **Design** (describe what you want, get matched voices) or **Browse** (filter the catalog manually).
 
 Ask the user:
-> "Want me to design a custom voice based on your description, or browse existing voices?"
+> "Want me to find a voice based on your description, or browse the catalog yourself?"
 
 Default to **Design** if the AVATAR file has a Voice section with personality traits.
 
 #### Path A — Voice Design (preferred)
 
-Generate voices from a natural language description using the Voice section from the AVATAR file.
+Find matching voices via semantic search using the Voice section from the AVATAR file. This searches HeyGen's full voice library. No new voices are generated and no quota is consumed.
 
 ```bash
 POST https://api.heygen.com/v3/voices

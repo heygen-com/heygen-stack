@@ -237,7 +237,7 @@ curl -X DELETE "https://api.heygen.com/v3/videos/<video_id>" -H "X-Api-Key: $HEY
 
 ## Voice Design
 
-Generate custom voices from a natural language description. Returns 3 voice options per request.
+Find matching voices from HeyGen's library using natural language. Uses semantic search (Pinecone) over all existing voices. No new voices are generated and no quota is consumed. Returned `voice_id`s work immediately in any video endpoint.
 
 ```bash
 curl -s -X POST "https://api.heygen.com/v3/voices" \
@@ -252,7 +252,7 @@ curl -s -X POST "https://api.heygen.com/v3/voices" \
 | Parameter | Type | Required | Description |
 |-----------|------|:--------:|-------------|
 | `prompt` | string | ✓ | Natural language description of the desired voice |
-| `seed` | integer | | Controls which set of voices you get. Think of it as pagination. Different seeds = different options. |
+| `seed` | integer | | Controls which set of voices you get. Deterministic: same prompt + seed = same results. Increment for more options. |
 
 **Response:**
 ```json
@@ -275,7 +275,9 @@ curl -s -X POST "https://api.heygen.com/v3/voices" \
 }
 ```
 
-Returns 3 voices per seed. If none match, increment seed and try again. Each voice has a `preview_audio_url` (MP3) for user auditioning.
+Returns 3 voices per seed. Deterministic: same prompt + seed always returns the same set. If none match, increment seed and try again. Each voice has a `preview_audio_url` (MP3) for user auditioning.
+
+**Key:** This is semantic search, not generation. Free to call. No voice slots consumed.
 
 ## Pricing
 
