@@ -2,7 +2,7 @@
 
 Give your AI agent the ability to create professional videos. One install. One API key. Full pipeline from identity to finished video.
 
-**heygen-stack** is an AI skill that turns any coding agent (OpenClaw, Claude Code, Codex, etc.) into a video producer. It handles avatar creation, script writing, prompt engineering, aspect ratio correction, style selection, and delivery. Built by HeyGen. Tested across 18 rounds of automated evaluation. 80+ videos generated during development.
+**heygen-stack** is an AI skill that turns any coding agent (OpenClaw, Claude Code, Codex, etc.) into a video producer. It handles avatar creation, script writing, prompt engineering, aspect ratio correction, style selection, and delivery. Built by HeyGen.
 
 ```
 "Make a 60-second product demo for our new feature"
@@ -33,7 +33,14 @@ Then set your API key:
 export HEYGEN_API_KEY=your_key_here  # Get one at app.heygen.com/settings/api
 ```
 
-That's it. Ask your agent to make a video.
+Try it:
+```
+You: Make a 60-second video introducing my product. It's a developer tool
+     that helps teams ship faster. Tone: confident, modern. Include a
+     call-to-action at the end.
+```
+
+That's it. The skill handles script writing, prompt engineering, avatar selection, style, and delivery.
 
 ## What's Inside
 
@@ -119,7 +126,7 @@ This skill was developed using an **autoresearch loop** — a human-supervised a
 4. Issues classified P0–P3, fixes applied to SKILL.md
 5. Next round validates fixes and tests for regressions
 
-**18 rounds completed.** Video success rate improved from 6/10 (R1) to 10/10 (R10+). SKILL.md went from 57KB to 12.8KB (78% token reduction) with zero functional regressions.
+Video success rate improved from 6/10 to 10/10. SKILL.md went from 57KB to 12.8KB (78% token reduction) with zero functional regressions.
 
 Bugs caught that you won't hit:
 - Avatar ID + prompt text conflicts (avatar appearance described in prompt overrides the actual avatar)
