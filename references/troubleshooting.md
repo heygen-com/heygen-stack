@@ -49,22 +49,23 @@ Without `avatar_id`: ~80% accuracy average.
 
 ## Frame Check Correction Prompts Not Executing
 
-If aspect ratio corrections (generative fill, reframing) aren't applied, check:
+If Video Agent isn't applying aspect ratio corrections (generative fill, reframing), check:
 
-1. **Correction templates must be in SKILL.md, not just referenced.** If the agent only sees a summary pointer ("read references/frame-check.md"), it may skip loading the reference and generate without corrections. The full correction text blocks (A, B, C) are inlined in SKILL.md to prevent this.
-2. The correction prompt must include the exact phrase: **"Use AI Image tool to generative fill"** — without this trigger, Video Agent acknowledges the directive but doesn't execute it.
-3. **photo_avatar does NOT need Correction C** (background fill). Video Agent generates avatar + environment together for photo_avatars. Only apply framing corrections (A/B) for orientation mismatches. Correction C is for studio_avatars with transparent/empty backgrounds only.
+1. **Correction notes must be appended to the prompt text.** If the FRAMING NOTE or BACKGROUND NOTE isn't in the prompt, Video Agent won't know to correct. The full correction text blocks (A, B, C, D, E) must be appended verbatim.
+2. The correction prompt must include the exact phrase: **"Use AI Image tool"** — without this trigger, Video Agent acknowledges the directive but doesn't execute it. This refers to Video Agent's INTERNAL AI Image tool, not our external image generation.
+3. **photo_avatar does NOT need Correction C** (background fill). Video Agent generates avatar + environment together for photo_avatars. Only apply framing corrections (A/B/D/E) for orientation mismatches. Correction C is for studio_avatars with transparent/empty backgrounds only.
+4. **Always submit with the original avatar_id.** Do NOT generate corrected images externally or create new avatar looks. Video Agent's internal AI Image tool handles framing while preserving face identity.
 
 ---
 
 ## Generative Fill Visual Quality
 
-Frame Check correction prompts can produce synthetic-looking backgrounds. The bar is **hyper photo-realistic** — backgrounds should be indistinguishable from real photography.
+Video Agent's AI Image tool can sometimes produce synthetic-looking backgrounds when applying Frame Check corrections. Tips for better results:
 
 **Mitigation:**
-- All correction prompts (A, B, C) now include explicit "HYPER PHOTO-REALISTIC" + anti-CGI directives
-- Specific real-world details beat generic descriptions: "visible mic stands, actual monitors with content" >> "professional studio"
-- Request depth-of-field blur, natural lighting direction, and realistic imperfections
+- Style-adaptive fill directives (Step 2.5 in frame-check.md) match the background to the avatar's visual style
+- Specific real-world details in the prompt beat generic descriptions: "visible mic stands, actual monitors with content" >> "professional studio"
+- The fill directive should request depth-of-field blur, natural lighting direction, and realistic imperfections
 - Short videos (≤30s) with corrections tend to overshoot duration (~163%)
 
 ---

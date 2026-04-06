@@ -121,7 +121,7 @@ This skill was built through 20 rounds of automated evaluation, producing 80+ vi
 
 **The tester agent reads only SKILL.md.** No tribal knowledge, no chat history, no "you know what I mean." If the skill file doesn't say it clearly, the agent gets it wrong. This surfaces documentation gaps that human review misses.
 
-**Scenarios escalate.** Early rounds test happy paths ("make a 30s product demo"). Later rounds push boundaries: square avatars, style_id combinations, 90-second long-form, Quick Shot mode, look reuse across scenarios.
+**Scenarios escalate.** Early rounds test happy paths ("make a 30s product demo"). Later rounds push boundaries: square avatars, style_id combinations, 90-second long-form, Quick Shot mode, prompt-based framing corrections.
 
 **Fixes are surgical.** Each round produces a branch, a PR, and a clear mapping from finding to fix. No rewrites unless the architecture is wrong.
 
@@ -135,7 +135,7 @@ This skill was built through 20 rounds of automated evaluation, producing 80+ vi
 | Timestamps per scene make delivery robotic | R8 | Switched to natural flow + tone description |
 | 365% duration overshoot on short videos | R12 | Script framing directive added |
 | Square (1:1) avatars letterboxed with black bars | R18 | Square detection + correction blocks D/E |
-| Corrections created new avatar groups instead of looks | R20 | Look-first architecture (new looks under existing group) |
+| Corrections created new avatar groups instead of looks | R20 | Reverted: prompt-only corrections (FRAMING NOTE / BACKGROUND NOTE) let Video Agent's AI Image tool handle framing while preserving face identity |
 
 ### Running Your Own Evals
 

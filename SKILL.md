@@ -237,9 +237,12 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type`, `preview_image_url`, `image_width`, `image_height`
 2. **Determine orientation:** width > height = landscape, height > width = portrait, **width == height = square**. Fetch fails = assume portrait.
 3. **Square avatar handling:** If avatar is square (1:1), it NEVER matches landscape or portrait. Always needs correction.
-4. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
-5. **If correction needed → YOU (the agent) must act.** See Correction Actions below. This is NOT prompt text. You must actually call tools.
-6. After correction, append the FRAMING NOTE (prompt text block) to the Video Agent prompt.
+4. **Detect avatar visual style:** Examine preview image → classify as photorealistic, animated, 3D rendered, or stylized. Determines fill language in correction templates.
+5. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
+6. **Build correction note(s)** from the matrix below. Append to the Video Agent prompt text verbatim.
+7. **Submit with the ORIGINAL `avatar_id`.** Video Agent's internal AI Image tool handles the framing/background corrections based on the FRAMING NOTE and BACKGROUND NOTE directives.
+
+**⚠️ Do NOT generate corrected images externally, upload new assets, or create new avatar looks for framing corrections. Video Agent's AI Image tool preserves the avatar's face identity. External image generation destroys it.**
 
 ### Correction Matrix
 
@@ -258,42 +261,30 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 | `video_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
 | `video_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
 
-### Correction Actions (YOU must do this — not prompt text)
+### Framing Correction (orientation mismatch or square avatar)
 
-**⚠️ CRITICAL: These are instructions for YOU, the agent. You must actually call the AI Image generation tool to modify the avatar image. Adding framing words to the Video Agent prompt DOES NOT fix aspect ratio problems. Video Agent cannot resize avatars.**
-
-#### Framing Correction (orientation mismatch or square avatar)
-
-1. Download the avatar's `preview_image_url` to a local file
-2. **Use the AI Image tool** (e.g., `image_generate` with the avatar image as reference) to generative-fill and extend the canvas from {source} to {target} orientation
-   - **Output MUST be exactly 16:9 for landscape (e.g. 1792x1024) or 9:16 for portrait (e.g. 1024x1792).** No other ratios. HeyGen Video Agent only accepts 16:9 and 9:16. Any other ratio (3:2, 4:3, etc.) causes zoom/crop artifacts.
-   - Specify explicit `size` parameter: `1792x1024` for landscape, `1024x1792` for portrait
-   - Detect avatar visual style first (see Avatar Visual Style Detection below)
-   - Photorealistic avatar → photorealistic environment fill
-   - Animated/illustrated avatar → matching illustrated environment fill
-   - Correct lighting, natural shadows, depth-of-field blur
-   - Do NOT add black bars, letterboxing, or leave transparent areas
-3. Upload the corrected image: `POST /v3/assets` → get `asset_id`
-4. Create a new look under the same group: `POST /v3/avatars` with `group_id` + corrected image `asset_id`
-5. Poll until new look is ready (preview_image_url non-null)
-6. **Use the NEW look's avatar_id** for the video, not the original square one
-7. Append this note to the Video Agent prompt (helps Video Agent compose scenes):
+Append to prompt — replace `{source}`, `{target}`, and `{FILL_DIRECTIVE}` (from style detection):
 ```
-FRAMING NOTE: The presenter avatar has been corrected for {target} orientation. Compose all scenes in {target} format.
+FRAMING NOTE: The avatar image is {source} but this video is {target}. YOU MUST
+generate a new variant using AI Image tool to generative fill and extend the
+canvas to {target} orientation. {FILL_DIRECTIVE}
+Correct lighting, natural shadows, consistent art style throughout.
+Do NOT use original uncropped. Do NOT add black bars or letterboxing.
+Do NOT leave transparent or missing background.
 ```
 
-#### Background Correction (studio_avatar only, no background)
+### Background Correction (studio_avatar only, no background)
 
-**Not for photo_avatar.** Same process as framing correction:
-1. Download preview image
-2. **Use AI Image tool** to generate an appropriate background
-   - Business: real studio/office/podcast set. Casual: real room with natural light.
-   - Correct lighting, natural shadows, shallow depth-of-field
-3. Upload → create new look → poll → use new avatar_id
-4. Append to prompt:
+**Not for photo_avatar.** Append to prompt — replace `{FILL_DIRECTIVE}` (from style detection):
 ```
-BACKGROUND NOTE: The presenter avatar has a professionally generated background. Maintain visual consistency across scenes.
+BACKGROUND NOTE: This studio avatar has no background. YOU MUST use AI Image tool
+to generate a background that MATCHES THE AVATAR'S VISUAL STYLE. {FILL_DIRECTIVE}
+Business: studio/office/podcast set. Casual: room with natural light.
+Correct lighting, natural shadows, art style consistency with the avatar.
+Do NOT leave any transparent, solid-color, or gradient background.
 ```
+
+📖 **Full style detection table, fill directives per style, all correction templates (A, B, C, D, E) → [references/frame-check.md](references/frame-check.md)**
 
 ---
 
@@ -307,7 +298,7 @@ BACKGROUND NOTE: The presenter avatar has a professionally generated background.
 
 - **Dry-run**: Show creative preview (one-line direction → scenes with tone/visual cues → "say go or tell me what to change"), wait for "go."
 - **Full Producer**: User approved script. Proceed.
-- **Quick Shot**: Run Frame Check corrections on the user's prompt, then generate.
+- **Quick Shot**: Run Frame Check (append correction notes to prompt), then generate.
 
 ### API Call
 

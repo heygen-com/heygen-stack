@@ -197,11 +197,14 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 ### Steps
 
-1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type`, `group_id`, and `preview_image_url`
-2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait. Fetch fails = assume portrait.
-3. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
-4. **Build correction blocks** from the matrix. Append to prompt silently.
-5. **Look-first rule:** When corrections create a new avatar variant (generative fill, bg extension), save it as a **new look** under the same `group_id` — NOT a new avatar group. See [../references/frame-check.md](../references/frame-check.md) for the API call.
+1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type` and `preview_image_url`
+2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait, width == height = square. Fetch fails = assume portrait.
+3. **Detect avatar visual style:** Classify as photorealistic, animated, 3D rendered, or stylized. Determines fill language.
+4. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
+5. **Build correction note(s)** from the matrix. Append to prompt silently.
+6. **Submit with the ORIGINAL `avatar_id`.** Video Agent's internal AI Image tool handles corrections based on the FRAMING NOTE / BACKGROUND NOTE directives.
+
+**⚠️ Do NOT generate corrected images externally, upload new assets, or create new avatar looks for framing corrections. Video Agent's AI Image tool preserves face identity. External image generation destroys it.**
 
 ### Correction Matrix
 
@@ -209,12 +212,16 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 |---|---|---|---|
 | `photo_avatar` | ✅ matched | (n/a) | None |
 | `photo_avatar` | ❌ mismatched | (n/a) | Framing correction |
+| `photo_avatar` | ◻ square | (n/a) | Framing correction (always) |
 | `studio_avatar` | ✅ matched | ✅ Yes | None |
 | `studio_avatar` | ✅ matched | ❌ No | Background correction |
 | `studio_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
 | `studio_avatar` | ❌ mismatched | ❌ No | Framing + Background |
+| `studio_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
+| `studio_avatar` | ◻ square | ❌ No | Framing + Background |
 | `video_avatar` | ✅ matched | ✅ Yes | None |
 | `video_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
+| `video_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
 
 ### Avatar Visual Style Detection (CRITICAL)
 

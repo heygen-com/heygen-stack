@@ -25,7 +25,7 @@ heygen-stack/
 │   ├── motion-vocabulary.md    # Prompt Craft: camera/transition vocabulary
 │   ├── prompt-craft.md         # Prompt Craft: prompt construction deep-dive
 │   ├── official-prompt-guide.md# Prompt Craft: HeyGen's own prompt research
-│   ├── frame-check.md          # Frame Check: aspect ratio correction logic + examples
+│   ├── frame-check.md          # Frame Check: aspect ratio correction prompts + style detection
 │   ├── api-reference.md        # Generate: endpoints, polling, interactive sessions, errors
 │   ├── troubleshooting.md      # Known issues, workarounds, duration variance
 │   └── reviewer-prompt.md      # Deliver: self-evaluation rubric
@@ -120,4 +120,4 @@ Validated across 18 rounds of testing (80+ videos):
 7. **Dry-run before API.** Always offer.
 8. **Quick Shot mode: omit avatar_id, let Video Agent auto-select.**
 9. **video_avatar type has a known backend bug.** Document in troubleshooting.
-10. **Look-first architecture.** Corrections (frame fix, bg fill, orientation) create new looks under the same avatar group, NOT new groups. `avatar_group_id` param on `POST /v3/avatars`. Keeps accounts clean and enables look reuse across videos.
+10. **Frame Check is prompt-only.** Corrections (frame fix, bg fill, orientation) are appended as FRAMING NOTE / BACKGROUND NOTE to the Video Agent prompt. Video Agent's internal AI Image tool handles the actual correction. Do NOT generate corrected images externally or create new avatar looks for framing — external image generation destroys face identity.
