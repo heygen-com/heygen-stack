@@ -233,11 +233,12 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 ### Steps
 
-1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type` and `preview_image_url`
-2. **Determine orientation:** Fetch preview image dimensions. width > height = landscape, height > width = portrait, **width == height = square**. Fetch fails = assume portrait.
-3. **Square avatar handling:** If avatar image is square (1:1), it will NOT match either landscape or portrait. Always apply framing correction to fill the target orientation. Without this, the video will have black bars.
+1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` → extract `avatar_type`, `preview_image_url`, `image_width`, `image_height`
+2. **Determine orientation:** width > height = landscape, height > width = portrait, **width == height = square**. Fetch fails = assume portrait.
+3. **Square avatar handling:** If avatar is square (1:1), it NEVER matches landscape or portrait. Always needs correction.
 4. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
-5. **Build correction blocks** from the matrix. Append to prompt silently.
+5. **If correction needed → YOU (the agent) must act.** See Correction Actions below. This is NOT prompt text. You must actually call tools.
+6. After correction, append the FRAMING NOTE (prompt text block) to the Video Agent prompt.
 
 ### Correction Matrix
 
@@ -256,27 +257,39 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 | `video_avatar` | ❌ mismatched | ✅ Yes | Framing correction |
 | `video_avatar` | ◻ square | ✅ Yes | Framing correction (always) |
 
-### Framing Correction (portrait↔landscape mismatch)
+### Correction Actions (YOU must do this — not prompt text)
 
-Append to prompt — replace `{source}` and `{target}` with actual orientations:
+**⚠️ CRITICAL: These are instructions for YOU, the agent. You must actually call the AI Image generation tool to modify the avatar image. Adding framing words to the Video Agent prompt DOES NOT fix aspect ratio problems. Video Agent cannot resize avatars.**
+
+#### Framing Correction (orientation mismatch or square avatar)
+
+1. Download the avatar's `preview_image_url` to a local file
+2. **Use the AI Image tool** (e.g., `image_generate` with the avatar image as reference) to generative-fill and extend the canvas from {source} to {target} orientation
+   - Detect avatar visual style first (see Avatar Visual Style Detection below)
+   - Photorealistic avatar → photorealistic environment fill
+   - Animated/illustrated avatar → matching illustrated environment fill
+   - Correct lighting, natural shadows, depth-of-field blur
+   - Do NOT add black bars, letterboxing, or leave transparent areas
+3. Upload the corrected image: `POST /v3/assets` → get `asset_id`
+4. Create a new look under the same group: `POST /v3/avatars` with `group_id` + corrected image `asset_id`
+5. Poll until new look is ready (preview_image_url non-null)
+6. **Use the NEW look's avatar_id** for the video, not the original square one
+7. Append this note to the Video Agent prompt (helps Video Agent compose scenes):
 ```
-FRAMING NOTE: The avatar image is {source} but this video is {target}. YOU MUST
-generate a new variant using AI Image tool to generative fill and extend the
-canvas to {target} orientation. Create a HYPER PHOTO-REALISTIC environment
-(real photography, not CGI/stock). Correct lighting, natural shadows, depth-of-field
-blur. Do NOT use original uncropped. Do NOT add black bars or letterboxing.
-Do NOT leave transparent or missing background.
+FRAMING NOTE: The presenter avatar has been corrected for {target} orientation. Compose all scenes in {target} format.
 ```
 
-### Background Correction (studio_avatar only, no background)
+#### Background Correction (studio_avatar only, no background)
 
-**Not for photo_avatar.** Append to prompt:
+**Not for photo_avatar.** Same process as framing correction:
+1. Download preview image
+2. **Use AI Image tool** to generate an appropriate background
+   - Business: real studio/office/podcast set. Casual: real room with natural light.
+   - Correct lighting, natural shadows, shallow depth-of-field
+3. Upload → create new look → poll → use new avatar_id
+4. Append to prompt:
 ```
-BACKGROUND NOTE: This studio avatar has no background. YOU MUST use AI Image tool
-to generate a HYPER PHOTO-REALISTIC background (real photography, not CGI/stock).
-Business: real studio/office/podcast set. Casual: real room with natural light.
-Correct lighting, natural shadows, shallow depth-of-field. Do NOT leave any
-transparent, solid-color, or gradient background.
+BACKGROUND NOTE: The presenter avatar has a professionally generated background. Maintain visual consistency across scenes.
 ```
 
 ---
