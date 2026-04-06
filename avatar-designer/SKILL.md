@@ -188,7 +188,7 @@ Find matching voices via semantic search using the Voice section from the AVATAR
 POST https://api.heygen.com/v3/voices
 {
   "prompt": "<built from AVATAR Voice section: tone, accent, energy, personality>",
-  "seed": 1
+  "seed": 0
 }
 ```
 

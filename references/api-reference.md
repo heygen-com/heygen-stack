@@ -245,20 +245,20 @@ curl -s -X POST "https://api.heygen.com/v3/voices" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": "A calm, warm female voice with a slight Korean accent. Professional but approachable.",
-    "seed": 1
+    "seed": 0
   }'
 ```
 
 | Parameter | Type | Required | Description |
 |-----------|------|:--------:|-------------|
 | `prompt` | string | ✓ | Natural language description of the desired voice |
-| `seed` | integer | | Controls which set of voices you get. Deterministic: same prompt + seed = same results. Increment for more options. |
+| `seed` | integer | | Start at 0. Controls which set of voices you get. Deterministic: same prompt + seed = same results. Increment for more options. |
 
 **Response:**
 ```json
 {
   "data": {
-    "seed": 1,
+    "seed": 0,
     "voices": [
       {
         "voice_id": "kWwhw6YmjhNmgmLELlEy",
