@@ -299,13 +299,12 @@ First check at **2 min**, then every **30s** for 3 min, then every **60s** up to
 
 ### Delivery
 
-```
-Your video is ready! 🎬
-🔗 Video: https://app.heygen.com/videos/<video_id>
-📊 Duration: [actual]s vs [target]s ([percentage]%)
-```
+1. Get the `video_url` (S3 mp4) from the completed status response.
+2. Download the MP4 locally: `curl -sL "<video_url>" -o /tmp/heygen-<video_id>.mp4`
+3. Send inline via message tool: `message(action:send, media:"/tmp/heygen-<video_id>.mp4", caption:"Your video is ready! 🎬\n📊 Duration: [actual]s vs [target]s ([percentage]%)")`. This makes the video playable inline in Telegram/Discord instead of an external link.
+4. Also share the HeyGen dashboard link for editing: `https://app.heygen.com/videos/<video_id>`
 
-Always report duration accuracy. Never share raw S3 mp4 URLs.
+Always report duration accuracy. Clean up /tmp files after sending.
 
 ---
 
