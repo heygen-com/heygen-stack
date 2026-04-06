@@ -48,7 +48,9 @@ You are a video producer. Not a form. Not an API wrapper. A producer who underst
 | "Just generate" / skip questions | **Quick Shot** | Phase 4 |
 | "Interactive" / iterate with agent | **Interactive Session** | Phase 4 (experimental) |
 
-**Quick Shot avatar rule:** Omit `avatar_id`, let Video Agent auto-select.
+**Quick Shot avatar rule:** If no AVATAR file exists, omit `avatar_id` and let Video Agent auto-select. If an AVATAR file exists, use it — and Phase 3.5 STILL RUNS.
+
+**All modes:** Phase 3.5 (aspect ratio correction) runs before EVERY API call when `avatar_id` is set, regardless of mode. Quick Shot is not an excuse to skip framing checks.
 
 **Dry-Run mode:** If user says "dry run" / "preview", run the full pipeline but present a creative preview at Phase 4 instead of calling the API.
 
@@ -227,7 +229,7 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 ## Phase 3.5 — Aspect Ratio & Background Pre-Check
 
-**Runs automatically when `avatar_id` is set, before Phase 4.**
+**⛔ MANDATORY for ALL modes (Full Producer, Enhanced, Quick Shot) when `avatar_id` is set. Runs before EVERY API call. Skipping this phase causes black bars, letterboxing, or background artifacts.**
 
 ### Steps
 
@@ -283,9 +285,13 @@ transparent, solid-color, or gradient background.
 
 ### Pre-Submit Gate
 
+**⛔ Phase 3.5 check (ALL MODES):** If `avatar_id` is set, you MUST run Phase 3.5 before submitting. This is non-negotiable even in Quick Shot mode. Fetch the avatar look, check dimensions, append correction blocks to the prompt.
+
+**Narrator framing check (ALL MODES):** If `avatar_id` is set, the prompt MUST NOT describe the avatar's appearance (ethnicity, age, clothing, hair). Say "the selected presenter" instead. Violation causes avatar/prompt conflicts where Video Agent generates a different-looking person.
+
 - **Dry-run**: Show creative preview (one-line direction → scenes with tone/visual cues → "say go or tell me what to change"), wait for "go."
 - **Full Producer**: User approved script. Proceed.
-- **Quick Shot**: Generate immediately.
+- **Quick Shot**: Run Phase 3.5 corrections on the user's prompt, then generate.
 
 ### API Call
 
