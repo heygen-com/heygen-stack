@@ -48,6 +48,22 @@ Default to Full Producer. Better to ask one smart question than generate a medio
 
 ---
 
+## Phase 0 — First-Run Avatar Check
+
+**Runs once before Phase 1 on the first video request in a session.**
+
+Check for any `AVATAR-*.md` files in the workspace root.
+
+- **Found:** Read the file, extract `Avatar ID` and `Voice ID` from the HeyGen section. Pre-load as defaults for Phase 1.
+- **Not found:** The user (or agent) has no avatar yet. Before proceeding to video creation, run the **avatar-designer** skill (`avatar-designer/SKILL.md` in this repo) to create one. Say:
+  > "Before we make your first video, let's set up your avatar so you have a consistent look across all your videos. This takes about a minute."
+  
+  After avatar-designer completes and writes the AVATAR file, return here and continue to Phase 1 with the new avatar pre-loaded.
+
+- **Quick Shot exception:** If the user explicitly says "skip avatar" / "use stock" / "just generate", skip this phase and proceed without an avatar.
+
+---
+
 ## Phase 1 — Discovery
 
 Interview the user. Be conversational, skip anything already answered.
