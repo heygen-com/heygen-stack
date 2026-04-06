@@ -96,7 +96,11 @@ If no AVATAR file exists: proceed to Phase 1.
 **For users/named characters:** Conversational onboarding. Ask naturally, not as a form:
 - "What do you look like? Age, hair, general vibe?"
 - "How would you describe your voice? Calm? Energetic? Any accent?"
-- "Any reference photo I can work from?"
+- "Do you have a reference photo? A headshot or clear photo of yourself gives the best results. Without one, I'll generate your look from your description — it'll capture the vibe but won't be an exact likeness."
+
+Be upfront about the two paths:
+- **With reference photo** → photo avatar, most faithful likeness. Best outcome.
+- **Without photo** → prompt-based avatar from identity description. Captures style/vibe but results vary. May take a few iterations to get right.
 
 Write `AVATAR-<NAME>.md` with the Appearance and Voice sections filled in. Leave HeyGen section empty.
 
@@ -164,6 +168,29 @@ Typical wait: 30-90 seconds for photo avatars, 1-3 minutes for prompt avatars. T
 
 **Do NOT proceed to video generation or voice selection until this check passes.** Videos submitted with an unready avatar will fail.
 
+### Phase 2b — Look Approval
+
+Once the avatar is ready (preview URL available), show it to the user for approval:
+
+1. Fetch the preview: `GET /v3/avatars/looks?group_id=<group_id>` → use `preview_image_url`
+2. Display the preview image to the user
+3. Ask:
+   > "Here's your avatar. What do you think?"
+   > • **Looks good** → proceed to Phase 3 (voice)
+   > • **Adjust** [describe what to change] → create a new look under the same group (Mode 2) with an updated prompt, then poll + show again
+   > • **Start over** → create a new character group (Mode 1) with a revised prompt
+
+**This is a loop.** Keep iterating until the user approves. Each "adjust" creates a new look within the same group (cheap, keeps history). Only "start over" creates a new group.
+
+For prompt-based avatars, expect 1–3 iterations. Coach the user:
+> "Prompt-based avatars take some back and forth. Tell me what's off and I'll refine it."
+
+For photo avatars, usually 1 iteration is enough. If the user wants a different crop/pose, create a new look with different `orientation` or `pose` settings.
+
+**Do NOT skip this step.** Never proceed to voice selection without user approval of the look.
+
+---
+
 Map identity fields to HeyGen enums for the prompt:
 - **age**: Young Adult | Early Middle Age | Late Middle Age | Senior | Unspecified
 - **gender**: Man | Woman | Unspecified
@@ -223,9 +250,12 @@ POST https://api.heygen.com/v3/video-agents
 
 ## Iteration Flow
 
-When the user wants to refine:
+Iteration happens in two places:
 
-- **"Adjust the prompt"** → Mode 2 with existing group_id (keeps the character, adds a new look). Only Mode 1 if they say "start completely over."
+**During creation (Phase 2b loop):** User sees preview → adjusts → new look created → preview again. This is the primary iteration path. Most users settle in 1-3 rounds.
+
+**After creation (returning user):**
+- **"Adjust the look"** / **"try a different style"** → Mode 2 with existing group_id (adds a new look). Re-enter Phase 2b approval loop.
 - **"Add a new look"** / **"different outfit"** / **"landscape version"** → Mode 2 with existing group_id. Add to Looks in AVATAR file.
 - **"Try a different voice"** → back to Phase 3
 - **"Start completely over"** → Mode 1, new character. Overwrite HeyGen section.
