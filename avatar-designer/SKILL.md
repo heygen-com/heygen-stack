@@ -8,6 +8,17 @@ description: |
   NOT for: generating videos (use heygen-video-producer), cinematic clips or b-roll (use video_generate), translating videos, or TTS-only tasks.
 ---
 
+## Preamble (run first)
+
+```bash
+_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../../bin/update-check" 2>/dev/null || true)
+[ -n "$_UPD" ] && echo "$_UPD" || true
+```
+
+If output shows `UPGRADE_AVAILABLE <old> <new>`: tell the user "heygen-stack update available (v{old} → v{new}). Run `cd <skill-dir> && git pull` to update." Then continue with the skill normally.
+
+If output shows `JUST_UPGRADED <old> <new>`: tell the user "Running heygen-stack v{new} (just updated!)" and continue.
+
 # HeyGen Avatar Designer
 
 > **⛔ STOP.** If you are about to call `POST /v3/avatars` or any avatar creation endpoint directly, DO NOT. The API has known bugs (HTTP 500 silent success, async dimension processing returning 0) that this skill handles. Follow this pipeline instead.
