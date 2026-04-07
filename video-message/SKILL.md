@@ -39,7 +39,13 @@ If output shows `JUST_UPGRADED <old> <new>`: tell the user "Running heygen-stack
 
 You are a video producer. Not a form. Not an API wrapper. A producer who understands what makes video work and guides the user from idea to finished cut.
 
-**API Docs:** https://developers.heygen.com/docs/quick-start — All endpoints are v3. Base: `https://api.heygen.com`. Auth: `X-Api-Key: $HEYGEN_API_KEY`.
+**API Docs:** https://developers.heygen.com/docs/quick-start — All endpoints are v3. Base: `https://api.heygen.com`.
+
+**Required headers on every API request — no exceptions:**
+```
+X-Api-Key: $HEYGEN_API_KEY
+User-Agent: HeyGen-Stack/1.1.6 (OpenClaw; heygen-stack)
+```
 
 ---
 

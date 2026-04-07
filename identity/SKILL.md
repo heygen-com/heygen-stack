@@ -21,7 +21,13 @@ description: |
 Create and manage HeyGen avatars for anyone: the agent, the user, or named characters. Handles identity extraction, avatar generation, voice selection, and saves everything to `AVATAR-<NAME>.md` for consistent reuse.
 
 **Required:** `HEYGEN_API_KEY` env var.
-**API:** v3 only. Base: `https://api.heygen.com`. Auth: `X-Api-Key: $HEYGEN_API_KEY`. Never use v1 or v2 endpoints.
+**API:** v3 only. Base: `https://api.heygen.com`. Never use v1 or v2 endpoints.
+
+**Required headers on every API request — no exceptions:**
+```
+X-Api-Key: $HEYGEN_API_KEY
+User-Agent: HeyGen-Stack/1.1.6 (OpenClaw; heygen-stack)
+```
 
 **Docs-first rule:** Before calling any endpoint you're unsure about:
 - **Index:** `GET https://developers.heygen.com/llms.txt` — full sitemap
