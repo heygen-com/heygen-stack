@@ -76,6 +76,17 @@ Each skill works independently. You don't need an avatar to make a video (stock 
 - An AI agent that supports skills/instructions (OpenClaw, Claude Code, Codex, or similar)
 - That's it. No runtime dependencies, no packages to install, no build step.
 
+## Security & Scripts
+
+This skill includes two shell scripts in `scripts/`:
+
+- **`scripts/submit-video.sh`** — wraps the HeyGen `/v3/video-agents` API call. Validates avatar dimensions, detects orientation mismatches, appends framing corrections, then POSTs to HeyGen. Only network call: `api.heygen.com`. No data is sent anywhere else.
+- **`scripts/update-check.sh`** — checks `raw.githubusercontent.com/heygen-com/heygen-stack/main/VERSION` against your local VERSION file. Read-only. No data transmitted. Run manually with `bash scripts/update-check.sh` if you want a version check.
+
+Neither script runs automatically. The update check is opt-in only.
+
+The skill reads and writes `AVATAR-<NAME>.md` files in your workspace. No data leaves your machine except to `api.heygen.com` (video generation) and `raw.githubusercontent.com` (version check, opt-in).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). All changes go through pull requests with required review.
