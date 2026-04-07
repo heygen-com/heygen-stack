@@ -1,4 +1,4 @@
-# Contributing to heygen-video-producer
+# Contributing to heygen-stack
 
 ## Git Workflow
 

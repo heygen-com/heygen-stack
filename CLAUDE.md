@@ -2,7 +2,7 @@
 
 ## What This Is
 
-The HeyGen Skill Stack. Two skills that chain together: **avatar-designer** (identity → avatar → voice) and **video-producer** (idea → script → video). SKILL.md at root routes between them.
+The HeyGen Skill Stack. Two skills that chain together: **heygen-identity** (identity → avatar → voice) and **heygen-video-message** (idea → script → video). SKILL.md at root routes between them.
 
 ## Architecture
 
@@ -14,9 +14,9 @@ heygen-stack/
 ├── README.md                   # Public-facing description
 ├── CONTRIBUTING.md             # PR workflow
 ├── LICENSE
-├── avatar-designer/
+├── identity/
 │   └── SKILL.md                # Avatar creation workflow (identity → avatar → voice → AVATAR file)
-├── video-producer/
+├── video-message/
 │   └── SKILL.md                # Video production workflow (7-stage pipeline)
 ├── references/                 # Shared. Loaded on-demand by phase (NOT every turn)
 │   ├── avatar-discovery.md     # Discovery: avatar lookup, voice selection, curl examples
@@ -58,8 +58,8 @@ Each SKILL.md must stay under 300 lines. Skill files are injected into EVERY pro
 ## Shared State
 
 Skills communicate through `AVATAR-<NAME>.md` files at the workspace root:
-- avatar-designer writes them (avatar_id, group_id, voice_id)
-- video-producer reads them (picks up avatar + voice automatically)
+- heygen-identity writes them (avatar_id, group_id, voice_id)
+- heygen-video-message reads them (picks up avatar + voice automatically)
 - One file per character. Human-readable AND machine-readable.
 
 ## API Conventions

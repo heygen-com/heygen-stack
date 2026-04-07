@@ -1,5 +1,5 @@
 ---
-name: heygen-video-producer
+name: heygen-video-message
 description: |
   Create a video featuring a human presenter — your avatar, a team member, or a named character —
   delivering a message. Built for identity-first and messaging-first video use cases.
@@ -7,7 +7,7 @@ description: |
   (2) creating a presenter-led explainer, tutorial, or product demo with a human face on screen,
   (3) "make a video of me saying...", "send a video to my leads", "record an update for my team",
   "create a video pitch", "make a loom-style message", "I want to appear in this video".
-  Accepts avatar_id from heygen-avatar-designer for identity-first videos, or uses a stock presenter.
+  Accepts avatar_id from heygen-identity for identity-first videos, or uses a stock presenter.
   Returns video share URL + session URL for iteration.
   Encodes 22 eval rounds and 80+ videos of production knowledge to prevent common failures.
   NOT for: cinematic footage or b-roll without a presenter, translating videos, TTS-only, or streaming avatars.
@@ -81,10 +81,10 @@ Default to Full Producer. Better to ask one smart question than generate a medio
 Check for any `AVATAR-*.md` files in the workspace root.
 
 - **Found:** Read the file, extract `Avatar ID` and `Voice ID` from the HeyGen section. Pre-load as defaults for Discovery.
-- **Not found:** The user (or agent) has no avatar yet. Before proceeding to video creation, run the **avatar-designer** skill (`avatar-designer/SKILL.md` in this repo) to create one. Say:
+- **Not found:** The user (or agent) has no avatar yet. Before proceeding to video creation, run the **heygen-identity** skill (`identity/SKILL.md` in this repo) to create one. Say:
   > "Before we make your first video, let's set up your avatar so you have a consistent look across all your videos. This takes about a minute."
   
-  After avatar-designer completes and writes the AVATAR file, return here and continue to Discovery with the new avatar pre-loaded.
+  After heygen-identity completes and writes the AVATAR file, return here and continue to Discovery with the new avatar pre-loaded.
 
 - **⛔ Avatar readiness gate (BLOCKING):** After loading an avatar (whether from an existing AVATAR file or freshly created), verify it's ready before using it in video generation. Call `GET /v3/avatars/looks?group_id=<group_id>` and confirm `preview_image_url` is non-null. If null, poll every 10s up to 5 min. **Do NOT proceed to Discovery until this check passes.** Videos submitted with an unready avatar WILL fail silently.
 
@@ -365,7 +365,7 @@ Your video is ready! 🎬
 
 ### Self-Evaluation Log
 
-After EVERY generation, append to `heygen-video-producer-log.jsonl`:
+After EVERY generation, append to `heygen-video-message-log.jsonl`:
 
 ```json
 {"timestamp":"ISO-8601","video_id":"...","session_id":"...","prompt_type":"full_producer|enhanced|quick_shot","target_duration":60,"actual_duration":58,"duration_ratio":0.97,"avatar_id":"...","voice_id":"...","style_id":"...","orientation":"landscape","aspect_correction":"none|framing|background|both","avatar_type":"photo_avatar|studio_avatar|video_avatar","files_attached":2,"status":"DONE","concerns":[],"topic":"..."}

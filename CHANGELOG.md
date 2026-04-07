@@ -2,7 +2,7 @@
 
 ## v1.1.0 (2026-04-06)
 
-### heygen-video-producer
+### heygen-video-message
 - Prompt-only Frame Check architecture (no external image generation, preserves face identity)
 - submit-video.sh wrapper enforces aspect ratio checks before every API call
 - Phase naming overhaul: action verbs replace numbered phases (Discovery, Script, Prompt Craft, Frame Check, Generate, Deliver)
@@ -12,7 +12,7 @@
 - Inline MP4 delivery (downloads video, sends as media attachment)
 - Hard gates at all user decision points
 
-### heygen-avatar-designer
+### heygen-identity
 - Voice Design endpoint (POST /v3/voices) with semantic search, seed pagination
 - Reference photo nudge on first-time avatar creation
 - Inline audio previews for voice selection
