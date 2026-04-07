@@ -19,7 +19,7 @@ metadata:
 ## Preamble (run first)
 
 ```bash
-_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../bin/update-check" 2>/dev/null || true)
+_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../scripts/update-check.sh" 2>/dev/null || true)
 [ -n "$_UPD" ] && echo "$_UPD" || true
 ```
 
