@@ -9,7 +9,12 @@ description: |
   "create a video pitch", "make a loom-style message", "I want to appear in this video".
   Accepts avatar_id from heygen-avatar-designer for identity-first videos, or uses a stock presenter.
   Returns video share URL + session URL for iteration.
-  NOT for: cinematic footage or b-roll without a presenter, translating videos, TTS-only, or streaming avatars.
+  Chain signal: when the user wants to create/design an avatar AND make a video in the same request,
+  run heygen-avatar-designer first, then return here. Conjunctions to watch: "and then", "and immediately",
+  "first...then", "X and make a video", "design [presenter] and record" = always CHAIN.
+  If the user provides a photo AND wants a video, route to heygen-avatar-designer first.
+  NOT for: avatar creation or identity setup (use heygen-avatar-designer first), cinematic footage
+  or b-roll without a presenter, translating videos, TTS-only, or streaming avatars.
 homepage: https://developers.heygen.com/docs/quick-start
 metadata:
   openclaw:
