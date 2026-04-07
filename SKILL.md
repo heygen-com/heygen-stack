@@ -20,17 +20,6 @@ metadata:
     primaryEnv: HEYGEN_API_KEY
 ---
 
-## Preamble (run first)
-
-```bash
-_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../scripts/update-check.sh" 2>/dev/null || true)
-[ -n "$_UPD" ] && echo "$_UPD" || true
-```
-
-If output shows `UPGRADE_AVAILABLE <old> <new>`: tell the user "heygen-stack update available (v{old} → v{new}). Run `cd <skill-dir> && git pull` to update." Then continue with the skill normally.
-
-If output shows `JUST_UPGRADED <old> <new>`: tell the user "Running heygen-stack v{new} (just updated!)" and continue.
-
 # HeyGen Video Producer
 
 > **⛔ STOP.** If you are about to call any HeyGen endpoint directly (`/v3/video-agents`, `/v2/video/generate`, or any video creation API), DO NOT. Follow this pipeline instead. Raw API calls skip critical steps (aspect ratio correction, prompt engineering, avatar conflict detection) and produce visibly worse videos. This skill exists because the API alone is not enough.
