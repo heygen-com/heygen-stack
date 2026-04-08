@@ -263,7 +263,8 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 3. **Square avatar handling:** If avatar is square (1:1), it NEVER matches landscape or portrait. Always needs correction.
 4. **Detect avatar visual style:** Examine preview image → classify as photorealistic, animated, 3D rendered, or stylized. Determines fill language in correction templates.
 5. **Determine background:** `photo_avatar` → no standalone bg correction needed. `studio_avatar` → check if transparent/solid/empty. `video_avatar` → always has background.
-6. **Build correction note(s)** from the matrix below. Append to the Video Agent prompt text verbatim.
+6. **Build correction note(s)** from the matrix below. Before appending:
+   ⚠️ REQUIRED SUBSTITUTION: Replace `{FILL_DIRECTIVE}` with the exact fill directive text from Step 2.5 for the detected `avatar_visual_style`, unless instructed otherwise by the user. Do NOT use photorealistic fill language for animated, 3D, or stylized avatars. The fill must match the avatar's art style. If you output `{FILL_DIRECTIVE}` literally or paste the photorealistic default for a non-photorealistic avatar, that is a bug.
 7. **Submit with the ORIGINAL `avatar_id`.** Video Agent's internal AI Image tool handles the framing/background corrections based on the FRAMING NOTE and BACKGROUND NOTE directives.
 
 **⚠️ Do NOT generate corrected images externally, upload new assets, or create new avatar looks for framing corrections. Video Agent's AI Image tool preserves the avatar's face identity. External image generation destroys it.**
