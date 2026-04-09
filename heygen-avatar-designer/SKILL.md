@@ -176,12 +176,12 @@ Two creation types:
 {
   "type": "prompt",
   "name": "<name>",
-  "prompt": "<appearance prompt, MAX 200 chars — trim aggressively if needed>",
+  "prompt": "<appearance prompt, max 1000 chars>",
   "avatar_group_id": "<optional — Mode 2 only>"
 }
 ```
 
-⚠️ **200 character hard limit on `prompt`.** Count before sending. Good: `"Small round penguin, ruffled black/white feathers, expressive eyes, tiny orange feet, Pixar style, warm lighting"` (115 chars). Bad: a long descriptive sentence that exceeds 200 chars — API returns `invalid_parameter`.
+Prompt limit is 1000 characters. Be descriptive — include style, features, expression, lighting. The API spec says 200 but the actual enforced limit is 1000.
 
 **Type B — From reference image:**
 ```json
