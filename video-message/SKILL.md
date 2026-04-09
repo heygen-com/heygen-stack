@@ -222,6 +222,16 @@ YouTube/web/LinkedIn → `"landscape"` | TikTok/Reels/Shorts → `"portrait"` | 
 
 **Runs automatically when `avatar_id` is set, before Generate.**
 
+> ⛔ **SUBAGENT RULE — READ THIS FIRST:**
+> Frame Check MUST run in the **main session**. Do NOT delegate it to a subagent.
+> Subagents do not have access to the SKILL.md, cannot execute curl commands against the HeyGen API
+> in the right context, and cannot build a corrected prompt reliably.
+> The correct pattern:
+> 1. Run ALL Frame Check steps yourself in the main session (look resolution → dimensions → style detection → correction notes)
+> 2. Build the **complete, corrected prompt string** with any FRAMING NOTE / BACKGROUND NOTE already embedded
+> 3. THEN spawn a subagent with the finished payload — subagent only submits, polls, and delivers
+> A subagent that modifies or builds the prompt itself is a bug.
+
 ### Avatar ID Resolution (ALWAYS run first)
 
 **Never trust a stored `look_id` — looks are ephemeral and get deleted.** Always resolve fresh from the `group_id`:
@@ -312,10 +322,42 @@ Do NOT leave any transparent, solid-color, or gradient background.
 
 📖 **Full request/response schemas, interactive sessions, webhooks → [../references/api-reference.md](../references/api-reference.md)**
 
-**Step 1: Run Frame Check (if `avatar_id` set)**
+**Step 1: Run Frame Check (if `avatar_id` set) — MAIN SESSION ONLY**
 Before calling the API, run the Frame Check steps above. Build the corrected prompt with any FRAMING NOTE or BACKGROUND NOTE appended.
 
-**Step 2: Submit to `POST /v3/video-agents`**
+> ⛔ **Do NOT proceed to Step 2 until Frame Check is complete in the current (main) session.**
+> If you are inside a subagent: stop, report back to the main session with the avatar details, and let the main session run Frame Check before re-spawning you with the corrected payload.
+
+**Step 2: Build the complete payload object in main session**
+Before spawning any subagent, assemble the full request payload as a JSON object:
+```json
+{
+  "prompt": "<corrected prompt — Frame Check notes already embedded>",
+  "avatar_id": "<look_id resolved from group_id>",
+  "voice_id": "<confirmed voice_id>",
+  "style_id": "<optional>",
+  "orientation": "landscape",
+  "files": []
+}
+```
+This payload is the handoff to any subagent. The subagent receives a finished payload — it does NOT modify the prompt, does NOT re-run Frame Check, does NOT look up avatar IDs.
+
+**Step 3: Subagent spawn pattern (for batch or non-blocking generation)**
+
+When generating multiple videos or wanting non-blocking polling, spawn one subagent per video with the finished payload:
+```
+Spawn subagent task:
+"Submit this exact payload to POST https://api.heygen.com/v3/video-agents with headers
+ X-Api-Key, User-Agent, X-HeyGen-Source. Do not modify the payload.
+ Poll GET /v3/videos/<video_id> every 30s until status=completed.
+ Download the MP4 and deliver via message tool.
+ Payload: <paste completed JSON here>"
+```
+Subagents are for **submit + poll + deliver only**. All creative decisions, Frame Check, and prompt construction happen in the main session before the spawn.
+
+> ⛔ **BATCH RULE:** When generating N videos in parallel, spawn N subagents — one per video with its own finished payload. Do NOT spawn one subagent with N videos to handle. Each subagent should be a simple courier: one payload → one video → one delivery.
+
+**Step 4: Submit to `POST /v3/video-agents`**
 ```bash
 curl -sX POST "https://api.heygen.com/v3/video-agents" \
   -H "X-Api-Key: $HEYGEN_API_KEY" \
