@@ -29,7 +29,11 @@ Try to read `SOUL.md` from the workspace root.
 - **Found** → OpenClaw environment. Skip this section entirely and go straight to Phase 0.
 - **Not found** → Claude Code environment. Say this before anything else:
 
-> "Quick shortcut: if you have a **Claude Buddy** (the terminal pet you named when you set up Claude Code), I can build your avatar from that — personality, appearance, and voice are already mapped from your buddy's species. Just tell me your buddy's species, or say 'skip' and I'll ask a few quick questions."
+> "Quick shortcut: if you have a **Claude Buddy** (the terminal pet you named when you set up Claude Code), I can build your avatar from that — personality, appearance, and voice are already mapped from your buddy's species.
+>
+> Run `/buddy` in your terminal to see your buddy's card, then paste the species name here. Or say **'skip'** and I'll ask a few quick questions to design your avatar from scratch.
+>
+> *(On OpenClaw? Drop a `SOUL.md` or `IDENTITY.md` in your workspace root and I'll extract your identity automatically next time.)*"
 
 Wait for their answer before proceeding.
 
