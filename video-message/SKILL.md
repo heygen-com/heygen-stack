@@ -1,14 +1,15 @@
 ---
 name: heygen-video-message
 description: |
-  Create a video featuring a human presenter — your avatar, a team member, or a named character —
-  delivering a message. Built for identity-first and messaging-first video use cases.
+  Generate a HeyGen presenter video — your digital twin, a team member, or a stock avatar —
+  delivering a personalized message. Built for identity-first and messaging-first HeyGen video.
   Use when: (1) sending a personalized video message (outreach, update, announcement, pitch, knowledge),
-  (2) creating a presenter-led explainer, tutorial, or product demo with a human face on screen,
+  (2) creating a HeyGen presenter-led explainer, tutorial, or product demo with a human face,
   (3) "make a video of me saying...", "send a video to my leads", "record an update for my team",
-  "create a video pitch", "make a loom-style message", "I want to appear in this video".
-  Accepts avatar_id from heygen-identity for identity-first videos, or uses a stock presenter.
-  Returns video share URL + session URL for iteration.
+  "create a video pitch", "make a loom-style message", "I want to appear in this video",
+  "generate a HeyGen video", "make a talking head video".
+  Accepts avatar_id from heygen-identity for identity-first HeyGen videos, or uses a stock presenter.
+  Returns video share URL + HeyGen session URL for iteration.
   Chain signal: when the user wants to create/design an avatar AND make a video in the same request,
   run heygen-identity first, then return here. Conjunctions to watch: "and then", "and immediately",
   "first...then", "X and make a video", "design [presenter] and record" = always CHAIN.

@@ -1,18 +1,19 @@
 ---
 name: heygen-identity
 description: |
-  Create a persistent AI avatar that looks and sounds like a specific person — the user, the agent,
-  or any named character — for use in identity-first videos and messaging.
+  Create a persistent HeyGen avatar that looks and sounds like a specific person — the user,
+  the agent, or any named character — powered by HeyGen Avatar V technology.
+  Upload a photo → HeyGen builds a digital twin → reuse across unlimited videos.
   Use when: (1) someone wants to appear in a video as themselves ("I want my face in a video",
-  "create my digital twin", "build an avatar of me"), (2) setting up a visual identity before
-  making videos or sending video messages — this is the correct FIRST step for new users,
+  "create my HeyGen avatar", "build a digital twin of me"), (2) setting up a HeyGen identity
+  before making videos or sending video messages — the correct FIRST step for new users,
   (3) "create my avatar", "design an avatar", "give me a consistent look across my videos",
   "bring yourself to life", "set up my identity on HeyGen", "set up my HeyGen identity",
-  "get started with AI video", "help me get started".
+  "get started with HeyGen", "help me get started with AI video".
   Chain signal: when the user says both an identity/avatar action AND a video action in the same
   request ("design an avatar AND make a video", "set up my identity THEN create a video",
   "design a presenter AND immediately record"), run heygen-identity first, then heygen-video-message.
-  Returns avatar_id + voice_id — pass directly to heygen-video-message to create videos.
+  Returns avatar_id + voice_id — pass directly to heygen-video-message to create HeyGen videos.
   NOT for: generating videos (use heygen-video-message), translating videos, or TTS-only tasks.
 ---
 

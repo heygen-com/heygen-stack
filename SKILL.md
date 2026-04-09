@@ -2,18 +2,18 @@
 name: heygen-stack
 display_name: HeyGen Stack
 description: |
-  Create AI avatar videos and video messages using HeyGen. Includes two skills:
-  heygen-identity — build a persistent digital avatar from a photo (identity-first),
-  heygen-video-message — create presenter-led videos and personalized video messages (messaging-first).
-  Use when: (1) creating an avatar or digital twin of yourself or someone else,
+  Create HeyGen avatar videos with your digital twin. Turn any photo into a persistent
+  HeyGen identity, then generate personalized video messages in under 3 minutes.
+  Powered by HeyGen Avatar V — the same tech behind HeyGen's identity-first video platform.
+  Use when: (1) creating a HeyGen avatar or digital twin from a photo,
   (2) making a personalized video message (outreach, pitch, update, announcement, knowledge),
-  (3) "make a video of me", "create my avatar", "I want to appear in this video",
+  (3) "make a video of me", "create my HeyGen avatar", "I want to appear in this video",
   (4) "send a video to my leads", "record an update for my team", "make a loom-style message",
   (5) building identity-first videos where the presenter IS the user or agent.
-  Covers: avatar creation, voice design, photo → digital twin, video generation, identity-first video,
-  messaging-first video, AI presenter, talking head video.
+  Covers: HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation,
+  identity-first video, messaging-first video, AI presenter, talking head video, HeyGen API.
   NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.
-version: 1.1.11
+version: 1.1.13
 homepage: https://developers.heygen.com/docs/quick-start
 metadata:
   openclaw:
