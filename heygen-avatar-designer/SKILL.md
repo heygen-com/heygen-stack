@@ -171,15 +171,17 @@ Adds a variation to an existing character. Read the Group ID from the AVATAR fil
 
 Two creation types:
 
-**Type A — From prompt:**
+**Type A — From prompt (AI-generated appearance):**
 ```json
 {
   "type": "prompt",
   "name": "<name>",
-  "prompt": "<appearance prompt built from AVATAR file>",
+  "prompt": "<appearance prompt, MAX 200 chars — trim aggressively if needed>",
   "avatar_group_id": "<optional — Mode 2 only>"
 }
 ```
+
+⚠️ **200 character hard limit on `prompt`.** Count before sending. Good: `"Small round penguin, ruffled black/white feathers, expressive eyes, tiny orange feet, Pixar style, warm lighting"` (115 chars). Bad: a long descriptive sentence that exceeds 200 chars — API returns `invalid_parameter`.
 
 **Type B — From reference image:**
 ```json
