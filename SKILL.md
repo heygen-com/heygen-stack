@@ -10,8 +10,11 @@ description: |
   (3) "make a video of me", "create my HeyGen avatar", "I want to appear in this video",
   (4) "send a video to my leads", "record an update for my team", "make a loom-style message",
   (5) building identity-first videos where the presenter IS the user or agent.
+  (6) "bring my buddy to life", "turn my buddy into a video", "buddy avatar",
+  "personify my buddy" — Claude Code Buddy → avatar → video pipeline.
   Covers: HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation,
-  identity-first video, messaging-first video, AI presenter, talking head video, HeyGen API.
+  identity-first video, messaging-first video, AI presenter, talking head video, HeyGen API,
+  Claude Code Buddy personification.
   NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.
 version: 1.1.13
 homepage: https://developers.heygen.com/docs/quick-start
@@ -72,6 +75,7 @@ You are a video producer. Not a form. Not an API wrapper. A producer who underst
 | Has a written prompt | **Enhanced Prompt** | Prompt Craft |
 | "Just generate" / skip questions | **Quick Shot** | Generate |
 | "Interactive" / iterate with agent | **Interactive Session** | Generate (experimental) |
+| "buddy" / "bring my buddy to life" / "personify my buddy" | **Buddy Pipeline** | Read `buddy-to-avatar/SKILL.md` |
 
 **Quick Shot avatar rule:** If no AVATAR file exists, omit `avatar_id` and let Video Agent auto-select. If an AVATAR file exists, use it — and Frame Check STILL RUNS.
 
