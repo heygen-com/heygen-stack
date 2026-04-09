@@ -22,10 +22,6 @@ git clone https://github.com/heygen-com/heygen-stack.git ~/.claude/skills/heygen
 
 ## First Run
 
-### OpenClaw
+Paste this prompt to your agent (works on OpenClaw and Claude Code):
 
-> My HeyGen API key is `[HEYGEN_API_KEY]`. Save it to your persistent environment config and validate it works by calling `GET https://api.heygen.com/v3/user/me` with header `X-Api-Key`. Then use the heygen-avatar-designer skill to create an avatar for yourself and use heygen-video-producer to make a video introducing yourself, 30-60 seconds, casual tone.
-
-### Claude Code
-
-> My HeyGen API key is `[HEYGEN_API_KEY]`. Use it as HEYGEN_API_KEY for all HeyGen API calls — do not store it anywhere, just use it in this session. Validate it works by calling `GET https://api.heygen.com/v3/user/me` with header `X-Api-Key`. Then use the heygen-avatar-designer skill to create an avatar for yourself, and use heygen-video-producer to make a video introducing yourself, 30-60 seconds, casual tone.
+> My HeyGen API key is `[HEYGEN_API_KEY]`. Store it as HEYGEN_API_KEY in your environment config if supported, otherwise use it directly in this session. Validate it works by calling `GET https://api.heygen.com/v3/user/me` with header `X-Api-Key`. Then use the heygen-avatar-designer skill to create an avatar for yourself, and use heygen-video-producer to make a video introducing yourself, 30-60 seconds, casual tone.
