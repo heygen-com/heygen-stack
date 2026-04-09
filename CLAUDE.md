@@ -2,7 +2,7 @@
 
 ## What This Is
 
-The HeyGen Skill Stack. Two skills that chain together: **heygen-avatar-designer** (identity → avatar → voice) and **heygen-video-producer** (idea → script → video). SKILL.md at root routes between them.
+The HeyGen Skill Stack. Three skills that chain together: **heygen-avatar-designer** (identity → avatar → voice), **heygen-video-producer** (idea → script → video), and **buddy-to-avatar** (Claude Code Buddy → personified avatar → intro video). SKILL.md at root routes between them.
 
 ## Architecture
 
@@ -14,10 +14,12 @@ heygen-stack/
 ├── README.md                   # Public-facing description
 ├── CONTRIBUTING.md             # PR workflow
 ├── LICENSE
-├── identity/
+├── heygen-avatar-designer/
 │   └── SKILL.md                # Avatar creation workflow (identity → avatar → voice → AVATAR file)
-├── video-message/
+├── heygen-video-producer/
 │   └── SKILL.md                # Video production workflow (7-stage pipeline)
+├── buddy-to-avatar/
+│   └── SKILL.md                # Claude Code Buddy → avatar → intro video chain
 ├── references/                 # Shared. Loaded on-demand by phase (NOT every turn)
 │   ├── avatar-discovery.md     # Discovery: avatar lookup, voice selection, curl examples
 │   ├── asset-routing.md        # Discovery: asset classification engine, upload flows
@@ -28,7 +30,8 @@ heygen-stack/
 │   ├── frame-check.md          # Frame Check: aspect ratio correction prompts + style detection
 │   ├── api-reference.md        # Generate: endpoints, polling, interactive sessions, errors
 │   ├── troubleshooting.md      # Known issues, workarounds, duration variance
-│   └── reviewer-prompt.md      # Deliver: self-evaluation rubric
+│   ├── reviewer-prompt.md      # Deliver: self-evaluation rubric
+│   └── buddy-species-map.md    # Buddy: 18 species prompts, stat→trait maps, rarity modifiers
 └── evals/                      # Dev-only test infrastructure (not shipped to users)
     ├── eval-runner-prompt.md   # Instructions for eval subagent
     ├── autoresearch-loop.md    # Loop methodology docs
