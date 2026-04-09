@@ -179,26 +179,25 @@ Two creation types:
 3. Upload to HeyGen (see asset upload below) or pass as base64
 4. Then POST to `/v3/avatars` as Type B (photo)
 
-**Type B — From reference image:**
-```json
-{
-  "type": "photo",
-  "name": "<name>",
-  "file": { "type": "url", "url": "https://..." },
-  "avatar_group_id": "<optional — Mode 2 only>"
-}
+**Type B — From image (the ONLY valid creation method for custom avatars):**
+```bash
+curl -s -X POST "https://api.heygen.com/v3/avatars" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"photo","name":"<name>","file":{"type":"url","url":"https://..."}}'  
 ```
 
-File options for Type B:
-- `{ "type": "url", "url": "https://..." }` — public image URL
-- `{ "type": "asset_id", "asset_id": "<id>" }` — from asset upload
-- `{ "type": "base64", "media_type": "image/png", "data": "<base64>" }` — inline
+File options:
+- `{ "type": "url", "url": "https://..." }` — public image URL (generated image, hosted image, etc.)
+- `{ "type": "asset_id", "asset_id": "<id>" }` — from asset upload (use for local files)
+- `{ "type": "base64", "media_type": "image/png", "data": "<base64>" }` — inline bytes
 
 To upload a local file first:
-```
-POST https://api.heygen.com/v3/assets
-Content-Type: multipart/form-data
-Body: file=@<photo_path>
+```bash
+curl -s -X POST "https://api.heygen.com/v3/assets" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -F "file=@/path/to/image.png"
+# Returns asset_id — use in file field above
 ```
 
 **Response:** Returns `avatar_item.id` (look ID) and `avatar_item.group_id` (character identity).
