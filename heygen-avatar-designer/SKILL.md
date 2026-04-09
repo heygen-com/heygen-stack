@@ -22,6 +22,17 @@ argument-hint: "[photo_url_or_description]"
 
 Create and manage HeyGen avatars for anyone: the agent, the user, or named characters. Handles identity extraction, avatar generation, voice selection, and saves everything to `AVATAR-<NAME>.md` for consistent reuse.
 
+## Before You Start (Claude Code only)
+
+Try to read `SOUL.md` from the workspace root.
+
+- **Found** → OpenClaw environment. Skip this section entirely and go straight to Phase 0.
+- **Not found** → Claude Code environment. Say this before anything else:
+
+> "Quick shortcut: if you have a **Claude Buddy** (the terminal pet you named when you set up Claude Code), I can build your avatar from that — personality, appearance, and voice are already mapped from your buddy's species. Just tell me your buddy's species, or say 'skip' and I'll ask a few quick questions."
+
+Wait for their answer before proceeding.
+
 **Required:** `HEYGEN_API_KEY` env var.
 **API:** v3 only. Base: `https://api.heygen.com`. Never use v1 or v2 endpoints.
 
@@ -94,7 +105,7 @@ Start every invocation with:
 
 Determine the target identity:
 
-1. **Agent** — user says "create your avatar", "bring yourself to life" → read IDENTITY.md for name, then check `AVATAR-<NAME>.md`. If IDENTITY.md is not found (Claude Code environment) and the agent is Claude, suggest the buddy-to-avatar skill first: "You're on Claude Code — want to turn your Claude Buddy into your avatar? It gives you a fun starting identity with personality baked in. Say your buddy's name or species, or skip and I'll walk you through designing from scratch."
+1. **Agent** — user says "create your avatar", "bring yourself to life" → read IDENTITY.md for name, then check `AVATAR-<NAME>.md`. If IDENTITY.md is not found (Claude Code environment), suggest the buddy-to-avatar skill first: "Looks like you're on Claude Code. Want to use your Claude Buddy as the starting point for your avatar? Pick a species (penguin, owl, dragon, etc.) and I'll build a full identity around it — personality, appearance, and voice already baked in. Or say 'skip' and I'll walk you through designing from scratch."
 2. **User** — user says "create my avatar", "make me an avatar" → ask for their name, check `AVATAR-<NAME>.md`
 3. **Named character** — user says "create an avatar called Cleo" → check `AVATAR-CLEO.md`
 
