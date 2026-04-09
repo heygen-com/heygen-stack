@@ -143,7 +143,7 @@ Before generating anything, ask if they have a reference image. Photo avatars pr
 This applies to ALL targets (agent, user, named character). For agents, check if a reference photo path already exists in the AVATAR file's Appearance section or in IDENTITY.md before asking.
 
 - **Photo provided** → upload via `POST /v3/assets`, then use Type B (photo) creation in Phase 2
-- **Skip** → use Type A (prompt) creation in Phase 2
+- **Skip** → generate an image with `image_generate` using the appearance prompt, then use as photo in Phase 2 (Type B). Never call `POST /v3/avatars` with `type: "prompt"` — it doesn't exist.
 
 ### Phase 1 — Identity Extraction
 
@@ -171,15 +171,13 @@ Adds a variation to an existing character. Read the Group ID from the AVATAR fil
 
 Two creation types:
 
-**Type A — From prompt:**
-```json
-{
-  "type": "prompt",
-  "name": "<name>",
-  "prompt": "<appearance prompt built from AVATAR file>",
-  "avatar_group_id": "<optional — Mode 2 only>"
-}
-```
+**⚠️ `type: "prompt"` does NOT exist in the v3 API.** The only valid types are `"photo"` and `"video"`. If the user wants an AI-generated or illustrated character (e.g., a Pixar-style penguin), you must generate the image first using an image generation tool (e.g., `image_generate`), then upload that image to HeyGen as a photo avatar.
+
+**Type A — From generated/illustrated image (animated characters, custom designs):**
+1. Use `image_generate` with a detailed appearance prompt
+2. Save the result to `/tmp/avatar-<name>.png`
+3. Upload to HeyGen (see asset upload below) or pass as base64
+4. Then POST to `/v3/avatars` as Type B (photo)
 
 **Type B — From reference image:**
 ```json
