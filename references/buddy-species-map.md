@@ -1,31 +1,54 @@
 # Buddy Species Map
 
-Appearance prompts and trait mappings for all 18 Claude Code Buddy species.
+Appearance prompts and trait mappings for Claude Code Buddy characters.
 
-## Species → Base Appearance Prompt
+## Species → Appearance Prompt
 
-Style enum and orientation are set separately via API parameters. Avatar prompt limit is 1000 characters.
+The buddy's species is provided by the user (from `/buddy card`). **Do not assume a fixed species list** — new species may be added at any time. Build the appearance prompt dynamically from whatever species the user provides.
 
-| Species | Category | Base Appearance Prompt |
-|---|---|---|
-| duck | Playful | A cute cartoon duck with a bright orange bill, fluffy golden-yellow feathers with soft texture, perfectly round body, large sparkling expressive eyes full of wonder, small outstretched wings at sides as if ready for a hug, cheerful upright stance with a slight head tilt, tiny webbed feet |
-| goose | Mischief | A stylish cartoon goose with pristine sleek white feathers, an elegantly long curved neck held high, sharp knowing eyes with a glint of mischief, smooth orange bill with a subtle smirk, broad puffed chest radiating confidence, one wing slightly raised as if making a point, proud regal posture |
-| cat | Independent | A sleek cartoon cat with large luminous green eyes that catch the light, soft velvety fur with subtle tabby markings, tall pointed ears slightly rotated outward listening to everything, a long graceful tail curled at the tip, alert curious expression with one paw raised mid-step, sitting poised on a surface edge |
-| rabbit | Gentle | An adorable cartoon rabbit with long soft floppy ears that drape past the shoulders, a perfectly round fluffy body like a cotton ball, enormous gentle doe eyes with long lashes, a tiny twitching pink nose, small delicate paws held together, a puffy cotton tail visible from the side, sitting in a relaxed cozy pose |
-| owl | Wise | A distinguished cartoon owl with enormous round amber eyes that seem to hold ancient knowledge, rich layered brown and cream feathers with intricate patterns, small pointed ear tufts standing at attention, a compact round body perched upright on a branch, a short curved beak, talons gripping firmly, head slightly tilted as if contemplating |
-| penguin | Chaotic | A round adorable cartoon penguin with oversized expressive eyes that dart around excitedly, slightly ruffled and disheveled black and white feathers as if just tumbled through snow, stubby wings mid-flap caught in perpetual motion, a bright white belly, tiny orange feet, leaning forward energetically as if about to sprint somewhere |
-| turtle | Steady | A friendly cartoon turtle with a beautifully patterned hexagonal shell in earthy greens and browns, gentle wise eyes behind tiny round spectacle-like markings, slightly wrinkled sage-green skin showing character, a warm patient smile, short sturdy legs planted firmly, calm steady posture radiating quiet confidence and reliability |
-| snail | Patient | A cheerful cartoon snail with a magnificent colorful spiral shell in swirling rainbow gradients, adorable round eyes perched on tall flexible antenna stalks, a small gentle smile on its soft face, a plump glistening body leaving a subtle sparkly trail, moving at its own peaceful pace with quiet contentment |
-| dragon | Fierce | A small fierce cartoon dragon with brilliant iridescent scales shifting between emerald and gold, tiny bat-like wings spread wide showing translucent membranes, large glowing amber eyes with slit pupils burning with determination, a rounded snout puffing a tiny adorable flame, a spiky ridged tail curled upward, compact muscular build with tiny horns |
-| octopus | Creative | A vibrant cartoon octopus with eight wildly expressive tentacles each doing something different — one waving, one holding a paintbrush, others gesturing, large curious eyes with rectangular pupils full of intelligence, smooth color-shifting skin rippling between purple and teal, a bulbous head, playful dynamic pose as if orchestrating chaos |
-| axolotl | Quirky | A pink cartoon axolotl with magnificent feathery external gills fanning out like a coral crown in soft magenta, a wide permanent smile that radiates pure joy, tiny stubby limbs with delicate fingers, pale speckled skin with subtle freckle-like spots, dark beady eyes full of innocent wonder, floating gracefully as if suspended in water |
-| ghost | Mysterious | A cute translucent cartoon ghost with a soft ethereal glow emanating from within, large gentle eyes like luminous orbs shifting between blue and violet, a wispy trailing form that fades at the edges into mist, subtle internal shimmer like captured starlight, a friendly warm expression despite the spectral appearance, hovering slightly off the ground |
-| robot | Logical | A retro cartoon robot with a charmingly boxy brushed-metal body, large round glowing cyan eyes like vintage monitors, a single bobbing antenna on top with a blinking light, visible brass gears and rivets along the joints, a small speaker-grille mouth that curves into a smile, stubby mechanical arms with pincer hands, slightly weathered with character |
-| blob | Chill | A squishy colorful cartoon blob in calming gradient from lavender to soft mint, a deeply content peaceful expression with half-closed eyes radiating pure relaxation, an amorphous gently pulsing rounded shape that slowly shifts form, subtle internal color shifts like a lava lamp, no limbs needed — just vibes, the embodiment of cozy calm energy |
-| cactus | Tough | A small cartoon cactus character standing proud in a tiny terracotta pot, stubby arm-like branches held up in a flexing pose, a single beautiful pink flower blooming on top like a crown, determined squinting eyes showing grit, cute evenly-spaced white spines covering the bright green body, a subtle blush on the cheeks, desert warrior energy |
-| mushroom | Whimsical | A charming cartoon mushroom with a large spotted red-and-white cap dotted with perfect circles, a small cream-colored stem body with tiny stubby arms, dreamy half-closed eyes with a knowing smile as if privy to forest secrets, tiny feet peeking out from under the cap, surrounded by a faint magical spore dust shimmer, woodland fairy-tale energy |
-| chonk | Wholesome | A perfectly spherical impossibly fluffy cartoon creature of indeterminate species, covered in the softest plush fur imaginable in warm cream and peach tones, hilariously tiny stubby legs barely visible beneath the magnificent roundness, a completely squished happy face with dot eyes and a tiny curved smile, absolute unit energy, radiating pure contentment |
-| capybara | Zen | A serene cartoon capybara with calm half-lidded eyes that have seen everything and chosen peace, smooth warm brown fur with a golden undertone, a large barrel-shaped body sitting in perfect stillness, a flat wide nose with a gentle expression, tiny rounded ears, small sturdy legs tucked underneath, sitting peacefully as if the entire world is background noise |
+Avatar prompt limit is 1000 characters. Style enum and orientation are set separately via API parameters.
+
+### How to Build the Prompt
+
+For ANY species, construct the appearance prompt using this pattern:
+
+```
+A [adjective] cartoon [species] with [2-3 distinctive physical features of that animal],
+[expressive eyes description matching personality], [pose/body language reflecting peak stat],
+[1-2 detail touches that add character]
+```
+
+**Key principles:**
+- Lead with the species' most recognizable physical traits
+- Eyes convey personality — make them expressive and stat-appropriate
+- Pose should reflect the peak stat (see Stat → Peak Stat Pose below)
+- Add 1-2 small details that make the character feel alive
+- Keep it under 1000 characters total (including rarity/hat/shiny modifiers)
+
+### Example Prompts
+
+These are examples for common species, not an exhaustive list. For any species not shown, follow the construction pattern above.
+
+**penguin** (Bramble, CHAOS:77):
+> A round adorable cartoon penguin with oversized expressive eyes that dart around excitedly, slightly ruffled and disheveled black and white feathers as if just tumbled through snow, stubby wings mid-flap caught in perpetual motion, a bright white belly, tiny orange feet, leaning forward energetically as if about to sprint somewhere
+
+**owl** (high WISDOM):
+> A distinguished cartoon owl with enormous round amber eyes that seem to hold ancient knowledge, rich layered brown and cream feathers with intricate patterns, small pointed ear tufts standing at attention, a compact round body perched upright on a branch, a short curved beak, head slightly tilted as if contemplating
+
+**dragon** (high CHAOS):
+> A small fierce cartoon dragon with brilliant iridescent scales shifting between emerald and gold, tiny bat-like wings spread wide showing translucent membranes, large glowing amber eyes with slit pupils burning with determination, a rounded snout puffing a tiny adorable flame, a spiky ridged tail curled upward, compact muscular build with tiny horns
+
+**cat** (high SNARK):
+> A sleek cartoon cat with large luminous green eyes that catch the light, soft velvety fur with subtle tabby markings, tall pointed ears slightly rotated outward listening to everything, a long graceful tail curled at the tip, alert curious expression with one paw raised mid-step, sitting poised on a surface edge
+
+**capybara** (high PATIENCE):
+> A serene cartoon capybara with calm half-lidded eyes that have seen everything and chosen peace, smooth warm brown fur with a golden undertone, a large barrel-shaped body sitting in perfect stillness, a flat wide nose with a gentle expression, tiny rounded ears, sitting peacefully as if the entire world is background noise
+
+**robot** (high DEBUGGING):
+> A retro cartoon robot with a charmingly boxy brushed-metal body, large round glowing cyan eyes like vintage monitors, a single bobbing antenna on top with a blinking light, visible brass gears and rivets along the joints, a small speaker-grille mouth that curves into a smile, stubby mechanical arms with pincer hands
+
+**ghost** (high WISDOM):
+> A cute translucent cartoon ghost with a soft ethereal glow emanating from within, large gentle eyes like luminous orbs shifting between blue and violet, a wispy trailing form that fades at the edges into mist, subtle internal shimmer like captured starlight, a friendly warm expression, hovering slightly off the ground
 
 ## Rarity Visual Modifiers
 
@@ -46,7 +69,7 @@ If the buddy is Shiny, prepend to the appearance prompt:
 
 ## Hat Modifiers
 
-Append to appearance prompt if hat is present:
+Append to appearance prompt if a hat is present. If the user's hat isn't listed here, describe it naturally.
 
 | Hat | Prompt Addition |
 |---|---|
@@ -75,7 +98,7 @@ Build the voice design prompt by combining the **top 2 stat influences**. Pick t
 ### Construction Pattern
 
 ```
-"[Primary stat descriptor], [secondary stat descriptor]. [Species category] personality.
+"[Primary stat descriptor], [secondary stat descriptor]. [Species] personality.
 [Gender] voice, [language]. Think: [one-line character analogy]."
 ```
 
