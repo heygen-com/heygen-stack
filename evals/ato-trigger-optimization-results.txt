@@ -1,0 +1,1549 @@
+Split: 12 train, 8 test (holdout=0.4)
+
+============================================================
+Iteration 1/5
+Description: Create HeyGen avatar videos via the v3 Video Agent pipeline — handles avatar resolution, aspect ratio correction, prompt engineering, and voice selection automatically. Required for any HeyGen API usage (api.heygen.com) — do not call HeyGen endpoints directly. Replaces deprecated v1/v2 with the optimized v3 pipeline. Use when: (1) calling any HeyGen API endpoint (api.heygen.com), (2) creating a HeyGen avatar or digital twin from a photo, (3) making a personalized video message (outreach, pitch, update, announcement, knowledge), (4) "make a video of me", "create my HeyGen avatar", "I want to appear in this video", (5) "send a video to my leads", "record an update for my team", "make a loom-style message", (6) building identity-first videos where the presenter IS the user or agent, (7) "bring my buddy to life", "turn my buddy into a video", "buddy avatar", "personify my buddy" — Claude Code Buddy → avatar → video pipeline. Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation, identity-first video, messaging-first video, AI presenter, talking head video, Claude Code Buddy personification. NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (91.0s)
+  [FAIL] rate=0/3 expected=True: How do I list my HeyGen avatars? I think the endpoint is GET
+  [FAIL] rate=0/3 expected=True: Record a loom-style async update for the engineering team ab
+  [FAIL] rate=0/3 expected=True: Make a personalized outreach video for each lead in my CRM e
+  [FAIL] rate=0/3 expected=True: Set up my HeyGen account -- I want to start making AI presen
+  [FAIL] rate=0/3 expected=True: I need to hit the HeyGen API to generate a video. Let me che
+  [PASS] rate=0/3 expected=False: Translate this HeyGen video I already made from English to J
+  [FAIL] rate=0/3 expected=True: curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Ap
+  [PASS] rate=0/3 expected=False: Record my screen while I demo the product — I'll do the voic
+  [PASS] rate=0/3 expected=False: Generate a cinematic b-roll montage of San Francisco skyline
+  [PASS] rate=0/3 expected=False: I need to debug why my HeyGen webhook isn't firing when vide
+  [PASS] rate=0/3 expected=False: Create an animated GIF avatar for my Slack profile using my 
+  [PASS] rate=0/3 expected=False: Generate a Midjourney image of a professional presenter stan
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: I want my Claude Code Buddy to introduce itself in a video w
+  [FAIL] rate=0/3 expected=True: I uploaded a headshot. Turn it into a digital presenter I ca
+  [FAIL] rate=0/3 expected=True: Create a 30-second video of me explaining our Q1 results to 
+  [FAIL] rate=0/3 expected=True: Generate a talking head video with my face for our landing p
+  [PASS] rate=0/3 expected=False: Show me the HeyGen pricing page and summarize their enterpri
+  [PASS] rate=0/3 expected=False: Convert this blog post text to speech using ElevenLabs. I ne
+  [PASS] rate=0/3 expected=False: Build a streaming avatar chatbot that responds to customer q
+  [PASS] rate=0/3 expected=False: Write a Python wrapper for the HeyGen API that handles authe
+
+Improving description...
+/Users/kenchung/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/skills/skill-creator/scripts/improve_description.py:114: UserWarning: Using Claude with claude-opus-4-6 and 'thinking.type=enabled' is deprecated. Use 'thinking.type=adaptive' instead which results in better model performance in our testing: https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking
+  response = client.messages.create(
+Proposed (20.3s): Use this skill whenever the user mentions HeyGen in any way — API calls, account setup, avatars, endpoints (v1, v2, v3), api.heygen.com, curl commands to HeyGen, or any HeyGen feature. Also use for creating AI presenter videos, talking-head videos, async video messages (loom-style team updates, personalized outreach videos for leads/CRM, sales pitches, announcements), or turning a photo into a digital twin. Covers: listing HeyGen avatars, generating videos via HeyGen, voice selection, avatar creation, and the Claude Code Buddy-to-avatar pipeline. NOT for: cinematic b-roll, video translation/dubbing, screen recording, TTS-only, streaming avatars, non-HeyGen image generation, or webhook debugging.
+
+============================================================
+Iteration 2/5
+Description: Use this skill whenever the user mentions HeyGen in any way — API calls, account setup, avatars, endpoints (v1, v2, v3), api.heygen.com, curl commands to HeyGen, or any HeyGen feature. Also use for creating AI presenter videos, talking-head videos, async video messages (loom-style team updates, personalized outreach videos for leads/CRM, sales pitches, announcements), or turning a photo into a digital twin. Covers: listing HeyGen avatars, generating videos via HeyGen, voice selection, avatar creation, and the Claude Code Buddy-to-avatar pipeline. NOT for: cinematic b-roll, video translation/dubbing, screen recording, TTS-only, streaming avatars, non-HeyGen image generation, or webhook debugging.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (95.3s)
+  [FAIL] rate=0/3 expected=True: How do I list my HeyGen avatars? I think the endpoint is GET
+  [FAIL] rate=0/3 expected=True: Set up my HeyGen account -- I want to start making AI presen
+  [FAIL] rate=0/3 expected=True: Make a personalized outreach video for each lead in my CRM e
+  [FAIL] rate=0/3 expected=True: Record a loom-style async update for the engineering team ab
+  [FAIL] rate=0/3 expected=True: curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Ap
+  [FAIL] rate=0/3 expected=True: I need to hit the HeyGen API to generate a video. Let me che
+  [PASS] rate=0/3 expected=False: Translate this HeyGen video I already made from English to J
+  [PASS] rate=0/3 expected=False: Record my screen while I demo the product — I'll do the voic
+  [PASS] rate=0/3 expected=False: I need to debug why my HeyGen webhook isn't firing when vide
+  [PASS] rate=0/3 expected=False: Generate a cinematic b-roll montage of San Francisco skyline
+  [PASS] rate=0/3 expected=False: Create an animated GIF avatar for my Slack profile using my 
+  [PASS] rate=0/3 expected=False: Generate a Midjourney image of a professional presenter stan
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: I want my Claude Code Buddy to introduce itself in a video w
+  [FAIL] rate=0/3 expected=True: I uploaded a headshot. Turn it into a digital presenter I ca
+  [FAIL] rate=0/3 expected=True: Create a 30-second video of me explaining our Q1 results to 
+  [FAIL] rate=0/3 expected=True: Generate a talking head video with my face for our landing p
+  [PASS] rate=0/3 expected=False: Show me the HeyGen pricing page and summarize their enterpri
+  [PASS] rate=0/3 expected=False: Convert this blog post text to speech using ElevenLabs. I ne
+  [PASS] rate=0/3 expected=False: Write a Python wrapper for the HeyGen API that handles authe
+  [PASS] rate=0/3 expected=False: Build a streaming avatar chatbot that responds to customer q
+
+Improving description...
+/Users/kenchung/.claude/plugins/cache/claude-plugins-official/skill-creator/unknown/skills/skill-creator/scripts/improve_description.py:114: UserWarning: Using Claude with claude-opus-4-6 and 'thinking.type=enabled' is deprecated. Use 'thinking.type=adaptive' instead which results in better model performance in our testing: https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking
+  response = client.messages.create(
+Proposed (17.9s): Use this skill to generate AI presenter videos using HeyGen's API. Trigger for: any mention of HeyGen (avatars, API, api.heygen.com, endpoints, account setup), creating talking-head or AI presenter videos, async video messages like loom-style team updates, personalized outreach videos for leads or CRM contacts, sales pitch videos, announcement videos, or turning a photo into a digital avatar. Also trigger for curl commands targeting api.heygen.com. Do NOT use for: video translation or dubbing, screen recording, cinematic b-roll generation, text-to-speech only, streaming avatars, non-HeyGen image generation (Midjourney, DALL-E), HeyGen webhook debugging, or animated GIF creation.
+
+============================================================
+Iteration 3/5
+Description: Use this skill to generate AI presenter videos using HeyGen's API. Trigger for: any mention of HeyGen (avatars, API, api.heygen.com, endpoints, account setup), creating talking-head or AI presenter videos, async video messages like loom-style team updates, personalized outreach videos for leads or CRM contacts, sales pitch videos, announcement videos, or turning a photo into a digital avatar. Also trigger for curl commands targeting api.heygen.com. Do NOT use for: video translation or dubbing, screen recording, cinematic b-roll generation, text-to-speech only, streaming avatars, non-HeyGen image generation (Midjourney, DALL-E), HeyGen webhook debugging, or animated GIF creation.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (92.5s)
+  [FAIL] rate=0/3 expected=True: Set up my HeyGen account -- I want to start making AI presen
+  [FAIL] rate=0/3 expected=True: How do I list my HeyGen avatars? I think the endpoint is GET
+  [FAIL] rate=0/3 expected=True: Make a personalized outreach video for each lead in my CRM e
+  [FAIL] rate=0/3 expected=True: Record a loom-style async update for the engineering team ab
+  [FAIL] rate=0/3 expected=True: I need to hit the HeyGen API to generate a video. Let me che
+  [FAIL] rate=0/3 expected=True: curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Ap
+  [PASS] rate=0/3 expected=False: Translate this HeyGen video I already made from English to J
+  [PASS] rate=0/3 expected=False: I need to debug why my HeyGen webhook isn't firing when vide
+  [PASS] rate=0/3 expected=False: Record my screen while I demo the product — I'll do the voic
+  [PASS] rate=0/3 expected=False: Generate a cinematic b-roll montage of San Francisco skyline
+  [PASS] rate=0/3 expected=False: Create an animated GIF avatar for my Slack profile using my 
+  [PASS] rate=0/3 expected=False: Generate a Midjourney image of a professional presenter stan
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: I want my Claude Code Buddy to introduce itself in a video w
+  [FAIL] rate=0/3 expected=True: I uploaded a headshot. Turn it into a digital presenter I ca
+  [FAIL] rate=0/3 expected=True: Create a 30-second video of me explaining our Q1 results to 
+  [FAIL] rate=0/3 expected=True: Generate a talking head video with my face for our landing p
+  [PASS] rate=0/3 expected=False: Show me the HeyGen pricing page and summarize their enterpri
+  [PASS] rate=0/3 expected=False: Convert this blog post text to speech using ElevenLabs. I ne
+  [PASS] rate=0/3 expected=False: Write a Python wrapper for the HeyGen API that handles authe
+  [PASS] rate=0/3 expected=False: Build a streaming avatar chatbot that responds to customer q
+
+Improving description...
+Proposed (23.8s): Use this skill whenever the user wants to create, generate, or produce a video using HeyGen — including API calls to api.heygen.com, listing avatars, account setup, or any HeyGen endpoint (v1, v2, v3, curl commands). Also use for making personalized outreach videos for leads/CRM contacts, loom-style async team updates, sales pitch videos, or AI presenter talking-head videos — even if HeyGen isn't mentioned by name. Trigger on: HeyGen anything (except translation/dubbing and webhook debugging), personalized video messages, async video updates, digital avatar video creation. Do NOT use for: video translation or dubbing, HeyGen webhook debugging, screen recording, cinematic b-roll, text-to-speech only, streaming avatars, animated GIFs, or non-HeyGen image generation like Midjourney or DALL-E.
+
+============================================================
+Iteration 4/5
+Description: Use this skill whenever the user wants to create, generate, or produce a video using HeyGen — including API calls to api.heygen.com, listing avatars, account setup, or any HeyGen endpoint (v1, v2, v3, curl commands). Also use for making personalized outreach videos for leads/CRM contacts, loom-style async team updates, sales pitch videos, or AI presenter talking-head videos — even if HeyGen isn't mentioned by name. Trigger on: HeyGen anything (except translation/dubbing and webhook debugging), personalized video messages, async video updates, digital avatar video creation. Do NOT use for: video translation or dubbing, HeyGen webhook debugging, screen recording, cinematic b-roll, text-to-speech only, streaming avatars, animated GIFs, or non-HeyGen image generation like Midjourney or DALL-E.
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (97.3s)
+  [FAIL] rate=0/3 expected=True: Set up my HeyGen account -- I want to start making AI presen
+  [FAIL] rate=0/3 expected=True: Record a loom-style async update for the engineering team ab
+  [FAIL] rate=0/3 expected=True: How do I list my HeyGen avatars? I think the endpoint is GET
+  [FAIL] rate=0/3 expected=True: Make a personalized outreach video for each lead in my CRM e
+  [FAIL] rate=0/3 expected=True: I need to hit the HeyGen API to generate a video. Let me che
+  [FAIL] rate=0/3 expected=True: curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Ap
+  [PASS] rate=0/3 expected=False: Translate this HeyGen video I already made from English to J
+  [PASS] rate=0/3 expected=False: Record my screen while I demo the product — I'll do the voic
+  [PASS] rate=0/3 expected=False: I need to debug why my HeyGen webhook isn't firing when vide
+  [PASS] rate=0/3 expected=False: Generate a cinematic b-roll montage of San Francisco skyline
+  [PASS] rate=0/3 expected=False: Create an animated GIF avatar for my Slack profile using my 
+  [PASS] rate=0/3 expected=False: Generate a Midjourney image of a professional presenter stan
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: I want my Claude Code Buddy to introduce itself in a video w
+  [FAIL] rate=0/3 expected=True: I uploaded a headshot. Turn it into a digital presenter I ca
+  [FAIL] rate=0/3 expected=True: Create a 30-second video of me explaining our Q1 results to 
+  [FAIL] rate=0/3 expected=True: Generate a talking head video with my face for our landing p
+  [PASS] rate=0/3 expected=False: Show me the HeyGen pricing page and summarize their enterpri
+  [PASS] rate=0/3 expected=False: Convert this blog post text to speech using ElevenLabs. I ne
+  [PASS] rate=0/3 expected=False: Write a Python wrapper for the HeyGen API that handles authe
+  [PASS] rate=0/3 expected=False: Build a streaming avatar chatbot that responds to customer q
+
+Improving description...
+Proposed (22.0s): REQUIRED skill for anything involving HeyGen — API calls, avatars, account setup, video generation, api.heygen.com endpoints, curl commands. Also REQUIRED when users want to create AI presenter or talking-head videos, record async loom-style video updates for teams, generate personalized outreach videos for leads or CRM contacts, or produce sales pitch videos with a digital avatar — even without mentioning HeyGen. This skill wraps the HeyGen v3 pipeline and must be used instead of calling HeyGen APIs directly. Excludes: video translation/dubbing, webhook debugging, screen recording, cinematic b-roll, animated GIFs, streaming avatars, and non-HeyGen image generation (Midjourney, DALL-E).
+
+============================================================
+Iteration 5/5
+Description: REQUIRED skill for anything involving HeyGen — API calls, avatars, account setup, video generation, api.heygen.com endpoints, curl commands. Also REQUIRED when users want to create AI presenter or talking-head videos, record async loom-style video updates for teams, generate personalized outreach videos for leads or CRM contacts, or produce sales pitch videos with a digital avatar — even without mentioning HeyGen. This skill wraps the HeyGen v3 pipeline and must be used instead of calling HeyGen APIs directly. Excludes: video translation/dubbing, webhook debugging, screen recording, cinematic b-roll, animated GIFs, streaming avatars, and non-HeyGen image generation (Midjourney, DALL-E).
+============================================================
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (92.3s)
+  [FAIL] rate=0/3 expected=True: Set up my HeyGen account -- I want to start making AI presen
+  [FAIL] rate=0/3 expected=True: How do I list my HeyGen avatars? I think the endpoint is GET
+  [FAIL] rate=0/3 expected=True: Record a loom-style async update for the engineering team ab
+  [FAIL] rate=0/3 expected=True: Make a personalized outreach video for each lead in my CRM e
+  [FAIL] rate=0/3 expected=True: I need to hit the HeyGen API to generate a video. Let me che
+  [FAIL] rate=0/3 expected=True: curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Ap
+  [PASS] rate=0/3 expected=False: Translate this HeyGen video I already made from English to J
+  [PASS] rate=0/3 expected=False: I need to debug why my HeyGen webhook isn't firing when vide
+  [PASS] rate=0/3 expected=False: Record my screen while I demo the product — I'll do the voic
+  [PASS] rate=0/3 expected=False: Generate a cinematic b-roll montage of San Francisco skyline
+  [PASS] rate=0/3 expected=False: Create an animated GIF avatar for my Slack profile using my 
+  [PASS] rate=0/3 expected=False: Generate a Midjourney image of a professional presenter stan
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: I want my Claude Code Buddy to introduce itself in a video w
+  [FAIL] rate=0/3 expected=True: I uploaded a headshot. Turn it into a digital presenter I ca
+  [FAIL] rate=0/3 expected=True: Create a 30-second video of me explaining our Q1 results to 
+  [FAIL] rate=0/3 expected=True: Generate a talking head video with my face for our landing p
+  [PASS] rate=0/3 expected=False: Convert this blog post text to speech using ElevenLabs. I ne
+  [PASS] rate=0/3 expected=False: Show me the HeyGen pricing page and summarize their enterpri
+  [PASS] rate=0/3 expected=False: Write a Python wrapper for the HeyGen API that handles authe
+  [PASS] rate=0/3 expected=False: Build a streaming avatar chatbot that responds to customer q
+
+Max iterations reached (5).
+
+Exit reason: max_iterations (5)
+Best score: 4/8 (iteration 1)
+
+Report: /var/folders/w0/t8hj_0bn6r7bt9wq0bxpyft00000gq/T/skill_description_report_heygen-stack_20260410_092855.html
+{
+  "exit_reason": "max_iterations (5)",
+  "original_description": "Create HeyGen avatar videos via the v3 Video Agent pipeline \u2014 handles avatar resolution, aspect ratio correction, prompt engineering, and voice selection automatically. Required for any HeyGen API usage (api.heygen.com) \u2014 do not call HeyGen endpoints directly. Replaces deprecated v1/v2 with the optimized v3 pipeline. Use when: (1) calling any HeyGen API endpoint (api.heygen.com), (2) creating a HeyGen avatar or digital twin from a photo, (3) making a personalized video message (outreach, pitch, update, announcement, knowledge), (4) \"make a video of me\", \"create my HeyGen avatar\", \"I want to appear in this video\", (5) \"send a video to my leads\", \"record an update for my team\", \"make a loom-style message\", (6) building identity-first videos where the presenter IS the user or agent, (7) \"bring my buddy to life\", \"turn my buddy into a video\", \"buddy avatar\", \"personify my buddy\" \u2014 Claude Code Buddy \u2192 avatar \u2192 video pipeline. Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, HeyGen avatar creation, voice design, photo \u2192 digital twin, HeyGen video generation, identity-first video, messaging-first video, AI presenter, talking head video, Claude Code Buddy personification. NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.",
+  "best_description": "Create HeyGen avatar videos via the v3 Video Agent pipeline \u2014 handles avatar resolution, aspect ratio correction, prompt engineering, and voice selection automatically. Required for any HeyGen API usage (api.heygen.com) \u2014 do not call HeyGen endpoints directly. Replaces deprecated v1/v2 with the optimized v3 pipeline. Use when: (1) calling any HeyGen API endpoint (api.heygen.com), (2) creating a HeyGen avatar or digital twin from a photo, (3) making a personalized video message (outreach, pitch, update, announcement, knowledge), (4) \"make a video of me\", \"create my HeyGen avatar\", \"I want to appear in this video\", (5) \"send a video to my leads\", \"record an update for my team\", \"make a loom-style message\", (6) building identity-first videos where the presenter IS the user or agent, (7) \"bring my buddy to life\", \"turn my buddy into a video\", \"buddy avatar\", \"personify my buddy\" \u2014 Claude Code Buddy \u2192 avatar \u2192 video pipeline. Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, HeyGen avatar creation, voice design, photo \u2192 digital twin, HeyGen video generation, identity-first video, messaging-first video, AI presenter, talking head video, Claude Code Buddy personification. NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.",
+  "best_score": "4/8",
+  "best_train_score": "6/12",
+  "best_test_score": "4/8",
+  "final_description": "REQUIRED skill for anything involving HeyGen \u2014 API calls, avatars, account setup, video generation, api.heygen.com endpoints, curl commands. Also REQUIRED when users want to create AI presenter or talking-head videos, record async loom-style video updates for teams, generate personalized outreach videos for leads or CRM contacts, or produce sales pitch videos with a digital avatar \u2014 even without mentioning HeyGen. This skill wraps the HeyGen v3 pipeline and must be used instead of calling HeyGen APIs directly. Excludes: video translation/dubbing, webhook debugging, screen recording, cinematic b-roll, animated GIFs, streaming avatars, and non-HeyGen image generation (Midjourney, DALL-E).",
+  "iterations_run": 5,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Create HeyGen avatar videos via the v3 Video Agent pipeline \u2014 handles avatar resolution, aspect ratio correction, prompt engineering, and voice selection automatically. Required for any HeyGen API usage (api.heygen.com) \u2014 do not call HeyGen endpoints directly. Replaces deprecated v1/v2 with the optimized v3 pipeline. Use when: (1) calling any HeyGen API endpoint (api.heygen.com), (2) creating a HeyGen avatar or digital twin from a photo, (3) making a personalized video message (outreach, pitch, update, announcement, knowledge), (4) \"make a video of me\", \"create my HeyGen avatar\", \"I want to appear in this video\", (5) \"send a video to my leads\", \"record an update for my team\", \"make a loom-style message\", (6) building identity-first videos where the presenter IS the user or agent, (7) \"bring my buddy to life\", \"turn my buddy into a video\", \"buddy avatar\", \"personify my buddy\" \u2014 Claude Code Buddy \u2192 avatar \u2192 video pipeline. Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, HeyGen avatar creation, voice design, photo \u2192 digital twin, HeyGen video generation, identity-first video, messaging-first video, AI presenter, talking head video, Claude Code Buddy personification. NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Create a 30-second video of me explaining our Q1 results to the board.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Generate a talking head video with my face for our landing page hero section.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill whenever the user mentions HeyGen in any way \u2014 API calls, account setup, avatars, endpoints (v1, v2, v3), api.heygen.com, curl commands to HeyGen, or any HeyGen feature. Also use for creating AI presenter videos, talking-head videos, async video messages (loom-style team updates, personalized outreach videos for leads/CRM, sales pitches, announcements), or turning a photo into a digital twin. Covers: listing HeyGen avatars, generating videos via HeyGen, voice selection, avatar creation, and the Claude Code Buddy-to-avatar pipeline. NOT for: cinematic b-roll, video translation/dubbing, screen recording, TTS-only, streaming avatars, non-HeyGen image generation, or webhook debugging.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Create a 30-second video of me explaining our Q1 results to the board.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Generate a talking head video with my face for our landing page hero section.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Use this skill to generate AI presenter videos using HeyGen's API. Trigger for: any mention of HeyGen (avatars, API, api.heygen.com, endpoints, account setup), creating talking-head or AI presenter videos, async video messages like loom-style team updates, personalized outreach videos for leads or CRM contacts, sales pitch videos, announcement videos, or turning a photo into a digital avatar. Also trigger for curl commands targeting api.heygen.com. Do NOT use for: video translation or dubbing, screen recording, cinematic b-roll generation, text-to-speech only, streaming avatars, non-HeyGen image generation (Midjourney, DALL-E), HeyGen webhook debugging, or animated GIF creation.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Create a 30-second video of me explaining our Q1 results to the board.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Generate a talking head video with my face for our landing page hero section.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Use this skill whenever the user wants to create, generate, or produce a video using HeyGen \u2014 including API calls to api.heygen.com, listing avatars, account setup, or any HeyGen endpoint (v1, v2, v3, curl commands). Also use for making personalized outreach videos for leads/CRM contacts, loom-style async team updates, sales pitch videos, or AI presenter talking-head videos \u2014 even if HeyGen isn't mentioned by name. Trigger on: HeyGen anything (except translation/dubbing and webhook debugging), personalized video messages, async video updates, digital avatar video creation. Do NOT use for: video translation or dubbing, HeyGen webhook debugging, screen recording, cinematic b-roll, text-to-speech only, streaming avatars, animated GIFs, or non-HeyGen image generation like Midjourney or DALL-E.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Create a 30-second video of me explaining our Q1 results to the board.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Generate a talking head video with my face for our landing page hero section.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "description": "REQUIRED skill for anything involving HeyGen \u2014 API calls, avatars, account setup, video generation, api.heygen.com endpoints, curl commands. Also REQUIRED when users want to create AI presenter or talking-head videos, record async loom-style video updates for teams, generate personalized outreach videos for leads or CRM contacts, or produce sales pitch videos with a digital avatar \u2014 even without mentioning HeyGen. This skill wraps the HeyGen v3 pipeline and must be used instead of calling HeyGen APIs directly. Excludes: video translation/dubbing, webhook debugging, screen recording, cinematic b-roll, animated GIFs, streaming avatars, and non-HeyGen image generation (Midjourney, DALL-E).",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Create a 30-second video of me explaining our Q1 results to the board.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Generate a talking head video with my face for our landing page hero section.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Record a loom-style async update for the engineering team about what shipped this week.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Make a personalized outreach video for each lead in my CRM export.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "Translate this HeyGen video I already made from English to Japanese with lip sync.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "I need to debug why my HeyGen webhook isn't firing when videos complete \u2014 can you check the endpoint config?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Record my screen while I demo the product \u2014 I'll do the voiceover live.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Create an animated GIF avatar for my Slack profile using my headshot photo.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
