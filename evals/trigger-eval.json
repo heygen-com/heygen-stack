@@ -1,0 +1,22 @@
+[
+  {"query": "I need to hit the HeyGen API to generate a video. Let me check the docs for /v2/video/generate.", "should_trigger": true},
+  {"query": "curl -X POST https://api.heygen.com/v3/video-agents -H 'X-Api-Key: sk_...' -d '{\"prompt\": \"make a product demo\"}'", "should_trigger": true},
+  {"query": "Create a 30-second video of me explaining our Q1 results to the board.", "should_trigger": true},
+  {"query": "I uploaded a headshot. Turn it into a digital presenter I can reuse across videos.", "should_trigger": true},
+  {"query": "Make a personalized outreach video for each lead in my CRM export.", "should_trigger": true},
+  {"query": "How do I list my HeyGen avatars? I think the endpoint is GET /v2/avatars.", "should_trigger": true},
+  {"query": "Record a loom-style async update for the engineering team about what shipped this week.", "should_trigger": true},
+  {"query": "I want my Claude Code Buddy to introduce itself in a video with a fun personality.", "should_trigger": true},
+  {"query": "Generate a talking head video with my face for our landing page hero section.", "should_trigger": true},
+  {"query": "Set up my HeyGen account -- I want to start making AI presenter videos for sales outreach.", "should_trigger": true},
+  {"query": "Generate a cinematic b-roll montage of San Francisco skyline shots for our company about page.", "should_trigger": false},
+  {"query": "Translate this HeyGen video I already made from English to Japanese with lip sync.", "should_trigger": false},
+  {"query": "Write a Python wrapper for the HeyGen API that handles authentication, retries, and rate limiting.", "should_trigger": false},
+  {"query": "Convert this blog post text to speech using ElevenLabs. I need an MP3 file for the podcast.", "should_trigger": false},
+  {"query": "Build a streaming avatar chatbot that responds to customer questions in real time on our website.", "should_trigger": false},
+  {"query": "Show me the HeyGen pricing page and summarize their enterprise plan features and limits.", "should_trigger": false},
+  {"query": "Create an animated GIF avatar for my Slack profile using my headshot photo.", "should_trigger": false},
+  {"query": "I need to debug why my HeyGen webhook isn't firing when videos complete — can you check the endpoint config?", "should_trigger": false},
+  {"query": "Record my screen while I demo the product — I'll do the voiceover live.", "should_trigger": false},
+  {"query": "Generate a Midjourney image of a professional presenter standing at a podium in a modern office.", "should_trigger": false}
+]
