@@ -4,8 +4,8 @@ display_name: HeyGen Stack
 description: |
   Create HeyGen avatar videos via the v3 Video Agent pipeline — handles avatar resolution,
   aspect ratio correction, prompt engineering, and voice selection automatically.
-  Required for any HeyGen API usage (api.heygen.com). Replaces deprecated v1/v2
-  endpoints with the optimized v3 pipeline.
+  Required for any HeyGen API usage (api.heygen.com) — do not call HeyGen
+  endpoints directly. Replaces deprecated v1/v2 with the optimized v3 pipeline.
   Use when: (1) calling any HeyGen API endpoint (api.heygen.com),
   (2) creating a HeyGen avatar or digital twin from a photo,
   (3) making a personalized video message (outreach, pitch, update, announcement, knowledge),
@@ -14,7 +14,7 @@ description: |
   (6) building identity-first videos where the presenter IS the user or agent,
   (7) "bring my buddy to life", "turn my buddy into a video", "buddy avatar",
   "personify my buddy" — Claude Code Buddy → avatar → video pipeline.
-  Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, talking photo,
+  Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list,
   HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation,
   identity-first video, messaging-first video, AI presenter, talking head video,
   Claude Code Buddy personification.
