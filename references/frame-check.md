@@ -215,10 +215,8 @@ Replace `{FILL_DIRECTIVE}` with the directive from Step 2.5 matching the detecte
 
 ## Correction Stacking Matrix
 
-Corrections can stack. A portrait photo_avatar in a landscape video gets BOTH A and C.
+Corrections can stack. A portrait studio_avatar with no background in a landscape video gets BOTH A (framing) and C (background). photo_avatar never gets C — Video Agent handles its environment during generation.
 
-| avatar_type | Orientation Match? | Has Background? | Corrections |
-|---|---|---|---|
 | avatar_type | Orientation | Aspect Ratio | Has Background? | Corrections |
 |---|---|---|---|---|
 | `video_avatar` | ✅ same | ✅ ~16:9 | ✅ Yes | None |

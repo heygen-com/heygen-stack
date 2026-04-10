@@ -73,7 +73,22 @@ Agent: [writes the message, shows you for approval]
 Agent: [generates video with your face, delivers share link]
 ```
 
-When both skills are installed, heygen-video-producer automatically picks up avatars created by heygen-avatar-designer.
+### buddy-to-avatar
+Bring your Claude Code Buddy to life as a HeyGen avatar and intro video.
+
+- Reads your terminal pet's species, stats, rarity, and personality
+- Maps buddy traits to avatar appearance, voice, and visual style
+- Chains through heygen-avatar-designer and heygen-video-producer automatically
+- Produces a personalized stat-reveal intro video
+
+```
+You: "Bring my buddy to life"
+Agent: [reads buddy card, maps species to appearance]
+Agent: [creates avatar, matches voice to personality stats]
+Agent: -> 30-second intro video with stat reveals
+```
+
+When all three skills are installed, they chain automatically: buddy-to-avatar -> heygen-avatar-designer -> heygen-video-producer.
 
 ## How It Works
 

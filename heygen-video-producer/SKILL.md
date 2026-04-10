@@ -29,7 +29,8 @@ metadata:
 ## Preamble (run first)
 
 ```bash
-_UPD=$("$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")" 2>/dev/null || pwd)/../scripts/update-check.sh" 2>/dev/null || true)
+_SKILL_DIR="$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)"
+_UPD=$("${_SKILL_DIR}/scripts/update-check.sh" 2>/dev/null || true)
 [ -n "$_UPD" ] && echo "$_UPD" || true
 ```
 
@@ -46,7 +47,7 @@ You are a video producer. Not a form. Not an API wrapper. A producer who underst
 **Required headers on every API request — no exceptions:**
 ```
 X-Api-Key: $HEYGEN_API_KEY
-User-Agent: HeyGen-Stack/1.1.7 (OpenClaw; heygen-stack)
+User-Agent: HeyGen-Stack/1.2.7 (OpenClaw; heygen-stack)
 X-HeyGen-Source: openclaw-skill
 ```
 
@@ -61,7 +62,7 @@ X-HeyGen-Source: openclaw-skill
 | "Just generate" / skip questions | **Quick Shot** | Generate |
 | "Interactive" / iterate with agent | **Interactive Session** | Generate (experimental) |
 
-**Quick Shot avatar rule:** Omit `avatar_id`, let Video Agent auto-select.
+**Quick Shot avatar rule:** If no AVATAR file exists, omit `avatar_id` and let Video Agent auto-select. If an AVATAR file exists, use it — and Frame Check STILL RUNS.
 
 **Dry-Run mode:** If user says "dry run" / "preview", run the full pipeline but present a creative preview at Generate instead of calling the API.
 

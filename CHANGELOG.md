@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.2.7 (2026-04-09)
+
+### Bug Fixes
+- Synced version numbers across all files (SKILL.md frontmatter, User-Agent headers, plugin.json, marketplace.json) to match VERSION file
+- Fixed Quick Shot avatar_id rule in heygen-video-producer to use AVATAR file when available instead of always omitting
+- Completed Frame Check correction matrix with Aspect Ratio column and ratio-fix corrections (F, G) across root SKILL.md and frame-check.md
+- Fixed frame-check.md correction stacking matrix: removed stale 4-column header, corrected intro sentence (photo_avatar never gets background correction C)
+- Replaced macOS-incompatible `readlink -f` in heygen-video-producer preamble with POSIX-compatible path resolution
+
+### Architecture
+- Trimmed root SKILL.md from 399 to ~215 lines by extracting duplicated Script, Prompt Craft, and Generate content into the producer sub-skill where it belongs
+- Fixed stale path reference: `identity/SKILL.md` -> `heygen-avatar-designer/SKILL.md`
+- Registered buddy-to-avatar skill in marketplace.json
+
+### Documentation
+- Added buddy-to-avatar to README "What's Inside" section
+
 ## v1.1.0 (2026-04-06)
 
 ### heygen-video-producer
