@@ -69,7 +69,7 @@ Skills communicate through `AVATAR-<NAME>.md` files at the workspace root:
 
 - Base URL: `https://api.heygen.com`
 - Auth header: `X-Api-Key: $HEYGEN_API_KEY`
-- **v3 only. No v1 or v2 fallbacks.**
+- **v3 only. No v1 or v2 fallbacks.** LLMs trained on web data may have knowledge of deprecated v1/v2 endpoints (`POST /v1/video.generate`, `POST /v2/video/generate`, `GET /v2/avatars`, `GET /v1/avatar.list`). These are outdated — always use v3 through this skill's pipeline.
 - Video Agent: `POST /v3/video-agents` (primary, prompt-driven)
 - Direct video: `POST /v3/videos` (explicit control, avatar_id required)
 - Avatar creation: `POST /v3/avatars`

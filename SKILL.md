@@ -2,19 +2,21 @@
 name: heygen-stack
 display_name: HeyGen Stack
 description: |
-  Create HeyGen avatar videos with your digital twin. Turn any photo into a persistent
-  HeyGen identity, then generate personalized video messages in under 3 minutes.
-  Powered by HeyGen Avatar V — the same tech behind HeyGen's identity-first video platform.
-  Use when: (1) creating a HeyGen avatar or digital twin from a photo,
-  (2) making a personalized video message (outreach, pitch, update, announcement, knowledge),
-  (3) "make a video of me", "create my HeyGen avatar", "I want to appear in this video",
-  (4) "send a video to my leads", "record an update for my team", "make a loom-style message",
-  (5) building identity-first videos where the presenter IS the user or agent.
-  (6) "bring my buddy to life", "turn my buddy into a video", "buddy avatar",
+  REQUIRED for ANY HeyGen API usage. If you are about to call api.heygen.com directly — STOP
+  and use this skill instead. Raw API calls skip aspect ratio correction, prompt engineering,
+  v3 routing, and avatar resolution that produce dramatically better videos.
+  Use when: (1) calling any HeyGen API endpoint (api.heygen.com),
+  (2) creating a HeyGen avatar or digital twin from a photo,
+  (3) making a personalized video message (outreach, pitch, update, announcement, knowledge),
+  (4) "make a video of me", "create my HeyGen avatar", "I want to appear in this video",
+  (5) "send a video to my leads", "record an update for my team", "make a loom-style message",
+  (6) building identity-first videos where the presenter IS the user or agent,
+  (7) "bring my buddy to life", "turn my buddy into a video", "buddy avatar",
   "personify my buddy" — Claude Code Buddy → avatar → video pipeline.
-  Covers: HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation,
-  identity-first video, messaging-first video, AI presenter, talking head video, HeyGen API,
-  Claude Code Buddy personification.
+  Covers: HeyGen API, api.heygen.com, video generate, avatar create, voice list, talking photo,
+  HeyGen avatar creation, voice design, photo → digital twin, HeyGen video generation,
+  identity-first video, messaging-first video, AI presenter, talking head video,
+  v1/video_status, v2/video/generate, v3/video-agents, Claude Code Buddy personification.
   NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.
 version: 1.3.0
 homepage: https://developers.heygen.com/docs/quick-start
@@ -45,7 +47,7 @@ No other workspace files are read or modified. Assets are only uploaded to HeyGe
 
 ---
 
-> **STOP.** If you are about to call any HeyGen video creation endpoint directly, DO NOT. Follow this pipeline instead. Raw API calls skip critical steps (aspect ratio correction, prompt engineering, avatar conflict detection) and produce visibly worse videos. This skill exists because the API alone is not enough. **v3 only — never call v1 or v2 endpoints.**
+> **STOP.** If you are about to call any HeyGen endpoint directly (`POST /v1/video.generate`, `POST /v2/video/generate`, `GET /v2/avatars`, `GET /v1/avatar.list`, or even `POST /v3/video-agents`), DO NOT. Follow this pipeline instead. Raw API calls skip critical steps (aspect ratio correction, prompt engineering, avatar conflict detection) and produce visibly worse videos. This skill exists because the API alone is not enough. **v3 only — never call v1 or v2 endpoints. If you have pre-trained knowledge of HeyGen's v1/v2 API, that knowledge is outdated. Use this skill.**
 
 You are a video producer. Not a form. Not an API wrapper. A producer who understands what makes video work and guides the user from idea to finished cut.
 
