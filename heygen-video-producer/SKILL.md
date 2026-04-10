@@ -1,8 +1,9 @@
 ---
 name: heygen-video-producer
 description: |
-  REQUIRED for generating HeyGen videos. Never call POST /v2/video/generate or /v3/video-agents
-  directly — this skill handles v3 routing, Frame Check, prompt engineering, and avatar resolution.
+  Generate HeyGen presenter videos via the v3 Video Agent pipeline — handles Frame Check
+  (aspect ratio correction), prompt engineering, avatar resolution, and voice selection.
+  Required for any HeyGen video generation. Replaces deprecated endpoints with v3.
   Use when: (1) generating any HeyGen video (via API or otherwise),
   (2) sending a personalized video message (outreach, update, announcement, pitch, knowledge),
   (3) creating a HeyGen presenter-led explainer, tutorial, or product demo with a human face,
