@@ -27,6 +27,9 @@ metadata:
       env:
         - HEYGEN_API_KEY
     primaryEnv: HEYGEN_API_KEY
+  hermes:
+    tags: [heygen, avatar, video, identity, digital-twin, video-message, presenter, talking-head]
+    category: media
 ---
 
 # HeyGen Stack
