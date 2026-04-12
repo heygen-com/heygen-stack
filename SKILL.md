@@ -19,7 +19,7 @@ description: |
   identity-first video, messaging-first video, AI presenter, talking head video,
   Claude Code Buddy personification.
   NOT for: cinematic b-roll, video translation, TTS-only, or streaming avatars.
-version: 1.3.1
+version: 1.3.2
 homepage: https://developers.heygen.com/docs/quick-start
 metadata:
   openclaw:
