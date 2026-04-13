@@ -30,10 +30,7 @@ if [ -d "$HOME/.claude" ]; then
   SKILLS_DIR="$HOME/.claude/skills"
 elif [ -d "$HOME/.openclaw" ]; then
   AGENT="openclaw"
-  SKILLS_DIR="$HOME/.openclaw/skills"
-elif [ -d "$HOME/openclaw" ]; then
-  AGENT="openclaw"
-  SKILLS_DIR="$HOME/openclaw/skills"
+  SKILLS_DIR="$HOME/.openclaw/workspace/skills"
 fi
 
 echo ""
