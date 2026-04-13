@@ -338,7 +338,7 @@ Transform the script into an optimized Video Agent prompt.
 ### Construction Rules
 
 1. **Narrator framing.** With `avatar_id`: "The selected presenter [explains]..." Without: describe desired presenter or "Voice-over narration only."
-2. **Duration signal.** State the target duration in the prompt.
+2. **Duration signal.** State the target duration in the prompt. **Video Agent runs ~25% short** — compensate by requesting 25–30% longer than the user's target. (User wants 30s → request 38–40s in the prompt.)
 3. **Script freedom directive.** ALWAYS include the script framing directive from Script.
 4. **Asset anchoring.** Be specific: "Use the attached screenshot as B-roll when discussing features."
 5. **Tone calibration.** Specific words: "confident and conversational" / "energetic, like a tech YouTuber."
@@ -490,7 +490,7 @@ This payload is the handoff to any subagent. The subagent receives a finished pa
 When generating multiple videos or wanting non-blocking polling, spawn one subagent per video with the finished payload.
 Subagents are for **submit + poll + deliver only**. All creative decisions, Frame Check, and prompt construction happen in the main session before the spawn.
 
-> ⛔ **BATCH RULE:** When generating N videos in parallel, spawn N subagents — one per video with its own finished payload.
+> ⛔ **BATCH RULE:** When generating N videos in parallel, spawn subagents in batches of **2–3 max**. Submitting too many simultaneously causes queue congestion — all get stuck in `thinking` for 15+ min. Submit batch 1, wait for `waiting_for_input` checkpoint on each, approve, then submit batch 2.
 
 **Step 4: Submit to `POST /v3/video-agents`**
 ```bash
@@ -513,7 +513,22 @@ Response: `{ "data": { "video_id": "...", "session_id": "..." } }`
 
 ### Polling
 
-First check at **2 min**, then every **30s** for 3 min, then every **60s** up to 30 min. Stuck `pending` >10 min → flag to user.
+Total wall time per video: **20–45 minutes**. First check at **5 min**, then every **60s** up to 45 min.
+
+**⚠️ The Video Agent ALWAYS pauses at a review checkpoint.** When polling returns `waiting_for_input` or `reviewing`, the agent must approve immediately — do NOT wait for the user:
+
+```bash
+curl -sX POST "https://api.heygen.com/v3/video-agents/{session_id}" \
+  -H "X-Api-Key: $HEYGEN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Approved, please generate the video.", "auto_proceed": true}'
+```
+
+After approval, status returns to `thinking` → `processing` → `completed`. Resume polling at 60s intervals.
+
+Status flow: `thinking` → `waiting_for_input` → *(approve)* → `thinking` → `processing` → `completed` | `failed`
+
+Stuck `processing` >15 min with no progress → flag to user.
 
 ### Delivery
 
