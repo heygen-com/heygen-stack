@@ -338,7 +338,7 @@ Transform the script into an optimized Video Agent prompt.
 ### Construction Rules
 
 1. **Narrator framing.** With `avatar_id`: "The selected presenter [explains]..." Without: describe desired presenter or "Voice-over narration only."
-2. **Duration signal.** State the target duration in the prompt. **Video Agent runs ~25% short** — compensate by requesting 25–30% longer than the user's target. (User wants 30s → request 38–40s in the prompt.)
+2. **Duration signal.** State the target duration in the prompt.
 3. **Script freedom directive.** ALWAYS include the script framing directive from Script.
 4. **Asset anchoring.** Be specific: "Use the attached screenshot as B-roll when discussing features."
 5. **Tone calibration.** Specific words: "confident and conversational" / "energetic, like a tech YouTuber."
