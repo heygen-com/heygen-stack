@@ -112,7 +112,166 @@ Tags: `cinematic`, `retro-tech`, `iconic-artist`, `pop-culture`, `handmade`, `pr
 
 When `style_id` is set, the prompt's Visual Style Block becomes optional — the style controls scene layout, transitions, pacing, and aesthetic. You can still add specific media type guidance or color overrides.
 
-**2. Prompt Styles** — Full manual control via prompt text. See [../references/prompt-styles.md](../references/prompt-styles.md).
+**2. Prompt Styles** — Full manual control via prompt text. Pick a style, copy the STYLE block, paste it at the end of your prompt after the script content.
+
+**How to pick:** Match mood first, content second. Ask: *"What should the viewer FEEL?"*
+
+> Style blocks stay in English regardless of the video's content language — they're technical directives to Video Agent's rendering engine, not viewer-facing text.
+
+**Mood-to-Style Guide:**
+
+| Content feels... | Use... |
+|---|---|
+| Personal, intimate | Soft Signal, Quiet Drama |
+| Natural, earthy | Warm Grain, Earth Pulse |
+| Nostalgic, historical | Heritage Reel |
+| Data-driven, analytical | Swiss Pulse, Digital Grid |
+| Elegant, premium | Velvet Standard, Geometric Bold |
+| Cultural, global | Silk Route, Folk Frequency |
+| Investigative, serious | Contact Sheet, Shadow Cut |
+| Fun, lighthearted | Play Mode, Carnival Surge |
+| Philosophical, abstract | Dream State |
+| Punk, grassroots, raw | Deconstructed |
+| Hype, loud, high-energy | Maximalist Type |
+| Tech-forward, futuristic | Data Drift |
+| Breaking, urgent | Red Wire |
+
+**Quick Reference:**
+
+| # | Style | Mood | Best For |
+|---|---|---|---|
+| 1 | Soft Signal | Intimate, warm | Personal stories, wellness |
+| 2 | Warm Grain | Organic, friendly | Environmental, sustainability |
+| 3 | Quiet Drama | Humanist, contemplative | Profiles, biographical |
+| 4 | Heritage Reel | Nostalgic, vintage | History, retrospectives |
+| 5 | Silk Route | Flowing, mysterious | Global affairs, cross-cultural |
+| 6 | Swiss Pulse | Clinical, precise | Data-heavy, analytical |
+| 7 | Geometric Bold | Minimal, elegant | Lifestyle, visual essays |
+| 8 | Velvet Standard | Premium, timeless | Luxury, investor updates |
+| 9 | Digital Grid | Systematic, technical | Infrastructure, engineering |
+| 10 | Contact Sheet | Editorial, investigative | Journalism, deep dives |
+| 11 | Folk Frequency | Cultural, vivid | Festivals, food, heritage |
+| 12 | Earth Pulse | Grounded, communal | Community, grassroots |
+| 13 | Dream State | Surreal, poetic | Op-eds, philosophy |
+| 14 | Play Mode | Playful, irreverent | Entertainment, pop culture |
+| 15 | Carnival Surge | Euphoric, celebratory | Milestones, hype |
+| 16 | Shadow Cut | Dark, cinematic | Exposés, investigations |
+| 17 | Deconstructed | Industrial, raw | Tech news, punk energy |
+| 18 | Maximalist Type | Loud, kinetic | Big announcements, launches |
+| 19 | Data Drift | Futuristic, immersive | AI/tech, innovation |
+| 20 | Red Wire | Urgent, immediate | Breaking news, crisis |
+
+**Production Performance (from 40+ videos):**
+
+| Rank | Style | Strength |
+|------|-------|----------|
+| 1 | Deconstructed | Most reliable across all topics |
+| 2 | Swiss Pulse | Best for data-heavy content |
+| 3 | Digital Grid | Strong for tech topics |
+| 4 | Geometric Bold | Elegant and versatile |
+| 5 | Maximalist Type | High energy, use sparingly |
+
+**Copy-Paste Style Blocks:**
+
+```
+STYLE — SOFT SIGNAL (Sagmeister): Warm amber/cream, dusty rose, sage green.
+Handwritten-style text. Close-up framing. Slow drifts and floats.
+Soft dissolves with warm light leaks.
+```
+```
+STYLE — WARM GRAIN (Eksell): Earth tones — ochre, forest green, terracotta, cream.
+Organic rounded compositions. 16mm film grain. Rounded sans-serif.
+Gentle wipes and soft cuts.
+```
+```
+STYLE — QUIET DRAMA (Ray): Muted warm — sepia, deep brown, soft gold.
+Portrait framing. Clean serif. Strong single-source contrast.
+Slow fades to black.
+```
+```
+STYLE — HERITAGE REEL (Cassandre): Faded gold, burgundy, navy, sepia wash.
+Elegant centered serif. Vignetting and aged film grain.
+Iris wipe transitions.
+```
+```
+STYLE — SILK ROUTE (Abedini): Jewel tones — deep teal, burgundy, gold, lapis blue.
+Layered compositions, all depths active. Elegant spaced type.
+Flowing dissolves and smooth morphs.
+```
+```
+STYLE — SWISS PULSE (Müller-Brockmann): Black/white + electric blue #0066FF.
+Grid-locked. Helvetica Bold. Animated counters. Diagonal accents.
+Grid wipe transitions.
+```
+```
+STYLE — GEOMETRIC BOLD (Tanaka): Max 3 flat colors per frame.
+60% negative space. Bold type as primary element.
+Single focal point. Clean cuts on beat.
+```
+```
+STYLE — VELVET STANDARD (Vignelli): Black, white, one accent: gold #c9a84c.
+Thin ALL CAPS, wide spacing. Generous negative space.
+Slow elegant cross-dissolves.
+```
+```
+STYLE — DIGITAL GRID (Crouwel): Monospaced type. Dark #0a0a0a with cyan #00E5FF, amber #FFB300.
+Pixel grid overlays. Terminal aesthetic. Clean wipe transitions.
+```
+```
+STYLE — CONTACT SHEET (Brodovitch): High contrast B&W, desaturated accents.
+Photo-editorial framing. Bold sans-serif annotations. Raw grain.
+Hard cuts on beat. Snap-zooms.
+```
+```
+STYLE — FOLK FREQUENCY (Terrazas): Vivid folk — hot pink, cobalt blue, sun yellow, emerald.
+Bold rounded type. Folk art rhythms. Rich handmade textures.
+Colorful wipes on festive rhythm.
+```
+```
+STYLE — EARTH PULSE (Ghariokwu): Warm saturated — burnt orange, deep green, rich yellow.
+Bold expressive type. Wide community framing.
+Rhythmic cuts on beat. Freeze-frames.
+```
+```
+STYLE — DREAM STATE (Tomaszewski): Muted palette + one surreal accent.
+Thin elegant floating type. Soft edges, atmospheric haze.
+Slow morph dissolves — NEVER hard cuts.
+```
+```
+STYLE — PLAY MODE (Ahn Sang-soo): Electric blue, hot pink, lime green.
+Bouncy spring physics. Oversized tilted text. Score cards, XP bars.
+Pop cuts, bounce effects.
+```
+```
+STYLE — CARNIVAL SURGE (Lins): Max color — hot pink #FF1493, yellow #FFE000, teal #00CED1.
+Collage layering. Text MASSIVE at ANGLES. Confetti bursts.
+Smash cuts, flash frames.
+```
+```
+STYLE — SHADOW CUT (Hillmann): Deep blacks, cold greys + blood red accent.
+Sharp angular text. Heavy shadow. Slow creeping push-ins.
+Hard cuts to black. Film noir tension.
+```
+```
+STYLE — DECONSTRUCTED (Brody): Dark grey #1a1a1a, rust orange #D4501E.
+Type at angles, overlapping. Gritty textures, scan-line glitch.
+Smash cuts with flash frames.
+```
+```
+STYLE — MAXIMALIST TYPE (Scher): Red, yellow, black, white — max contrast.
+Text IS the visual. Overlapping at different scales, 50-80% of frame.
+Kinetic everything. Smash cuts, flash frames.
+```
+```
+STYLE — DATA DRIFT (Anadol): Iridescent — purple #7c3aed, cyan #06b6d4, deep black.
+Fluid morphing compositions. Thin futuristic type.
+Liquid dissolves. Particles coalesce into numbers.
+```
+```
+STYLE — RED WIRE (Tartakover): Red, black, white, emergency yellow.
+Bold condensed all-caps. Split screens, tickers, timestamps.
+Snap cuts, flash frames. Zero breathing room.
+```
 
 **When to use which:**
 - User has no strong visual preference → browse API styles, pick one
@@ -221,7 +380,7 @@ Video Agent supports three media types. Guide it explicitly or it guesses (often
 Be explicit in the prompt: "Use motion graphics for the statistics, stock footage for the office scene, AI-generated visuals for the futuristic concept."
 
 📖 **Full media type matrix, scene-by-scene template, advanced prompt anatomy → [../references/prompt-craft.md](../references/prompt-craft.md)**
-📖 **Named styles (Deconstructed, Swiss Pulse, etc.) → [../references/prompt-styles.md](../references/prompt-styles.md)**
+📖 **Named styles (Deconstructed, Swiss Pulse, etc.) → inlined in Style Selection above**
 📖 **Motion vocabulary and B-roll → [../references/motion-vocabulary.md](../references/motion-vocabulary.md)**
 
 ### Orientation
