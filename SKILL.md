@@ -114,7 +114,7 @@ Default to Full Producer. Better to ask one smart question than generate a medio
 
 Check for any `AVATAR-*.md` files in the workspace root.
 
-- **Found:** Read the file, extract `Avatar ID` and `Voice ID` from the HeyGen section. Pre-load as defaults for Discovery.
+- **Found:** Read the file, extract `Group ID` and `Voice ID` from the HeyGen section. Pre-load as defaults for Discovery. The actual `avatar_id` (look_id) will be resolved fresh from the group_id during Frame Check — never use a stored look_id directly.
 - **Not found:** The user (or agent) has no avatar yet. Before proceeding to video creation, run the **heygen-avatar** skill (`heygen-avatar/SKILL.md` in this repo) to create one. Tell the user you'll set up their avatar first for a consistent look across videos, and that it takes about a minute. Communicate in `user_language`.
   
   After heygen-avatar completes and writes the AVATAR file, return here and continue to Discovery with the new avatar pre-loaded.
@@ -192,10 +192,11 @@ After Discovery, the producer sub-skill handles the full pipeline. Read `heygen-
 
 ### Steps
 
-1. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` -> extract `avatar_type`, `preview_image_url`, `image_width`, `image_height`
-2. **Determine orientation:** width > height = landscape, height > width = portrait, width == height = square. Fetch fails = assume portrait.
-3. **Determine background:** `photo_avatar` -> Video Agent handles environment. `studio_avatar` -> check if transparent/solid/empty. `video_avatar` -> always has background.
-4. **Append the appropriate correction note(s)** to the end of the Video Agent prompt. That's it. No image generation, no new looks.
+1. **Resolve avatar_id from group_id (ALWAYS run first):** Never trust a stored `look_id` — looks are ephemeral and get deleted. Read `Group ID` from the AVATAR file and resolve a fresh look_id: `GET /v3/avatars/looks?group_id=<group_id>&limit=20`. Pick the look matching the target orientation. Use this resolved look_id as `avatar_id` for all subsequent steps.
+2. **Fetch avatar look metadata:** `GET /v3/avatars/looks/<avatar_id>` -> extract `avatar_type`, `preview_image_url`, `image_width`, `image_height`
+3. **Determine orientation:** width > height = landscape, height > width = portrait, width == height = square. Fetch fails = assume portrait.
+4. **Determine background:** `photo_avatar` -> Video Agent handles environment. `studio_avatar` -> check if transparent/solid/empty. `video_avatar` -> always has background.
+5. **Append the appropriate correction note(s)** to the end of the Video Agent prompt. That's it. No image generation, no new looks.
 
 ### Correction Matrix
 
