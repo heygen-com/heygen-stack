@@ -5,7 +5,7 @@ AI agent skills for creating avatar videos. Your agent gets a face, a voice, and
 Works with Claude Code, OpenClaw, Codex, Cursor, and other AI coding agents.
 
 ```
-"I want to introduce myself as a founder with a short video. Use heygen-avatar and heygen-video — ask me what you need."
+"Create an avatar of me and make a 30-second intro video. Use heygen-avatar and heygen-video — ask me anything before you start."
 → asks the right questions → builds your avatar → picks the best style → generates the video → delivers the share link
 ```
 
