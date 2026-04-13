@@ -259,16 +259,19 @@ GET https://api.heygen.com/v3/voices
 
 ### Phase 4 — Save to AVATAR File
 
-Update the HeyGen section of `AVATAR-<NAME>.md`:
+Update the HeyGen section of `AVATAR-<NAME>.md` to match the canonical format:
 
 ```markdown
 ## HeyGen
-- Avatar ID: <avatar_item.id>
-- Group ID: <avatar_item.group_id>
+- Group ID: <avatar_item.group_id — THE stable reference, never changes>
 - Voice ID: <chosen voice_id>
 - Voice Name: <voice name>
-- Looks: default=<avatar_item.id>
+- Voice Designed: <true if custom-designed, false if picked from catalog>
+- Voice Seed: <seed value used, if designed>
+- Looks: <orientation>=<avatar_item.id> (e.g., landscape=<look_id>, portrait=<look_id>)
 - Last Synced: <ISO timestamp>
+
+⚠️ look_ids are ephemeral — always resolve fresh from group_id at runtime via GET /v3/avatars/looks?group_id=<id>. Never hardcode look_id as the primary avatar reference.
 ```
 
 Confirm the avatar is saved and that other skills (like heygen-video) will pick it up automatically. Communicate in `user_language`.
@@ -311,8 +314,8 @@ Each iteration updates the AVATAR file. The file is always the source of truth.
 
 ## Video Producer Integration
 
-`heygen-video` reads AVATAR files for avatar_id and voice_id:
-- "Make a video with Eve" → reads `AVATAR-EVE.md` → gets Avatar ID + Voice ID
+`heygen-video` reads AVATAR files for group_id and voice_id:
+- "Make a video with Eve" → reads `AVATAR-EVE.md` → gets Group ID + Voice ID → resolves fresh look_id at runtime
 - "Make a video with Ken" → reads `AVATAR-KEN.md`
 - No AVATAR file found → falls back to stock avatars or asks user
 
