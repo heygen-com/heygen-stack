@@ -13,11 +13,7 @@ One install. One API key. Works with Claude Code, OpenClaw, Codex, and other AI 
 
 **30-second setup.** Paste this into your agent:
 
-> Clone and install HeyGen Stack:
-> ```
-> git clone https://github.com/heygen-com/heygen-stack.git ~/.claude/skills/heygen-stack && cd ~/.claude/skills/heygen-stack && ./setup
-> ```
-> The setup script will prompt for your API key and save it to `~/.heygen/config` automatically.
+> Install HeyGen Stack: run `git clone --single-branch --depth 1 https://github.com/heygen-com/heygen-stack.git ~/.claude/skills/heygen-stack && cd ~/.claude/skills/heygen-stack && ./setup` — the setup script will prompt for your API key and save it to `~/.heygen/config`. After setup, use the heygen-avatar skill to create an avatar from my photo, and heygen-video to make a 30-60 second intro video, casual tone.
 
 Get your API key at [app.heygen.com/settings/api](https://app.heygen.com/settings/api?nav=API).
 
