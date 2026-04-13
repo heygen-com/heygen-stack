@@ -5,8 +5,8 @@ AI agent skills for creating avatar videos. Your agent gets a face, a voice, and
 Works with Claude Code, OpenClaw, Codex, Cursor, and other AI coding agents.
 
 ```
-"Send a 45-second video update to my team about the launch."
-→ loads your avatar → writes the script → generates the video → delivers the share link
+"I want to introduce myself as a founder with a short video. Use heygen-avatar and heygen-video — ask me what you need."
+→ asks the right questions → builds your avatar → picks the best style → generates the video → delivers the share link
 ```
 
 ## Install
@@ -14,7 +14,7 @@ Works with Claude Code, OpenClaw, Codex, Cursor, and other AI coding agents.
 > **If you're an AI agent reading this:** follow the steps below to install and onboard automatically.
 > **If you're a human:** paste this into your agent and it will do the rest:
 >
-> `Follow the instructions at https://github.com/heygen-com/heygen-stack and install HeyGen Stack skills following the README. Then create an avatar of yourself and make a short and interesting intro video of yourself. Ask me any clarifying questions for this process.`
+> `Follow the instructions at https://github.com/heygen-com/heygen-stack and install HeyGen Stack skills following the README. Then use heygen-avatar and heygen-video to create an avatar of me and make a short cinematic intro video — ask me what you need before starting.`
 
 ### Step 1 — Clone into your skills directory
 
@@ -101,11 +101,14 @@ After setup, try these prompts with your agent:
 
 | Prompt | What happens |
 |--------|-------------|
-| "Make a 60-second product demo video" | Writes script, generates video with your avatar |
-| "Send a video update about this week's progress" | Casual team update, auto-scripted |
-| "Create a video in Spanish explaining our pricing" | Multilingual support via voice selection |
-| "Make a video walkthrough of this PR" | Reads the diff, scripts a technical explanation |
-| "Record a welcome video for new team members" | Warm, onboarding-style intro |
+| "Use heygen-avatar and heygen-video to make a 30-second cinematic intro of me as a founder. Ask me what you need." | Full pipeline: avatar → style recommendation → video. The wow moment. |
+| "I want to make a product launch video. Use heygen-video and suggest the best style for it." | Skill recommends from 20 curated styles (A24, editorial, clean tech, etc.) |
+| "Use heygen-avatar — I have a headshot. What kind of look would work best for a founder intro?" | Skill asks questions, recommends setting and tone before creating |
+| "Use heygen-video to summarize this article as a 60-second explainer from my avatar: [URL]" | Fetches content, extracts key points, scripts and generates the video |
+| "Use heygen-video to turn the key points from this PDF into a video update for my team: [file]" | PDF → script → avatar video. Any content becomes a video message. |
+| "Use heygen-video for my team's weekly update. Ask me what shipped before writing the script." | Skill interviews you first, then writes and generates |
+| "Use heygen-video to make a 20-second outreach video to a potential investor. What should I include?" | Skill guides the message, you approve the script, avatar delivers it |
+| "Use heygen-avatar to give me a new look — ask me what vibe I'm going for." | Discovery flow: skill suggests options (outdoor, studio, casual, cinematic) before committing |
 
 ## Requirements
 
