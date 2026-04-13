@@ -14,7 +14,7 @@ Works with Claude Code, OpenClaw, Codex, Cursor, and other AI coding agents.
 > **If you're an AI agent reading this:** follow the steps below to install and onboard automatically.
 > **If you're a human:** paste this into your agent and it will do the rest:
 >
-> `Follow the instructions at https://github.com/heygen-com/heygen-stack and install HeyGen Stack skills following the README.`
+> `Follow the instructions at https://github.com/heygen-com/heygen-stack and install HeyGen Stack skills following the README. Then create an avatar of yourself and make a short and interesting intro video of yourself. Ask me any clarifying questions for this process.`
 
 ### Step 1 — Clone into your skills directory
 
